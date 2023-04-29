@@ -12,7 +12,7 @@ export const typeDefs = gql`
         token: String!
     }
 
-    type Maderas {
+    type Madera {
         _id: ID!
         img: String!
         name: String!
@@ -29,15 +29,23 @@ export const typeDefs = gql`
     
     type Query{
         getAdmins: [User!]!
-        getMaderas: [Maderas!]!
+        getMaderas: [Madera!]!
+        getProductos: [Product!]!
+        getProducto (id_product: String!): Product!
     }
 
     type Mutation{
         RegistrarAdmin(nombre: String!, apellido: String!, correo: String!, nivel_auth: String!, password: String!): User!
-        ChangeLvlAuth(idUser: String!, newNivel_auth: String!): User!
-        darAltaMadera(img: String!, name: String!, description: String!): Maderas!
-        borrarMadera(id: ID!): Maderas!
+        logIn(correo: String!, password: String!): User!
+        ChangeLvlAuth(idUser: ID!, newNivel_auth: String!): User!
+
+        darAltaMadera(img: String!, name: String!, description: String!): Madera!
+        modificarMadera(id_madera: ID!, img: String, name: String, description: String): Madera!
+        borrarMadera(id_madera: ID!): Madera!
+
         addProducto(img: String!, name: String!, stock: String!, precio: String!): Product!
+        modificarProducto(id_product: ID!, img: String, name: String, stock: String, precio: String): Product!
+        borrarProducto(id_product: ID!): Product!
 
     }
 `
