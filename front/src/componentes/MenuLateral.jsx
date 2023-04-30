@@ -13,16 +13,17 @@ function MenuLateral() {
           <button className="flex justify-start underline mb-5">• Usuarios</button>
           <button className="flex justify-start underline mb-5">• Maderas</button>
           <button className="flex justify-start underline mb-5">• Productos</button>
-          {nivel_auth >= 2 && (
-            <button
-              className="flex justify-start underline mb-5"
-              onClick={() => {
-                changeViewRegistro(true);
-              }}
-            >
-              • Registrar administrador
-            </button>
-          )}
+          <div className="flex justify-start underline mb-5">
+            {nivel_auth >= 2 && (
+              <button
+                onClick={() => {
+                  changeViewRegistro(true);
+                }}
+              >
+                • Registrar administrador
+              </button>
+            )}
+          </div>
         </span>
       </div>
 
