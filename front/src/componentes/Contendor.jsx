@@ -25,7 +25,7 @@ function Contendor() {
               <MenuLateral />
             </div>
 
-            <div>
+            <div className="w-screen">
                 <PantallaPrincipal /> 
             </div>
           </div>
