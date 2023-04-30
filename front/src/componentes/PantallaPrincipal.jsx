@@ -7,7 +7,7 @@ function PantallaPrincipal() {
 
   return (
     <div>
-      <div className='flex justify-center'>{viewRegistro && <RegistrarAdmin />}</div>
+      <div className='flex justify-center '>{viewRegistro && <RegistrarAdmin />}</div>
     </div>
   );
 }

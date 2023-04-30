@@ -110,6 +110,21 @@ export const Mutation = {
         }
     },
 
+    cerrarSesion: async (parent: any, args: any, context: { db_admin: Db, userAdmin: any }) => {
+        const { db_admin, userAdmin } = context;
+
+        try {
+            if (!userAdmin) {
+                throw new ApolloError("User not exist", "USER_NOT_EXIST")
+            } else {
+                await db_admin.collection("Usuarios_admins").updateOne({ _id: userAdmin._id }, { $set: { token: null } });
+                return true;
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     ChangeLvlAuth: async (parent: any, args: { idUser: string, newNivel_auth: string }, context: { db_admin: Db, userAdmin: any  }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
