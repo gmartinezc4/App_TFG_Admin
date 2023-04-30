@@ -31,7 +31,7 @@ function IniciarSesion() {
   const [login] = useMutation(LOG_IN, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.logIn.token); //cuando se complete la mutation guardar el token
-      localStorage.setItem("nivel_auth", data.logIn.Nivel_auth); //guarda el nivel de autorización del admin
+      localStorage.setItem("nivel_auth", data.logIn.nivel_auth); //guarda el nivel de autorización del admin
       console.log("me loggeo, token: " + localStorage.getItem("token"));
 
       changeReload();
