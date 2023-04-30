@@ -3,6 +3,8 @@ import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { Context } from '../context/Context'
 import IniciarSesion from './IniciarSesion';
 import MenuLateral from './MenuLateral';
+import RegistrarAdmin from './RegistrarAdmin';
+import PantallaPrincipal from './PantallaPrincipal';
 
 function Contendor() {
   const client = new ApolloClient({
@@ -24,7 +26,7 @@ function Contendor() {
             </div>
 
             <div>
-                {/* <PantallaPrincipal /> */}
+                <PantallaPrincipal /> 
             </div>
           </div>
         )}
