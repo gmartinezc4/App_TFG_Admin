@@ -26,11 +26,12 @@ function IniciarSesion() {
   const [noHayPassword, setNoHayPassword] = useState(false);
   const [passView, setPassView] = useState(false);
 
-    const { changeReload } = useContext(Context)
+  const { changeReload } = useContext(Context);
 
   const [login] = useMutation(LOG_IN, {
     onCompleted: (data) => {
       localStorage.setItem("token", data.logIn.token); //cuando se complete la mutation guardar el token
+      localStorage.setItem("nivel_auth", data.logIn.Nivel_auth); //guarda el nivel de autorización del admin
       console.log("me loggeo, token: " + localStorage.getItem("token"));
 
       changeReload();
