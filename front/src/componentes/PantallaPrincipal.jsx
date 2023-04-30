@@ -6,7 +6,7 @@ function PantallaPrincipal() {
     const { viewRegistro } = useContext(Context);
 
   return (
-    <div className='flex justify-center'>
+    <div>
       <div className='flex justify-center'>{viewRegistro && <RegistrarAdmin />}</div>
     </div>
   );

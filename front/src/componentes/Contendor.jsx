@@ -21,7 +21,7 @@ function Contendor() {
         {!token && <IniciarSesion />}
         {token && (
           <div className='flex flex-row'>
-            <div className="w-56 mr-20">
+            <div className="w-72">
               <MenuLateral />
             </div>
 

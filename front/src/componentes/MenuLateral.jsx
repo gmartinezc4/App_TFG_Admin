@@ -10,6 +10,7 @@ function MenuLateral() {
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
 
+          <button className="flex justify-start underline mb-5">• Inicio</button>
           <button className="flex justify-start underline mb-5">• Usuarios</button>
           <button className="flex justify-start underline mb-5">• Maderas</button>
           <button className="flex justify-start underline mb-5">• Productos</button>
