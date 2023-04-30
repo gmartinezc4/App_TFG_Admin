@@ -8,6 +8,7 @@ export function ContextProvider(props) {
   const [reload, setReload] = useState(false);
 
   const token = localStorage.getItem("token");
+  const nivel_auth = localStorage.getItem("nivel_auth");
   
   function changeReload(){
     setReload(!reload);
@@ -17,6 +18,7 @@ export function ContextProvider(props) {
     <Context.Provider
       value={{
         token,
+        nivel_auth,
 
         changeReload,
       }}

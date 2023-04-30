@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { Context } from '../context/Context'
 import IniciarSesion from './IniciarSesion';
+import MenuLateral from './MenuLateral';
 
 function Contendor() {
   const client = new ApolloClient({
@@ -16,7 +17,17 @@ function Contendor() {
     <ApolloProvider client={client}>
       <div>
         {!token && <IniciarSesion />}
-        {token && <div>Contenedor</div>}
+        {token && (
+          <div className='flex flex-row'>
+            <div className="w-56 mr-20">
+              <MenuLateral />
+            </div>
+
+            <div>
+                {/* <PantallaPrincipal /> */}
+            </div>
+          </div>
+        )}
       </div>
     </ApolloProvider>
   );
