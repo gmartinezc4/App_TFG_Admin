@@ -110,7 +110,7 @@ function IniciarSesion() {
           
           <div className="mb-2">
             <label className="block text-sm font-semibold text-gray-800">
-              Password
+              Contraseña
             </label>
             <div className="flex flex-row">
               <input

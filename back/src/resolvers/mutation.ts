@@ -11,7 +11,7 @@ export const Mutation = {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
         const { nombre, apellido, correo, password, nivel_auth } = args;
-
+        console.log(userAdmin)
         try {
             if(userAdmin && userAdmin.Nivel_auth >= 2){
                 if (nombre == "" || apellido == "" || correo == "" || password == "" || nivel_auth == "") {

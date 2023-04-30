@@ -3,7 +3,7 @@ import React, { createContext, useState } from "react";
 export const Context = createContext(); //contexto
 
 export function ContextProvider(props) {
-  
+  const [viewRegistro, setViewRegistro] = useState(false);
   
   const [reload, setReload] = useState(false);
 
@@ -14,13 +14,19 @@ export function ContextProvider(props) {
     setReload(!reload);
   }
 
+  function changeViewRegistro(setView){
+    setViewRegistro(setView);
+  }
+
   return (
     <Context.Provider
       value={{
         token,
         nivel_auth,
+        viewRegistro,
 
         changeReload,
+        changeViewRegistro,
       }}
     >
       {props.children}
