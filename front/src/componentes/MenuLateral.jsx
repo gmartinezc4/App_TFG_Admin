@@ -28,7 +28,7 @@ function MenuLateral() {
         </span>
       </div>
 
-      <div className="border-gray-400 border h-screen ml-5"></div>
+      <div className="border-gray-400 border h-screen"></div>
     </div>
   );
 }

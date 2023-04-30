@@ -37,6 +37,7 @@ export const typeDefs = gql`
     type Mutation{
         RegistrarAdmin(nombre: String!, apellido: String!, correo: String!, nivel_auth: String!, password: String!): User!
         logIn(correo: String!, password: String!): User!
+        cerrarSesion: Boolean!
         ChangeLvlAuth(idUser: ID!, newNivel_auth: String!): User!
 
         darAltaMadera(img: String!, name: String!, description: String!): Madera!
