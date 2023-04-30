@@ -11,7 +11,7 @@ export const Mutation = {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
         const { nombre, apellido, correo, password, nivel_auth } = args;
-
+        console.log(userAdmin)
         try {
             if(userAdmin && userAdmin.Nivel_auth >= 2){
                 if (nombre == "" || apellido == "" || correo == "" || password == "" || nivel_auth == "") {
@@ -74,6 +74,42 @@ export const Mutation = {
         }
     },
 
+    logIn: async (parent: any, args: { correo: String, password: String }, context: { db_admin: Db }) => {
+        const db_admin = context.db_admin;
+        const { correo, password } = args;
+        
+        try {
+            const user = await db_admin.collection("Usuarios_admins").findOne({ Email: correo });
+            
+            if (!user) {
+                throw new ApolloError("Ningun usuario con ese correo está registrado");
+                
+            } else {
+                console.log(await bcrypt.compare(password, user['Password']))
+                if (await bcrypt.compare(password, user['Password'])) {
+                    const token = uuidv4();
+
+                    await db_admin.collection("Usuarios_admins").updateOne({ Email: correo }, { $set: { token: token } });
+                    
+                    return {
+                        _id: user._id.toString(),
+                        nombre: user.Nombre,
+                        apellido: user.Apellido,
+                        email: user.Email,
+                        password: user.Password,
+                        nivel_auth: user.Nivel_auth,
+                        token: token, 
+                    };
+
+                }else {
+                    throw new ApolloError("Contraseña invalida");
+                }
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     ChangeLvlAuth: async (parent: any, args: { idUser: string, newNivel_auth: string }, context: { db_admin: Db, userAdmin: any  }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
@@ -124,25 +160,76 @@ export const Mutation = {
 
     },
 
-    borrarMadera: async (parent: any, args: { id: string }, context: { db: Db, userAdmin: any  }) => {
+    modificarMadera: async (parent: any, args: { id_madera: string, img: string, name: string, description: string }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
-        const id = args.id;
+        let { id_madera, img, name, description } = args;
 
         try {
-            if(userAdmin){
-                const madera = await db.collection("Tipos_Madera").findOne({ _id: new ObjectId(id) });
-                if (madera) {
-                    await db.collection("Tipos_Madera").deleteOne({ _id: new ObjectId(id) });
+            if (userAdmin) {
+                if (id_madera.length != 24) {
+                    throw new ApolloError("ID invalido");
+                } else {
+
+                    const maderaModify = await db.collection("Tipos_Madera").findOne({ _id: new ObjectId(id_madera) });
+
+                    if (maderaModify) {
+
+                        if (img == "" || img == null) img = maderaModify.img;
+                        if (name == "" || name == null) name = maderaModify.name;
+                        if (description == "" || description == null) description = maderaModify.description;
+
+                        await db.collection("Tipos_Madera").findOneAndUpdate({ _id: new ObjectId(id_madera) }, { $set: { img: img, name: name, description: description } })
+                        
+                        return {
+                            _id: id_madera,
+                            img: img,
+                            name: name,
+                            description: description
+                        }
+
+                    } else {
+                        throw new ApolloError("No se encuentran coincidencias con ese ID");
+                    }
                 }
-                return {
-                    id: id,
-                    ...madera
-                };
-            }else{
+
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
-            
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    borrarMadera: async (parent: any, args: { id_madera: string }, context: { db: Db, userAdmin: any }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        const id_madera = args.id_madera;
+
+        try {
+            if (userAdmin) {
+                if (id_madera.length != 24) {
+                    throw new ApolloError("ID invalido");
+
+                } else {
+                    const madera = await db.collection("Tipos_Madera").findOne({ _id: new ObjectId(id_madera) });
+
+                    if (madera) {
+                        await db.collection("Tipos_Madera").deleteOne({ _id: new ObjectId(id_madera) });
+
+                        return {
+                            id: id_madera,
+                            ...madera
+                        };
+                    } else {
+                        throw new ApolloError("No se encuentran coincidencias con ese ID");
+                    }
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
@@ -172,5 +259,86 @@ export const Mutation = {
             throw new ApolloError(e, e.extensions.code);
         }
     },
+
+    modificarProducto: async (parent: any, args: { id_product: string, img: String, name: String, stock: String, precio: string }, context: { db: Db, userAdmin: any }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        let { id_product, img, name, stock, precio } = args;
+
+        try {
+            if (userAdmin) {
+                if (id_product.length != 24) {
+                    throw new ApolloError("ID invalido");
+                } else {
+
+                    const productModify = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(id_product) });
+
+                    if (productModify) {
+
+                        if (img == "" || img == null) img = productModify.img;
+                        if (name == "" || name == null) name = productModify.name;
+                        if (stock == "" || stock == null) stock = productModify.stock;
+                        if (precio == "" || precio == null) precio = productModify.precio;
+
+                        const precioInt: number = parseInt(precio);
+
+                        await db.collection("Productos_Venta").findOneAndUpdate({ _id: new ObjectId(id_product) }, { $set: { img: img, name: name, stock: stock, precio: precioInt } })
+                        
+                        return {
+                            _id: id_product,
+                            img: img,
+                            name: name,
+                            stock: stock,
+                            precio: precioInt
+                        }
+
+                    } else {
+                        throw new ApolloError("No se encuentran coincidencias con ese ID");
+                    }
+                }
+
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    borrarProducto: async (parent: any, args: { id_product: string }, context: { db: Db, userAdmin: any  }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        const id_product = args.id_product;
+
+        try {
+            if(userAdmin){
+                if (id_product.length != 24) {
+                    throw new ApolloError("ID invalido");
+
+                } else {
+                    const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(id_product) });
+
+                    if (producto) {
+                        await db.collection("Productos_Venta").deleteOne({ _id: new ObjectId(id_product) });
+
+                        return {
+                            id: id_product,
+                            ...producto
+                        };
+                    } else {
+                        throw new ApolloError("No se encuentran coincidencias con ese ID");
+                    }
+                }   
+
+            }else{
+                throw new ApolloError("Usuario no autorizado");
+            }
+            
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
 }
 
