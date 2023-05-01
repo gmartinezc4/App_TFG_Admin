@@ -20,7 +20,7 @@ export const Query = {
                         email: u.Email,
                         password: u.Password,
                         nivel_auth: u.Nivel_auth,
-                        token: u.token,
+                        token: u.token || "",
                     }))
                 } else {
                     throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd");
@@ -30,6 +30,31 @@ export const Query = {
             }
 
 
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getUsuarios: async (parent: any, args: any, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+
+        try {
+            if (userAdmin) {
+                const usuarios = await db.collection("Usuarios").find().toArray();
+                
+                if(usuarios){
+                    return usuarios.map((u) => ({
+                        _id: u._id.toString(),
+                        nombre: u.Nombre,
+                        apellido: u.Apellido,
+                        email: u.Email,
+                        password: u.Password,
+                        token: u.token || "",
+                    }))
+                }
+            }else{
+                throw new ApolloError("Usuario no autorizado");
+            }
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
@@ -103,6 +128,67 @@ export const Query = {
                 throw new ApolloError("Usuario no autorizado");
             }
 
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getHistorialPedidosUser: async (parent: any, args: { idUser: string }, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const idUser = args.idUser;
+
+        try {
+            if (userAdmin) {
+                if (idUser.length != 24) {
+                    throw new ApolloError("ID invalido");
+                }else {
+                    const userPedidos = await db.collection("Usuarios").findOne({ _id: new ObjectId(idUser) });
+
+                    if(userPedidos){
+                        const pedidos = await db.collection("Historial_Pedidos").find({ Id_user: idUser }).toArray();
+    
+                        if (pedidos) {
+                            return pedidos.map(p => ({
+                                _id: p._id,
+                                id_user: p.Id_user,
+                                estado: p.Estado,
+                                nombre: p.Nombre,
+                                apellido: p.Apellido,
+                                email: p.Email,
+                                telefono: p.Telefono,
+                                direccion: p.Direccion,
+                                masInformacion: p.MasInformacion,
+                                codigoPostal: p.CodigoPostal,
+                                ciudad: p.Ciudad,
+                                pais: p.Pais,
+                                fechaPedido: p.FechaPedido,
+                                fechaRecogida: p.FechaRecogida,
+                                importePedido: p.ImportePedido,
+                                importeFreeIvaPedido: p.ImporteFreeIvaPedido,
+                                productos: p.Productos.map((e: any) => ({
+                                    _id: e._id.toString(),
+                                    id_user: e.Id_user,
+                                    id_producto: e.Id_producto,
+                                    img: e.Img,
+                                    name: e.Name,
+                                    cantidad: e.Cantidad,
+                                    precioTotal: e.PrecioTotal,
+                                    precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                                }))
+        
+                            }))
+        
+                        } else {
+                            throw new ApolloError("El usuario no tiene pedidos", "404");
+                        }
+                    }else{
+                        throw new ApolloError("No hay coincidencias con ese ID");
+                    }
+                }
+                
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }

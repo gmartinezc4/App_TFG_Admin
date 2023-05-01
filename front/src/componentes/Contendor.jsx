@@ -18,7 +18,7 @@ function Contendor() {
 
   return (
     <ApolloProvider client={client}>
-      <div className="bg-gray-300 ">
+      <div className="">
         <div >
           <Cabecera />
         </div>
@@ -26,12 +26,12 @@ function Contendor() {
         {!token && <IniciarSesion />}
         {token && (
           <div className="flex flex-row">
-            <div className="w-72">
+            <div className="w-64 flex flex-row">
               <MenuLateral />
             </div>
 
-            <div className="w-screen ">
-              <PantallaPrincipal />
+            <div className="w-screen bg-gray-300 h-full">
+              <PantallaPrincipal/>
             </div>
           </div>
         )}

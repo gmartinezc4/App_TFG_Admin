@@ -2,7 +2,7 @@ import Contenedor from './componentes/Contendor'
 
 function App() {
   return (
-    <div>
+    <div className='bg-gray-600'>
       <Contenedor/> 
     </div>
   );
