@@ -2,7 +2,7 @@ import { ApolloError } from "apollo-server";
 import { Db, ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 const bcrypt = require('bcrypt');
-var nodemailer  = require('nodemailer');
+var nodemailer = require('nodemailer');
 import { htmlRegistro } from '/home/guillermo/App_TFG/back/data/htmlCorreos'
 
 export const Mutation = {
@@ -11,20 +11,20 @@ export const Mutation = {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
         const { nombre, apellido, correo, password, nivel_auth } = args;
-        console.log(userAdmin)
+
         try {
-            if(userAdmin && userAdmin.Nivel_auth >= 2){
+            if (userAdmin && userAdmin.Nivel_auth >= 2) {
                 if (nombre == "" || apellido == "" || correo == "" || password == "" || nivel_auth == "") {
                     return new ApolloError("Faltan campos por completar");
                 }
-    
+
                 const user = await db_admin.collection("Usuarios_admins").findOne({ Email: correo });
-    
+
                 if (!user) {
                     const encripted_pass = await bcrypt.hash(password, 12);
-    
+
                     await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
-    
+
                     //Creamos el objeto de transporte
                     var transporter = nodemailer.createTransport({
                         host: 'smtp.gmail.com',
@@ -36,14 +36,14 @@ export const Mutation = {
                             pass: 'fllksawjvxgrncfp'
                         }
                     });
-    
+
                     var mailOptions = {
                         from: 'maderas.cobo.cuenca@gmail.com',
                         to: correo,
                         subject: 'Nuevo usuario administrador',
                         html: htmlRegistro, // cambiar html
                     };
-    
+
                     transporter.sendMail(mailOptions, function (error: any, info: any) {
                         if (error) {
                             console.log(error);
@@ -51,7 +51,7 @@ export const Mutation = {
                             console.log('Email enviado: ' + info.response);
                         }
                     });
-    
+
                     return {
                         nombre: nombre,
                         apellido: apellido,
@@ -64,11 +64,11 @@ export const Mutation = {
                 } else {
                     return new ApolloError("Ya existe un administrador con ese email");
                 }
-            }else {
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
 
-            
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
@@ -77,20 +77,20 @@ export const Mutation = {
     logIn: async (parent: any, args: { correo: String, password: String }, context: { db_admin: Db }) => {
         const db_admin = context.db_admin;
         const { correo, password } = args;
-        
+
         try {
             const user = await db_admin.collection("Usuarios_admins").findOne({ Email: correo });
-            
+
             if (!user) {
                 throw new ApolloError("Ningun usuario con ese correo está registrado");
-                
+
             } else {
-                console.log(await bcrypt.compare(password, user['Password']))
+
                 if (await bcrypt.compare(password, user['Password'])) {
                     const token = uuidv4();
 
                     await db_admin.collection("Usuarios_admins").updateOne({ Email: correo }, { $set: { token: token } });
-                    
+
                     return {
                         _id: user._id.toString(),
                         nombre: user.Nombre,
@@ -98,10 +98,10 @@ export const Mutation = {
                         email: user.Email,
                         password: user.Password,
                         nivel_auth: user.Nivel_auth,
-                        token: token, 
+                        token: token,
                     };
 
-                }else {
+                } else {
                     throw new ApolloError("Contraseña invalida");
                 }
             }
@@ -110,18 +110,33 @@ export const Mutation = {
         }
     },
 
-    ChangeLvlAuth: async (parent: any, args: { idUser: string, newNivel_auth: string }, context: { db_admin: Db, userAdmin: any  }) => {
+    cerrarSesion: async (parent: any, args: any, context: { db_admin: Db, userAdmin: any }) => {
+        const { db_admin, userAdmin } = context;
+
+        try {
+            if (!userAdmin) {
+                throw new ApolloError("User not exist", "USER_NOT_EXIST")
+            } else {
+                await db_admin.collection("Usuarios_admins").updateOne({ _id: userAdmin._id }, { $set: { token: null } });
+                return true;
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    ChangeLvlAuth: async (parent: any, args: { idUser: string, newNivel_auth: string }, context: { db_admin: Db, userAdmin: any }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
         const { idUser, newNivel_auth } = args;
 
-        try{
-            if(userAdmin){
+        try {
+            if (userAdmin) {
                 const userAdminChanged = await db_admin.collection("Usuarios_admins").findOne({ _id: new ObjectId(idUser) });
 
-                if(userAdminChanged){
+                if (userAdminChanged) {
                     await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: new ObjectId(idUser) }, { $set: { Nivel_auth: newNivel_auth } });
-    
+
                     return {
                         _id: userAdminChanged._id.toString(),
                         nombre: userAdminChanged.Nombre,
@@ -132,28 +147,96 @@ export const Mutation = {
                         token: userAdminChanged.token || "",
                     }
                 }
-            }else {
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
-            
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
     },
 
-    darAltaMadera: async (parent: any, args: { img: String, name: String, description: String }, context: { db: Db, userAdmin: any  }) => {
+    borraUserAdmin: async (parent: any, args: { idUser: string }, context: { db_admin: Db, userAdmin: any }) => {
+        const db_admin = context.db_admin;
+        const userAdmin = context.userAdmin;
+        const idUser = args.idUser;
+
+        try {
+
+            if (userAdmin) {
+                const userAdminDelete = await db_admin.collection("Usuarios_admins").findOne({ _id: new ObjectId(idUser) });
+
+                if (userAdminDelete) {
+                    await db_admin.collection("Usuarios_admins").deleteOne({ _id: new ObjectId(idUser) });
+
+                    return {
+                        _id: userAdminDelete._id.toString(),
+                        nombre: userAdminDelete.Nombre,
+                        apellido: userAdminDelete.Apellido,
+                        email: userAdminDelete.Email,
+                        password: userAdminDelete.Password,
+                        nivel_auth: userAdminDelete.Nivel_auth,
+                        token: userAdminDelete.token || "",
+                    }
+                } else {
+                    throw new ApolloError("Usuario no encontrado");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+
+    },
+
+    borraUser: async (parent: any, args: { idUser: string }, context: { db: Db, userAdmin: any }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        const idUser = args.idUser;
+
+        try {
+
+            if (userAdmin) {
+
+                const userDelete = await db.collection("Usuarios").findOne({ _id: new ObjectId(idUser) });
+
+                if (userDelete) {
+                    await db.collection("Usuarios").deleteOne({ _id: new ObjectId(idUser) });
+
+                    return {
+                        _id: userDelete._id.toString(),
+                        nombre: userDelete.Nombre,
+                        apellido: userDelete.Apellido,
+                        email: userDelete.Email,
+                        password: userDelete.Password,
+                        token: userDelete.token || "",
+                    }
+                } else {
+                    throw new ApolloError("Usuario no encontrado");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+
+    },
+
+    darAltaMadera: async (parent: any, args: { img: String, name: String, description: String }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
         const { img, name, description } = args;
 
         try {
-            if(userAdmin){
+            if (userAdmin) {
                 await db.collection("Tipos_Madera").insertOne({ img, name, description });
                 return { img, name, description }
-            }else{
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
-            
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
@@ -180,7 +263,7 @@ export const Mutation = {
                         if (description == "" || description == null) description = maderaModify.description;
 
                         await db.collection("Tipos_Madera").findOneAndUpdate({ _id: new ObjectId(id_madera) }, { $set: { img: img, name: name, description: description } })
-                        
+
                         return {
                             _id: id_madera,
                             img: img,
@@ -235,13 +318,13 @@ export const Mutation = {
         }
     },
 
-    addProducto: async (parent: any, args: { img: string, name: string, stock: string, precio: string }, context: { db: Db, userAdmin: any  }) => {
+    addProducto: async (parent: any, args: { img: string, name: string, stock: string, precio: string }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
         const { img, name, stock, precio } = args;
 
         try {
-            if(userAdmin){
+            if (userAdmin) {
                 const precioInt: number = parseInt(precio)
 
                 await db.collection("Productos_Venta").insertOne({ img, name, stock, precio: precioInt })
@@ -250,11 +333,11 @@ export const Mutation = {
                     name,
                     stock,
                     precio: precio
-                    }    
-            }else{
+                }
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
-            
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }
@@ -283,7 +366,7 @@ export const Mutation = {
                         const precioInt: number = parseInt(precio);
 
                         await db.collection("Productos_Venta").findOneAndUpdate({ _id: new ObjectId(id_product) }, { $set: { img: img, name: name, stock: stock, precio: precioInt } })
-                        
+
                         return {
                             _id: id_product,
                             img: img,
@@ -306,13 +389,13 @@ export const Mutation = {
         }
     },
 
-    borrarProducto: async (parent: any, args: { id_product: string }, context: { db: Db, userAdmin: any  }) => {
+    borrarProducto: async (parent: any, args: { id_product: string }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
         const id_product = args.id_product;
 
         try {
-            if(userAdmin){
+            if (userAdmin) {
                 if (id_product.length != 24) {
                     throw new ApolloError("ID invalido");
 
@@ -329,12 +412,117 @@ export const Mutation = {
                     } else {
                         throw new ApolloError("No se encuentran coincidencias con ese ID");
                     }
-                }   
+                }
 
-            }else{
+            } else {
                 throw new ApolloError("Usuario no autorizado");
             }
-            
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    cambiarEstadoPedido: async (parent: any, args: { id_pedido: string, oldEstado: string, newEstado: string}, context: { db: Db, userAdmin: any }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        let { id_pedido, oldEstado, newEstado } = args;
+
+        try {
+            if (userAdmin) {
+                if (id_pedido.length != 24) {
+                    throw new ApolloError("ID invalido");
+                } else {
+                    let pedidoUserCambiado: any;
+                    let newBbdd: any;
+
+                    if(newEstado == "Activo") newBbdd = "Pedidos_Activos";
+                    if(newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
+                    if(newEstado == "Cancelado") newBbdd = "Pedidos_Cancelados";
+                    if(newEstado == "Recogido") newBbdd = "Pedidos_Recogidos";
+
+                    if (oldEstado == "Activo" && newEstado != "Activo") {
+                        const pedidoUser = await db.collection("Pedidos_Activos").findOne({ _id: new ObjectId(id_pedido) });
+                        if (pedidoUser) {
+                            pedidoUser.Estado = newEstado;
+                            pedidoUserCambiado = pedidoUser;
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection("Pedidos_Activos").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+                        } else {
+                            throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
+                        }
+
+                    } else if (oldEstado == "Pendiente" && newEstado != "Pendiente") {
+                        const pedidoUser = await db.collection("Pedidos_Pendientes").findOne({ _id: new ObjectId(id_pedido) });
+                        if (pedidoUser) {
+                            pedidoUser.Estado = newEstado;
+                            pedidoUserCambiado = pedidoUser;
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection("Pedidos_Pendientes").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+                        } else {
+                            throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
+                        }
+
+                    } else if (oldEstado == "Cancelado" && newEstado != "Cancelado") {
+                        const pedidoUser = await db.collection("Pedidos_Cancelados").findOne({ _id: new ObjectId(id_pedido) });
+                        if (pedidoUser) {
+                            pedidoUser.Estado = newEstado;
+                            pedidoUserCambiado = pedidoUser;
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection("Pedidos_Cancelados").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+                        } else {
+                            throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
+                        }
+
+                    } else if (oldEstado == "Recogido" && newEstado != "Recogido") {
+                        const pedidoUser = await db.collection("Pedidos_Recogidos").findOne({ _id: new ObjectId(id_pedido) });
+                        if (pedidoUser) {
+                            pedidoUser.Estado = newEstado;
+                            pedidoUserCambiado = pedidoUser;
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection("Pedidos_Recogidos").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+                        } else {
+                            throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
+                        }
+                    }
+
+                    if (pedidoUserCambiado) {
+                        return {
+                            _id: pedidoUserCambiado._id,
+                            id_user: pedidoUserCambiado.Id_user,
+                            estado: pedidoUserCambiado.Estado,
+                            nombre: pedidoUserCambiado.Nombre,
+                            apellido: pedidoUserCambiado.Apellido,
+                            email: pedidoUserCambiado.Email,
+                            telefono: pedidoUserCambiado.Telefono,
+                            direccion: pedidoUserCambiado.Direccion,
+                            masInformacion: pedidoUserCambiado.MasInformacion,
+                            codigoPostal: pedidoUserCambiado.CodigoPostal,
+                            ciudad: pedidoUserCambiado.Ciudad,
+                            pais: pedidoUserCambiado.Pais,
+                            fechaPedido: pedidoUserCambiado.FechaPedido,
+                            fechaRecogida: pedidoUserCambiado.FechaRecogida,
+                            importePedido: pedidoUserCambiado.ImportePedido,
+                            importeFreeIvaPedido: pedidoUserCambiado.ImporteFreeIvaPedido,
+                            productos: pedidoUserCambiado.Productos.map((e: any) => ({
+                                _id: e._id.toString(),
+                                id_user: e.Id_user,
+                                id_producto: e.Id_producto,
+                                img: e.Img,
+                                name: e.Name,
+                                cantidad: e.Cantidad,
+                                precioTotal: e.PrecioTotal,
+                                precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                            }))
+                        }
+                    } else {
+                        throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
+                    }
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }

@@ -20,7 +20,7 @@ const run = async () => {
     context: async ({ req }) => {
       const token = req.headers.authorization || "";
       const userAdmin = await db_admin.collection("Usuarios_admins").findOne({ token });
-      
+
       return { 
         db, 
         db_admin,

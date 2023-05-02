@@ -5,6 +5,7 @@ import IniciarSesion from './IniciarSesion';
 import MenuLateral from './MenuLateral';
 import RegistrarAdmin from './RegistrarAdmin';
 import PantallaPrincipal from './PantallaPrincipal';
+import Cabecera from './Cabecera';
 
 function Contendor() {
   const client = new ApolloClient({
@@ -17,16 +18,20 @@ function Contendor() {
 
   return (
     <ApolloProvider client={client}>
-      <div>
+      <div className="">
+        <div >
+          <Cabecera />
+        </div>
+
         {!token && <IniciarSesion />}
         {token && (
-          <div className='flex flex-row'>
-            <div className="w-56 mr-20">
+          <div className="flex flex-row">
+            <div className="w-64 flex flex-row">
               <MenuLateral />
             </div>
 
-            <div className="w-screen">
-                <PantallaPrincipal /> 
+            <div className="w-screen bg-gray-300 h-full">
+              <PantallaPrincipal/>
             </div>
           </div>
         )}

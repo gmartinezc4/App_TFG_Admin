@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { Context } from '../context/Context'
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
-
+import Swal from "sweetalert2";
 
 const LOG_IN = gql`
   mutation Mutation($correo: String!, $password: String!) {
@@ -26,7 +26,7 @@ function IniciarSesion() {
   const [noHayPassword, setNoHayPassword] = useState(false);
   const [passView, setPassView] = useState(false);
 
-  const { changeReload } = useContext(Context);
+  const { changeReload, nivel_auth } = useContext(Context);
 
   const [login] = useMutation(LOG_IN, {
     onCompleted: (data) => {
@@ -35,7 +35,7 @@ function IniciarSesion() {
       console.log("me loggeo, token: " + localStorage.getItem("token"));
 
       changeReload();
-      //   mostrarConfirmación();
+      mostrarConfirmación();
     },
     onError: (error) => {
       //si hay un error, borrar el token
@@ -66,6 +66,17 @@ function IniciarSesion() {
     }
   }
 
+  function mostrarConfirmación() {
+    Swal.fire({
+      position: 'center',
+      icon: 'success',
+      title: 'Bienvenido administrador',
+      text: 'Nivel de autorización: ' + localStorage.getItem("nivel_auth"),
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
+
   return (
     <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
       <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
@@ -94,6 +105,7 @@ function IniciarSesion() {
               type="email"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
+              autoComplete="true"
               className={
                 noHayCorreo || errorUserOrPasswordIncorrect
                   ? "block w-full px-4 py-2 mt-2 bg-white border rounded-md border-red-500"
