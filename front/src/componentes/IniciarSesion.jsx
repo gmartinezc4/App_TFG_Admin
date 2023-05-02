@@ -71,7 +71,7 @@ function IniciarSesion() {
       position: 'center',
       icon: 'success',
       title: 'Bienvenido administrador',
-      text: 'Nivel de autorización: ' + nivel_auth,
+      text: 'Nivel de autorización: ' + localStorage.getItem("nivel_auth"),
       showConfirmButton: false,
       timer: 2000
     });
