@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { Context } from "../context/Context";
 
 function MenuLateral() {
-  const { changeViewRegistro, nivel_auth, changeViewUsuarios } = useContext(Context);
+  const { nivel_auth, changeViewRegistro, changeViewUsuarios, changeViewTodosPedidos } = useContext(Context);
 
   return (
     <div className="flex flex-row justify-around  text-white">
@@ -19,8 +19,16 @@ function MenuLateral() {
           >
             • Usuarios
           </button>
-          <button className="flex justify-start underline mb-5">• Maderas</button>
+          <button
+            className="flex justify-start underline mb-5"
+            onClick={() => {
+              changeViewTodosPedidos(true);
+            }}
+          >
+            • Pedidos
+          </button>
           <button className="flex justify-start underline mb-5">• Productos</button>
+          <button className="flex justify-start underline mb-5">• Maderas</button>
           <div className="flex justify-start underline mb-5">
             {nivel_auth >= 2 && (
               <button

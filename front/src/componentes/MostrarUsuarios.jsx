@@ -72,10 +72,10 @@ const BORRAR_USER = gql`
 `;
 
 function MostrarUsuarios(props) {
-  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser } = useContext(Context);
+  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser } =
+    useContext(Context);
 
-  useEffect(() => {
-  }, [reload])
+  useEffect(() => {}, [reload]);
 
   const [changeLvlAuthUserAdmin] = useMutation(CHANGE_LVL_AUTH, {
     onCompleted: () => {
@@ -180,10 +180,10 @@ function MostrarUsuarios(props) {
   });
 
   if (loadingGetAdmins) return <div></div>;
-  if (errorGetAdmins) return <div>{console.log(error)}</div>;
+  if (errorGetAdmins) return <div>{console.log(errorGetAdmins)}</div>;
 
   if (loadingGetUsuarios) return <div></div>;
-  if (errorGetUsuarios) return <div>{console.log(error)}</div>;
+  if (errorGetUsuarios) return <div>{console.log(errorGetUsuarios)}</div>;
 
   async function modalCambiarNivelAuthAdmin(AdminId) {
     const { value: nivelAuth } = await Swal.fire({
@@ -198,7 +198,7 @@ function MostrarUsuarios(props) {
     });
 
     if (nivelAuth) {
-      if(nivelAuth > 2){
+      if (nivelAuth > 2) {
         Swal.fire({
           position: "center",
           icon: "error",
@@ -207,9 +207,9 @@ function MostrarUsuarios(props) {
           showConfirmButton: false,
           timer: 1500,
         }).then(() => {
-          modalCambiarNivelAuthAdmin(AdminId)
+          modalCambiarNivelAuthAdmin(AdminId);
         });
-      }else{
+      } else {
         changeLvlAuthUserAdmin({
           context: {
             headers: {
@@ -220,17 +220,17 @@ function MostrarUsuarios(props) {
             idUser: AdminId,
             newNivelAuth: nivelAuth,
           },
-        })
+        });
       }
     }
   }
 
   function modalBorrarUserAdmin(AdminId) {
     Swal.fire({
-      icon: 'warning',
-      title: '¿Confirmar cambios?',
+      icon: "warning",
+      title: "¿Confirmar cambios?",
       showCancelButton: true,
-      confirmButtonText: 'Si, borrar',
+      confirmButtonText: "Si, borrar",
       confirmButtonColor: "#DF0000",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -245,16 +245,16 @@ function MostrarUsuarios(props) {
           },
         });
       }
-    })
+    });
   }
 
   function modalBorrarUser(UserId) {
-    console.log(UserId)
+    console.log(UserId);
     Swal.fire({
-      icon: 'warning',
-      title: '¿Confirmar cambios?',
+      icon: "warning",
+      title: "¿Confirmar cambios?",
       showCancelButton: true,
-      confirmButtonText: 'Si, borrar',
+      confirmButtonText: "Si, borrar",
       confirmButtonColor: "#DF0000",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -269,17 +269,15 @@ function MostrarUsuarios(props) {
           },
         });
       }
-    })
+    });
   }
 
   return (
     <div>
-      <button
-        className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
-        onClick={() => {}}
-      >
-        volver
-      </button>
+      <h1 className="text-2xl font-mono text-orange-900 underline mb-10">
+        Bases de datos Usuarios
+      </h1>
+
       {!viewPedidosUser && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5">
