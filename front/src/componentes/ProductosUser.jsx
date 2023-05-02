@@ -1,52 +1,34 @@
-import React, { useContext, useState, useEffect } from "react";
-import { gql, useQuery, useMutation } from "@apollo/client";
+import React, { useContext, useState } from "react";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
 
-const GET_PRODUCTOS_PEDIDO_USER = gql`
-  query GetHistorialPedidosUser($idUser: ID!) {
-    getHistorialPedidosUser(idUser: $idUser) {
-      _id
-      apellido
-      ciudad
-      codigoPostal
-      direccion
-      email
-      estado
-      fechaPedido
-      fechaRecogida
-      id_user
-      importeFreeIvaPedido
-      importePedido
-      masInformacion
-      nombre
-      pais
-      telefono
-      productos {
-        _id
-        cantidad
-        id_producto
-        id_user
-        img
-        name
-        precioTotal
-        precioTotal_freeIVA
-      }
-    }
-  }
-`;
-
 function ProductosUser(props) {
-  const { changeViewPedidosUser } = useContext(Context);
+  const { changeViewPedidosUser, changeViewTodosPedidos, volverDeProductos } = useContext(Context);
  
   return (
     <div>
-       <button
-        className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
-        onClick={() => {changeViewPedidosUser(true)}}
-      >
-        volver
-      </button>
+      {volverDeProductos == "AllPedidos" && (
+        <button
+          className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
+          onClick={() => {
+            changeViewTodosPedidos(true);
+          }}
+        >
+          volver
+        </button>
+      )}
+
+      {volverDeProductos == "PedidosUser" && (
+        <button
+          className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
+          onClick={() => {
+            changeViewPedidosUser(true);
+          }}
+        >
+          volver
+        </button>
+      )}
+
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">USUARIO</h1>
         <div className="flex flex-col">

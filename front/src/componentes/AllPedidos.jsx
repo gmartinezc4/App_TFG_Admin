@@ -3,9 +3,9 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
 
-const GET_PEDIDOS_RECOGIDOS_USER = gql`
-  query Query($idUser: ID!) {
-    getPedidosRecogidosUser(id_user: $idUser) {
+const GET_PEDIDOS_RECOGIDOS = gql`
+  query Query {
+    getPedidosRecogidos {
       _id
       apellido
       ciudad
@@ -36,9 +36,9 @@ const GET_PEDIDOS_RECOGIDOS_USER = gql`
   }
 `;
 
-const GET_PEDIDOS_ACTIVOS_USER = gql`
-  query Query($idUser: ID!) {
-    getPedidosActivosUser(id_user: $idUser) {
+const GET_PEDIDOS_ACTIVOS = gql`
+  query Query {
+    getPedidosActivos {
       _id
       apellido
       ciudad
@@ -69,9 +69,9 @@ const GET_PEDIDOS_ACTIVOS_USER = gql`
   }
 `;
 
-const GET_PEDIDOS_PENDIENTES_USER = gql`
-  query Query($idUser: ID!) {
-    getPedidosPendientesUser(id_user: $idUser) {
+const GET_PEDIDOS_PENDIENTES = gql`
+  query Query {
+    getPedidosPendientes {
       _id
       apellido
       ciudad
@@ -102,9 +102,9 @@ const GET_PEDIDOS_PENDIENTES_USER = gql`
   }
 `;
 
-const GET_PEDIDOS_CANCELADOS_USER = gql`
-  query Query($idUser: ID!) {
-    getPedidosCanceladosUser(id_user: $idUser) {
+const GET_PEDIDOS_CANCELADOS = gql`
+  query Query {
+    getPedidosCancelados {
       _id
       apellido
       ciudad
@@ -172,16 +172,15 @@ const CAMBIAR_ESTADO_PEDIDO = gql`
   }
 `;
 
-function PedidosUser(props) {
+function AllPedidos(props) {
   let pedidoId = "";
 
   useEffect(() => {
-    changeVolverDeProductos("PedidosUser")
+    changeVolverDeProductos("AllPedidos")
   }, [])
   
 
-  const { changeViewProductosUser, changeViewUsuarios, changeReload, changeVolverDeProductos } =
-    useContext(Context);
+  const { changeViewProductosUser, changeReload, changeVolverDeProductos } = useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
     onCompleted: () => {
@@ -213,14 +212,11 @@ function PedidosUser(props) {
     data: dataRecogidos,
     loading: loadingRecogidos,
     error: errorRecogidos,
-  } = useQuery(GET_PEDIDOS_RECOGIDOS_USER, {
+  } = useQuery(GET_PEDIDOS_RECOGIDOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
       },
-    },
-    variables: {
-      idUser: props.idUser,
     },
   });
 
@@ -228,14 +224,11 @@ function PedidosUser(props) {
     data: dataActivos,
     loading: loadingActivos,
     error: errorActivos,
-  } = useQuery(GET_PEDIDOS_ACTIVOS_USER, {
+  } = useQuery(GET_PEDIDOS_ACTIVOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
       },
-    },
-    variables: {
-      idUser: props.idUser,
     },
   });
 
@@ -243,14 +236,11 @@ function PedidosUser(props) {
     data: dataPendientes,
     loading: loadingPendientes,
     error: errorPendientes,
-  } = useQuery(GET_PEDIDOS_PENDIENTES_USER, {
+  } = useQuery(GET_PEDIDOS_PENDIENTES, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
       },
-    },
-    variables: {
-      idUser: props.idUser,
     },
   });
 
@@ -258,14 +248,11 @@ function PedidosUser(props) {
     data: dataCancelados,
     loading: loadingCancelados,
     error: errorCancelados,
-  } = useQuery(GET_PEDIDOS_CANCELADOS_USER, {
+  } = useQuery(GET_PEDIDOS_CANCELADOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
       },
-    },
-    variables: {
-      idUser: props.idUser,
     },
   });
 
@@ -281,8 +268,7 @@ function PedidosUser(props) {
   if (loadingCancelados) return <div></div>;
   if (errorCancelados) return console.log(errorCancelados);
 
-
-  function modalCancelarPedido(estadoActual) {  
+  function modalCancelarPedido(estadoActual) {
     Swal.fire({
       icon: "warning",
       title: "¿Confirmar cambios?",
@@ -347,7 +333,7 @@ function PedidosUser(props) {
           oldEstado: estadoActual,
           newEstado: estado,
         },
-      })
+      });
 
       pedidoId = "";
     }
@@ -355,65 +341,9 @@ function PedidosUser(props) {
 
   return (
     <div>
-      <button
-        className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
-        onClick={() => {
-          changeViewUsuarios(true);
-        }}
-      >
-        volver
-      </button>
+      <h1 className="text-2xl font-mono text-orange-900 underline mb-10">Bases de datos Pedidos</h1>
       <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5">USUARIO</h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Name
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Email
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    <tr>
-                      <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                        {props.idUser}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                        {props.nombreUser + " " + props.apellidoUser}
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                        {props.correoUser}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+        <h1 className="flex justify-center text-2xl underline font-bold mb-5">
           PEDIDOS ACTIVOS
         </h1>
         <div className="flex flex-col">
@@ -474,7 +404,7 @@ function PedidosUser(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {dataActivos.getPedidosActivosUser.map((pedidos) => (
+                    {dataActivos.getPedidosActivos.map((pedidos) => (
                       <tr key={pedidos._id}>
                         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {pedidos._id}
@@ -594,7 +524,7 @@ function PedidosUser(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {dataPendientes.getPedidosPendientesUser.map((pedidos) => (
+                    {dataPendientes.getPedidosPendientes.map((pedidos) => (
                       <tr key={pedidos._id}>
                         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {pedidos._id}
@@ -708,7 +638,7 @@ function PedidosUser(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {dataCancelados.getPedidosCanceladosUser.map((pedidos) => (
+                    {dataCancelados.getPedidosCancelados.map((pedidos) => (
                       <tr key={pedidos._id}>
                         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {pedidos._id}
@@ -811,7 +741,7 @@ function PedidosUser(props) {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {dataRecogidos.getPedidosRecogidosUser.map((pedidos) => (
+                    {dataRecogidos.getPedidosRecogidos.map((pedidos) => (
                       <tr key={pedidos._id}>
                         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {pedidos._id}
@@ -861,4 +791,4 @@ function PedidosUser(props) {
   );
 }
 
-export default PedidosUser;
+export default AllPedidos;

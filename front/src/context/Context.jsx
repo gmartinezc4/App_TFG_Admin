@@ -7,7 +7,9 @@ export function ContextProvider(props) {
   const [viewUsuarios, setViewUsuarios] = useState(false);
   const [viewPedidosUser, setViewPedidosUser] = useState(false);
   const [viewProductosUser, setViewProductosUser] = useState(false);
-  
+  const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
+  const [volverDeProductos, setVolverDeProductos] = useState("");
+
   const [reload, setReload] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -22,6 +24,7 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewPedidosUser(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
   }
 
   function changeViewUsuarios(setView){
@@ -29,6 +32,7 @@ export function ContextProvider(props) {
     setViewRegistro(false);
     setViewPedidosUser(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
   }
 
   function changeViewPedidosUser(setView){
@@ -36,6 +40,7 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewRegistro(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
   }
 
   function changeViewProductosUser(setView){
@@ -43,6 +48,19 @@ export function ContextProvider(props) {
     setViewRegistro(false);
     setViewUsuarios(false);
     setViewPedidosUser(false);
+    setViewTodosPedidos(false);
+  }
+
+  function changeViewTodosPedidos(setView){
+    setViewTodosPedidos(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+  }
+
+  function changeVolverDeProductos(setVolver){
+    setVolverDeProductos(setVolver);
   }
 
   return (
@@ -55,12 +73,16 @@ export function ContextProvider(props) {
         viewUsuarios,
         viewPedidosUser,
         viewProductosUser,
+        viewTodosPedidos,
+        volverDeProductos,
 
         changeReload,
         changeViewRegistro,
         changeViewUsuarios,
         changeViewPedidosUser,
         changeViewProductosUser,
+        changeViewTodosPedidos,
+        changeVolverDeProductos
       }}
     >
       {props.children}

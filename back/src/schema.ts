@@ -73,10 +73,16 @@ export const typeDefs = gql`
         getMaderas: [Madera!]!
         getProductos: [Product!]!
         getProducto (id_product: ID!): Product!
-        getPedidosRecogidos(id_user: ID!): [Pedido!]
+
+        getPedidosRecogidosUser(id_user: ID!): [Pedido!]
         getPedidosActivosUser(id_user: ID!): [Pedido!]
         getPedidosPendientesUser(id_user: ID!): [Pedido!]
         getPedidosCanceladosUser(id_user: ID!): [Pedido!]
+
+        getPedidosRecogidos: [Pedido!]
+        getPedidosActivos: [Pedido!]
+        getPedidosPendientes: [Pedido!]
+        getPedidosCancelados: [Pedido!]
     }
 
     type Mutation{
