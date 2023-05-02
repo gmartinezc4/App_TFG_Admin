@@ -80,6 +80,14 @@ function MostrarUsuarios(props) {
   const [changeLvlAuthUserAdmin] = useMutation(CHANGE_LVL_AUTH, {
     onCompleted: () => {
       console.log("Se ha cambiado el nivel de autorización del usuario admin");
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "Operación realizada con éxito",
+        text: `Nuevo nivel de autorización: ${nivelAuth}`,
+        showConfirmButton: false,
+        timer: 1500,
+      });
     },
     onError: (error) => {
       //si hay un error, borrar el token
@@ -190,26 +198,30 @@ function MostrarUsuarios(props) {
     });
 
     if (nivelAuth) {
-      changeLvlAuthUserAdmin({
-        context: {
-          headers: {
-            authorization: localStorage.getItem("token"),
-          },
-        },
-        variables: {
-          idUser: AdminId,
-          newNivelAuth: nivelAuth,
-        },
-      }).then(() => {
+      if(nivelAuth > 2){
         Swal.fire({
           position: "center",
-          icon: "success",
-          title: "Operación realizada con éxito",
-          text: `Nuevo nivel de autorización: ${nivelAuth}`,
+          icon: "error",
+          title: "Nivel de autorización no valido",
+          text: "valores válidos: 1 y 2",
           showConfirmButton: false,
           timer: 1500,
+        }).then(() => {
+          modalCambiarNivelAuthAdmin(AdminId)
         });
-      });
+      }else{
+        changeLvlAuthUserAdmin({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idUser: AdminId,
+            newNivelAuth: nivelAuth,
+          },
+        })
+      }
     }
   }
 
