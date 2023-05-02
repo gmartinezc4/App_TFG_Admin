@@ -2,16 +2,23 @@ import React, { useContext } from "react";
 import { Context } from "../context/Context";
 
 function MenuLateral() {
-  const { changeViewRegistro, nivel_auth } = useContext(Context);
+  const { changeViewRegistro, nivel_auth, changeViewUsuarios } = useContext(Context);
 
   return (
-    <div className="flex flex-row justify-around">
+    <div className="flex flex-row justify-around  text-white">
       <div className="flex justify-center">
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
 
           <button className="flex justify-start underline mb-5">• Inicio</button>
-          <button className="flex justify-start underline mb-5">• Usuarios</button>
+          <button
+            className="flex justify-start underline mb-5"
+            onClick={() => {
+              changeViewUsuarios(true);
+            }}
+          >
+            • Usuarios
+          </button>
           <button className="flex justify-start underline mb-5">• Maderas</button>
           <button className="flex justify-start underline mb-5">• Productos</button>
           <div className="flex justify-start underline mb-5">
@@ -27,8 +34,6 @@ function MenuLateral() {
           </div>
         </span>
       </div>
-
-      <div className="border-gray-400 border h-screen"></div>
     </div>
   );
 }
