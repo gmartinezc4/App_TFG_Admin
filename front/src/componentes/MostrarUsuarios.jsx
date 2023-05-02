@@ -213,7 +213,7 @@ function MostrarUsuarios(props) {
     }
   }
 
-  async function modalBorrarUserAdmin(AdminId) {
+  function modalBorrarUserAdmin(AdminId) {
     Swal.fire({
       icon: 'warning',
       title: '¿Confirmar cambios?',
@@ -236,7 +236,7 @@ function MostrarUsuarios(props) {
     })
   }
 
-  async function modalBorrarUser(UserId) {
+  function modalBorrarUser(UserId) {
     console.log(UserId)
     Swal.fire({
       icon: 'warning',
@@ -262,6 +262,12 @@ function MostrarUsuarios(props) {
 
   return (
     <div>
+      <button
+        className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
+        onClick={() => {}}
+      >
+        volver
+      </button>
       {!viewPedidosUser && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5">
@@ -339,7 +345,7 @@ function MostrarUsuarios(props) {
                           </td>
                           <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                             <a
-                              className="text-red-500 hover:text-red-700 cursor-pointer"
+                              className="text-red-500 hover:text-red-600 cursor-pointer"
                               onClick={() => {
                                 modalBorrarUserAdmin(userAdmin._id);
                               }}
@@ -415,7 +421,12 @@ function MostrarUsuarios(props) {
                               className="text-blue-500 hover:text-blue-700 cursor-pointer"
                               onClick={() => {
                                 changeViewPedidosUser(true);
-                                props.setDatosUser(user._id, user.nombre, user.apellido, user.email);                           
+                                props.setDatosUser(
+                                  user._id,
+                                  user.nombre,
+                                  user.apellido,
+                                  user.email
+                                );
                               }}
                             >
                               Pedidios
@@ -423,7 +434,7 @@ function MostrarUsuarios(props) {
                           </td>
                           <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap ">
                             <a
-                              className="text-red-500 hover:text-red-700 cursor-pointer"
+                              className="text-red-500 hover:text-red-600 cursor-pointer"
                               onClick={() => {
                                 modalBorrarUser(user._id);
                               }}
@@ -441,7 +452,6 @@ function MostrarUsuarios(props) {
           </div>
         </div>
       )}
-      
     </div>
   );
 }

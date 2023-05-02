@@ -37,9 +37,16 @@ const GET_PRODUCTOS_PEDIDO_USER = gql`
 `;
 
 function ProductosUser(props) {
+  const { changeViewPedidosUser } = useContext(Context);
  
   return (
     <div>
+       <button
+        className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
+        onClick={() => {changeViewPedidosUser(true)}}
+      >
+        volver
+      </button>
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">USUARIO</h1>
         <div className="flex flex-col">
@@ -158,7 +165,7 @@ function ProductosUser(props) {
                         </td>
                         <td className="px-6 py-3 text-sm font-medium whitespace-nowrap">
                           <a
-                            className="text-red-500 hover:text-red-700 cursor-pointer"
+                            className="text-red-500 hover:text-red-600 cursor-pointer"
                             onClick={() => {}}
                           >
                             Cancelar producto

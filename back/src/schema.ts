@@ -73,7 +73,10 @@ export const typeDefs = gql`
         getMaderas: [Madera!]!
         getProductos: [Product!]!
         getProducto (id_product: ID!): Product!
-        getHistorialPedidosUser(idUser: ID!): [Pedido!]
+        getPedidosRecogidos(id_user: ID!): [Pedido!]
+        getPedidosActivosUser(id_user: ID!): [Pedido!]
+        getPedidosPendientesUser(id_user: ID!): [Pedido!]
+        getPedidosCanceladosUser(id_user: ID!): [Pedido!]
     }
 
     type Mutation{
@@ -92,7 +95,7 @@ export const typeDefs = gql`
         modificarProducto(id_product: ID!, img: String, name: String, stock: String, precio: String): Product!
         borrarProducto(id_product: ID!): Product!
 
-        cambiarEstadoPedido(id_pedido: ID!, newEstado: String!): Pedido!
-
+        cambiarEstadoPedido(id_pedido: ID!, oldEstado: String!, newEstado: String!): Pedido!
+        cancelarProductoPedido(id_product: ID!): Pedido!
     }
 `
