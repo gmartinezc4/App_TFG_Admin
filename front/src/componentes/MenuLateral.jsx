@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../context/Context";
+import styled from 'styled-components'
 
 function MenuLateral() {
   const {
@@ -21,7 +22,6 @@ function MenuLateral() {
       <div className="flex justify-center">
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
-
           <button
             className={
               viewUsuarios

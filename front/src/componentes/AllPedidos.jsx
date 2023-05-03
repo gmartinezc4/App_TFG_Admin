@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import styled from 'styled-components'
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -792,3 +793,8 @@ function AllPedidos(props) {
 }
 
 export default AllPedidos;
+
+const ColorPantallaPrincipal = styled.div`
+background-color: rgb(209 213 219);
+height: 100%;
+`
