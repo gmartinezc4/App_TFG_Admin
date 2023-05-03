@@ -6,6 +6,7 @@ import PedidosUser from "./PedidosUser";
 import ProductosUser from "./ProductosUser";
 import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
+import MaderasWeb from "./MaderasWeb";
 
 function PantallaPrincipal() {
   const {
@@ -15,6 +16,7 @@ function PantallaPrincipal() {
     viewProductosUser,
     viewTodosPedidos,
     viewProductosWeb,
+    viewMaderasWeb,
   } = useContext(Context);
   
   const [idUser, setIdUser] = useState("");
@@ -68,6 +70,13 @@ function PantallaPrincipal() {
         {viewProductosWeb && (
           <div>
             <ProductosWeb />
+          </div>
+        )}
+      </div>
+      <div className="m-10">
+        {viewMaderasWeb && (
+          <div>
+            <MaderasWeb />
           </div>
         )}
       </div>

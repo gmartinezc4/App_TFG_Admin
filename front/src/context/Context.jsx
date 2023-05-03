@@ -9,6 +9,7 @@ export function ContextProvider(props) {
   const [viewProductosUser, setViewProductosUser] = useState(false);
   const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
   const [viewProductosWeb, setViewProductosWeb] = useState(false);
+  const [viewMaderasWeb, setViewMaderasWeb] = useState(false);
 
   const [volverDeProductos, setVolverDeProductos] = useState("");
 
@@ -28,6 +29,7 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewUsuarios(setView){
@@ -37,6 +39,7 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewPedidosUser(setView){
@@ -46,6 +49,7 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewProductosUser(setView){
@@ -55,6 +59,7 @@ export function ContextProvider(props) {
     setViewPedidosUser(false);
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewTodosPedidos(setView){
@@ -64,6 +69,7 @@ export function ContextProvider(props) {
     setViewPedidosUser(false);
     setViewProductosUser(false);
     setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewProductosWeb(setView){
@@ -73,6 +79,17 @@ export function ContextProvider(props) {
     setViewPedidosUser(false);
     setViewProductosUser(false);
     setViewTodosPedidos(false);
+    setViewMaderasWeb(false);
+  }
+
+  function changeViewMaderasWeb(setView){
+    setViewMaderasWeb(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
   }
 
   function changeVolverDeProductos(setVolver){
@@ -82,25 +99,30 @@ export function ContextProvider(props) {
   return (
     <Context.Provider
       value={{
-        token,
-        nivel_auth,
-        reload,
         viewRegistro,
         viewUsuarios,
         viewPedidosUser,
         viewProductosUser,
         viewTodosPedidos,
         viewProductosWeb,
+        viewMaderasWeb,
+        
         volverDeProductos,
-
-        changeReload,
+        reload,
+        token,
+        nivel_auth,
+        
         changeViewRegistro,
         changeViewUsuarios,
         changeViewPedidosUser,
         changeViewProductosUser,
         changeViewTodosPedidos,
-        changeVolverDeProductos,
         changeViewProductosWeb,
+        changeViewMaderasWeb,
+
+        changeVolverDeProductos,
+        changeReload,
+        
       }}
     >
       {props.children}
