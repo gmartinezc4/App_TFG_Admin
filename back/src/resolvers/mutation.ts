@@ -423,7 +423,81 @@ export const Mutation = {
         }
     },
 
-    cambiarEstadoPedido: async (parent: any, args: { id_pedido: string, oldEstado: string, newEstado: string}, context: { db: Db, userAdmin: any }) => {
+    cancelarProductoPedido: async (parent: any, args: { id_pedido: string, id_product: string }, context: { db: Db, userAdmin: any }) => {
+        const db = context.db;
+        const userAdmin = context.userAdmin;
+        const { id_pedido, id_product } = args;
+        let newProductos: any = [];
+
+        try {
+            if (userAdmin) {
+                if (id_pedido.length != 24 || id_product.length != 24) {
+                    throw new ApolloError("ID invalido");
+
+                } else {
+                    const pedido = await db.collection("Pedidos_Activos").findOne({ _id: new ObjectId(id_pedido) });
+
+                    if (pedido) {
+                        if (pedido.Productos.length > 1) {
+                            pedido.Productos.map((p: any) => {
+                                if (p.Id_producto != id_product) {
+                                    newProductos.push(p);
+                                    console.log(p)
+                                }
+                            })
+
+                            await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos } });
+
+                            return {
+                                _id: pedido._id,
+                                id_user: pedido.Id_user,
+                                estado: pedido.Estado,
+                                nombre: pedido.Nombre,
+                                apellido: pedido.Apellido,
+                                email: pedido.Email,
+                                telefono: pedido.Telefono,
+                                direccion: pedido.Direccion,
+                                masInformacion: pedido.MasInformacion,
+                                codigoPostal: pedido.CodigoPostal,
+                                ciudad: pedido.Ciudad,
+                                pais: pedido.Pais,
+                                fechaPedido: pedido.FechaPedido,
+                                fechaRecogida: pedido.FechaRecogida,
+                                importePedido: pedido.ImportePedido,
+                                importeFreeIvaPedido: pedido.ImporteFreeIvaPedido,
+                                productos: newProductos.map((e: any) => ({
+                                    _id: e._id.toString(),
+                                    id_user: e.Id_user,
+                                    id_producto: e.Id_producto,
+                                    img: e.Img,
+                                    name: e.Name,
+                                    cantidad: e.Cantidad,
+                                    precioTotal: e.PrecioTotal,
+                                    precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                                }))
+                            }
+
+                        } else {
+                            throw new ApolloError("No se puede borrar ese producto. El pedido solo tiene un producto");
+                        }
+
+
+                    } else {
+                        throw new ApolloError("No se ha recuperado ningún peido con ese ID");
+                    }
+                }
+
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+
+    cambiarEstadoPedido: async (parent: any, args: { id_pedido: string, oldEstado: string, newEstado: string }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
         let { id_pedido, oldEstado, newEstado } = args;
@@ -436,10 +510,10 @@ export const Mutation = {
                     let pedidoUserCambiado: any;
                     let newBbdd: any;
 
-                    if(newEstado == "Activo") newBbdd = "Pedidos_Activos";
-                    if(newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
-                    if(newEstado == "Cancelado") newBbdd = "Pedidos_Cancelados";
-                    if(newEstado == "Recogido") newBbdd = "Pedidos_Recogidos";
+                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos";
+                    if (newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
+                    if (newEstado == "Cancelado") newBbdd = "Pedidos_Cancelados";
+                    if (newEstado == "Recogido") newBbdd = "Pedidos_Recogidos";
 
                     if (oldEstado == "Activo" && newEstado != "Activo") {
                         const pedidoUser = await db.collection("Pedidos_Activos").findOne({ _id: new ObjectId(id_pedido) });

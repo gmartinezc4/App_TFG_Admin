@@ -71,8 +71,10 @@ export const typeDefs = gql`
         getAdmins: [UserAdmin!]!
         getUsuarios: [User!]
         getMaderas: [Madera!]!
+
         getProductos: [Product!]!
         getProducto (id_product: ID!): Product!
+        getProductosPedido(id_pedido: ID!, estado: String!): [ProductoComprado!]!
 
         getPedidosRecogidosUser(id_user: ID!): [Pedido!]
         getPedidosActivosUser(id_user: ID!): [Pedido!]
@@ -102,6 +104,6 @@ export const typeDefs = gql`
         borrarProducto(id_product: ID!): Product!
 
         cambiarEstadoPedido(id_pedido: ID!, oldEstado: String!, newEstado: String!): Pedido!
-        cancelarProductoPedido(id_product: ID!): Pedido!
+        cancelarProductoPedido(id_pedido: ID!, id_product: ID!): Pedido!
     }
 `
