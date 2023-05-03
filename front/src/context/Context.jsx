@@ -8,6 +8,8 @@ export function ContextProvider(props) {
   const [viewPedidosUser, setViewPedidosUser] = useState(false);
   const [viewProductosUser, setViewProductosUser] = useState(false);
   const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
+  const [viewProductosWeb, setViewProductosWeb] = useState(false);
+
   const [volverDeProductos, setVolverDeProductos] = useState("");
 
   const [reload, setReload] = useState(false);
@@ -25,6 +27,7 @@ export function ContextProvider(props) {
     setViewPedidosUser(false);
     setViewProductosUser(false);
     setViewTodosPedidos(false);
+    setViewProductosWeb(false);
   }
 
   function changeViewUsuarios(setView){
@@ -33,6 +36,7 @@ export function ContextProvider(props) {
     setViewPedidosUser(false);
     setViewProductosUser(false);
     setViewTodosPedidos(false);
+    setViewProductosWeb(false);
   }
 
   function changeViewPedidosUser(setView){
@@ -41,6 +45,7 @@ export function ContextProvider(props) {
     setViewRegistro(false);
     setViewProductosUser(false);
     setViewTodosPedidos(false);
+    setViewProductosWeb(false);
   }
 
   function changeViewProductosUser(setView){
@@ -49,6 +54,7 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewPedidosUser(false);
     setViewTodosPedidos(false);
+    setViewProductosWeb(false);
   }
 
   function changeViewTodosPedidos(setView){
@@ -57,6 +63,16 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewPedidosUser(false);
     setViewProductosUser(false);
+    setViewProductosWeb(false);
+  }
+
+  function changeViewProductosWeb(setView){
+    setViewProductosWeb(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
   }
 
   function changeVolverDeProductos(setVolver){
@@ -74,6 +90,7 @@ export function ContextProvider(props) {
         viewPedidosUser,
         viewProductosUser,
         viewTodosPedidos,
+        viewProductosWeb,
         volverDeProductos,
 
         changeReload,
@@ -82,7 +99,8 @@ export function ContextProvider(props) {
         changeViewPedidosUser,
         changeViewProductosUser,
         changeViewTodosPedidos,
-        changeVolverDeProductos
+        changeVolverDeProductos,
+        changeViewProductosWeb,
       }}
     >
       {props.children}
