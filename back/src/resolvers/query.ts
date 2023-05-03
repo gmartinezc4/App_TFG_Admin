@@ -133,6 +133,55 @@ export const Query = {
         }
     },
 
+    getProductosPedido: async (parent: any, args: { id_pedido: string, estado: string }, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const { id_pedido, estado } = args;
+
+        try {
+            if (userAdmin) {
+                if (id_pedido.length != 24) {
+                    throw new ApolloError("ID invalido");
+                } else {
+                    let bbdd: any;
+
+                    if (estado == "Activo") bbdd = "Pedidos_Activos"
+                    if (estado == "Pendiente") bbdd = "Pedidos_Pendientes"
+                    if (estado == "Cancelado") bbdd = "Pedidos_Cancelados"
+                    if (estado == "Recogido") bbdd = "Pedidos_Recogidos"
+                    
+                    const pedido = await db.collection(bbdd).findOne({ _id: new ObjectId(id_pedido) });
+                    console.log(pedido)
+                    if (pedido) {
+                        if (pedido.Productos.length != 0) {
+                             
+                            return pedido?.Productos.map((e: any) => ({
+                                    _id: e._id.toString(),
+                                    id_user: e.Id_user,
+                                    id_producto: e.Id_producto,
+                                    img: e.Img,
+                                    name: e.Name,
+                                    cantidad: e.Cantidad,
+                                    precioTotal: e.PrecioTotal,
+                                    precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                                }))
+
+                            
+                        }else {
+                            throw new ApolloError("El pedido no tiene productos");
+
+                        }
+                    } else {
+                        throw new ApolloError("No se ha encontrado ningún pedido con ese ID");
+                    }
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     getPedidosRecogidosUser: async (parent: any, args: { id_user: string }, context: { db: Db, userAdmin: any }) => {
         const { db, userAdmin } = context;
         const id_user = args.id_user;

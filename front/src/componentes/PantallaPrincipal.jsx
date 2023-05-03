@@ -8,6 +8,7 @@ import AllPedidos from "./AllPedidos";
 
 function PantallaPrincipal() {
   const { viewRegistro, viewUsuarios, viewPedidosUser, viewProductosUser, viewTodosPedidos } = useContext(Context);
+  
   const [idUser, setIdUser] = useState("");
   const [nombreUser, setNombreUser] = useState("");
   const [apellidoUser, setApellidoUser] = useState("");
