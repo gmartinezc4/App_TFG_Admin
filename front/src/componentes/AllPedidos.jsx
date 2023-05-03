@@ -341,7 +341,7 @@ function AllPedidos(props) {
   }
 
   return (
-    <ColorPantallaPrincipal>
+    <div>
       <h1 className="text-2xl font-mono text-orange-900 underline mb-10">Bases de datos Pedidos</h1>
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">
@@ -788,7 +788,7 @@ function AllPedidos(props) {
           </div>
         </div>
       </div>
-    </ColorPantallaPrincipal>
+    </div>
   );
 }
 

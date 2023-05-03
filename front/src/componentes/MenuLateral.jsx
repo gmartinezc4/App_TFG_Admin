@@ -18,7 +18,7 @@ function MenuLateral() {
   } = useContext(Context);
 
   return (
-    <ColorMenu className="flex flex-row justify-around  text-white">
+    <div className="flex flex-row justify-around  text-white">
       <div className="flex justify-center">
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
@@ -88,13 +88,8 @@ function MenuLateral() {
           </div>
         </span>
       </div>
-    </ColorMenu>
+    </div>
   );
 }
 
 export default MenuLateral;
-
-const ColorMenu = styled.div`
-background-color: rgb(75 85 99);
-height: 100%;
-`

@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext } from "react";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { Context } from '../context/Context'
-import IniciarSesion from './IniciarSesion';
-import MenuLateral from './MenuLateral';
-import styled from 'styled-components'
-import PantallaPrincipal from './PantallaPrincipal';
-import Cabecera from './Cabecera';
+import { Context } from "../context/Context";
+import IniciarSesion from "./IniciarSesion";
+import MenuLateral from "./MenuLateral";
+import styled from "styled-components";
+import PantallaPrincipal from "./PantallaPrincipal";
+import Cabecera from "./Cabecera";
 
 function Contendor() {
   const client = new ApolloClient({
@@ -47,10 +47,11 @@ function Contendor() {
 export default Contendor;
 
 const ColorPantallaPrincipal = styled.div`
-background-color: rgb(209 213 219);
-height: 100vh;
-`
+  background-color: rgb(209 213 219);
+  height: auto;
+`;
+
 const ColorMenu = styled.div`
-background-color: rgb(75 85 99);
-height: 100vh;
-`
+  background-color: rgb(75 85 99);
+  height: 100vh;
+`;
