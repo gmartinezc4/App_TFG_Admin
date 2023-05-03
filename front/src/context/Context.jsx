@@ -4,7 +4,7 @@ export const Context = createContext(); //contexto
 
 export function ContextProvider(props) {
   const [viewRegistro, setViewRegistro] = useState(false);
-  const [viewUsuarios, setViewUsuarios] = useState(false);
+  const [viewUsuarios, setViewUsuarios] = useState(true);
   const [viewPedidosUser, setViewPedidosUser] = useState(false);
   const [viewProductosUser, setViewProductosUser] = useState(false);
   const [viewTodosPedidos, setViewTodosPedidos] = useState(false);

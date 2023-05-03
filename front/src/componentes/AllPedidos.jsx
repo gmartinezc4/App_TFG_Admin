@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import styled from 'styled-components'
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -340,7 +341,7 @@ function AllPedidos(props) {
   }
 
   return (
-    <div>
+    <ColorPantallaPrincipal>
       <h1 className="text-2xl font-mono text-orange-900 underline mb-10">Bases de datos Pedidos</h1>
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">
@@ -787,8 +788,13 @@ function AllPedidos(props) {
           </div>
         </div>
       </div>
-    </div>
+    </ColorPantallaPrincipal>
   );
 }
 
 export default AllPedidos;
+
+const ColorPantallaPrincipal = styled.div`
+background-color: rgb(209 213 219);
+height: 100%;
+`

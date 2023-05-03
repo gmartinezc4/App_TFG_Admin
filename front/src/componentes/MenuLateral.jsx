@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { Context } from "../context/Context";
+import styled from 'styled-components'
 
 function MenuLateral() {
   const {
@@ -12,12 +13,10 @@ function MenuLateral() {
   } = useContext(Context);
 
   return (
-    <div className="flex flex-row justify-around  text-white">
+    <ColorMenu className="flex flex-row justify-around  text-white">
       <div className="flex justify-center">
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
-
-          <button className="flex justify-start underline mb-5">• Inicio</button>
           <button
             className="flex justify-start underline mb-5"
             onClick={() => {
@@ -63,8 +62,13 @@ function MenuLateral() {
           </div>
         </span>
       </div>
-    </div>
+    </ColorMenu>
   );
 }
 
 export default MenuLateral;
+
+const ColorMenu = styled.div`
+background-color: rgb(75 85 99);
+height: 100%;
+`
