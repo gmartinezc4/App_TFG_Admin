@@ -7,7 +7,12 @@ export function ContextProvider(props) {
   const [viewUsuarios, setViewUsuarios] = useState(false);
   const [viewPedidosUser, setViewPedidosUser] = useState(false);
   const [viewProductosUser, setViewProductosUser] = useState(false);
-  
+  const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
+  const [viewProductosWeb, setViewProductosWeb] = useState(false);
+  const [viewMaderasWeb, setViewMaderasWeb] = useState(false);
+
+  const [volverDeProductos, setVolverDeProductos] = useState("");
+
   const [reload, setReload] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -22,6 +27,9 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewPedidosUser(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewUsuarios(setView){
@@ -29,6 +37,9 @@ export function ContextProvider(props) {
     setViewRegistro(false);
     setViewPedidosUser(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewPedidosUser(setView){
@@ -36,6 +47,9 @@ export function ContextProvider(props) {
     setViewUsuarios(false);
     setViewRegistro(false);
     setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
   }
 
   function changeViewProductosUser(setView){
@@ -43,24 +57,72 @@ export function ContextProvider(props) {
     setViewRegistro(false);
     setViewUsuarios(false);
     setViewPedidosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
+  }
+
+  function changeViewTodosPedidos(setView){
+    setViewTodosPedidos(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
+  }
+
+  function changeViewProductosWeb(setView){
+    setViewProductosWeb(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewMaderasWeb(false);
+  }
+
+  function changeViewMaderasWeb(setView){
+    setViewMaderasWeb(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+  }
+
+  function changeVolverDeProductos(setVolver){
+    setVolverDeProductos(setVolver);
   }
 
   return (
     <Context.Provider
       value={{
-        token,
-        nivel_auth,
-        reload,
         viewRegistro,
         viewUsuarios,
         viewPedidosUser,
         viewProductosUser,
-
-        changeReload,
+        viewTodosPedidos,
+        viewProductosWeb,
+        viewMaderasWeb,
+        
+        volverDeProductos,
+        reload,
+        token,
+        nivel_auth,
+        
         changeViewRegistro,
         changeViewUsuarios,
         changeViewPedidosUser,
         changeViewProductosUser,
+        changeViewTodosPedidos,
+        changeViewProductosWeb,
+        changeViewMaderasWeb,
+
+        changeVolverDeProductos,
+        changeReload,
+        
       }}
     >
       {props.children}
