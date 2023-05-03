@@ -5,9 +5,17 @@ import MostrarUsuarios from "./MostrarUsuarios";
 import PedidosUser from "./PedidosUser";
 import ProductosUser from "./ProductosUser";
 import AllPedidos from "./AllPedidos";
+import ProductosWeb from "./ProductosWeb";
 
 function PantallaPrincipal() {
-  const { viewRegistro, viewUsuarios, viewPedidosUser, viewProductosUser, viewTodosPedidos } = useContext(Context);
+  const {
+    viewRegistro,
+    viewUsuarios,
+    viewPedidosUser,
+    viewProductosUser,
+    viewTodosPedidos,
+    viewProductosWeb,
+  } = useContext(Context);
   
   const [idUser, setIdUser] = useState("");
   const [nombreUser, setNombreUser] = useState("");
@@ -53,6 +61,13 @@ function PantallaPrincipal() {
         {viewTodosPedidos && (
           <div>
             <AllPedidos setPedidoUser={setPedidoUser} />
+          </div>
+        )}
+      </div>
+      <div className="m-10">
+        {viewProductosWeb && (
+          <div>
+            <ProductosWeb />
           </div>
         )}
       </div>
