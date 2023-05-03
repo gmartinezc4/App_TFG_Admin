@@ -8,6 +8,7 @@ function MenuLateral() {
     changeViewUsuarios,
     changeViewTodosPedidos,
     changeViewProductosWeb,
+    changeViewMaderasWeb,
   } = useContext(Context);
 
   return (
@@ -33,10 +34,22 @@ function MenuLateral() {
           >
             • Pedidos
           </button>
-          <button className="flex justify-start underline mb-5" onClick={() => {
-            changeViewProductosWeb(true)
-          }}>• Productos</button>
-          <button className="flex justify-start underline mb-5">• Maderas</button>
+          <button
+            className="flex justify-start underline mb-5"
+            onClick={() => {
+              changeViewProductosWeb(true);
+            }}
+          >
+            • Productos
+          </button>
+          <button
+            className="flex justify-start underline mb-5"
+            onClick={() => {
+              changeViewMaderasWeb(true);
+            }}
+          >
+            • Maderas
+          </button>
           <div className="flex justify-start underline mb-5">
             {nivel_auth >= 2 && (
               <button

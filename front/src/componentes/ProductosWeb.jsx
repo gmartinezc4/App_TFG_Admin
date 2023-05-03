@@ -212,7 +212,6 @@ function ProductosWeb() {
    
   }
 
-  //error NAN al añadir el precio
   async function modalAddProducto() {
     const { value: formValues } = await Swal.fire({
       title: "Añadir Producto",
@@ -270,8 +269,8 @@ function ProductosWeb() {
   return (
     <div>
       <div className="flex justify-between">
-        <h1 className="text-2xl font-mono text-orange-900 underline mb-10">
-          Base de datos Productos
+        <h1 className="text-2xl font-mono text-orange-900 mb-10">
+          Base de datos Productos_Venta
         </h1>
         <button
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 border border-black hover:border-white rounded"
@@ -344,7 +343,7 @@ function ProductosWeb() {
                         <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                           {producto._id}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre-wrap">
                           {producto.img}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
