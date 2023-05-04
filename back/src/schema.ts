@@ -68,6 +68,7 @@ export const typeDefs = gql`
     }
     
     type Query{
+        getAdmin: UserAdmin!
         getAdmins: [UserAdmin!]!
         getAdminsFiltrados(filtro: String!): [UserAdmin!]!
         getUsuarios: [User!]
@@ -99,6 +100,7 @@ export const typeDefs = gql`
         ChangeLvlAuth(idUser: ID!, newNivel_auth: String!): UserAdmin!
         borraUserAdmin(idUser: ID!): UserAdmin!
         borraUser(idUser: ID!): User!
+        modificarUseraAdmin(nombre: String, apellido: String, newCorreo: String, password: String, newPassword: String): UserAdmin!
 
         darAltaMadera(img: String!, name: String!, description: String!): Madera!
         modificarMadera(id_madera: ID!, img: String, name: String, description: String): Madera!

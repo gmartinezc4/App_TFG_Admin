@@ -3,6 +3,28 @@ import { Db, ObjectId } from "mongodb";
 
 export const Query = {
 
+    getAdmin: async (parent: any, args: any, context: { userAdmin: any }) => {
+        const userAdmin = context.userAdmin;
+
+        try {
+            if (userAdmin) {
+                    return {
+                        _id: userAdmin._id.toString(),
+                        nombre: userAdmin.Nombre,
+                        apellido: userAdmin.Apellido,
+                        email: userAdmin.Email,
+                        password: userAdmin.Password,
+                        nivel_auth: userAdmin.Nivel_auth,
+                        token: userAdmin.token || "",
+                    }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     getAdmins: async (parent: any, args: any, context: { db_admin: Db, userAdmin: any }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
