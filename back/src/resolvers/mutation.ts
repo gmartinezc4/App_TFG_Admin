@@ -22,7 +22,7 @@ export const Mutation = {
                 if (!user) {
                     const encripted_pass = await bcrypt.hash(password, 12);
 
-                    //await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
+                    await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
                     
                     //Creamos el objeto de transporte
                     var transporter = nodemailer.createTransport({
