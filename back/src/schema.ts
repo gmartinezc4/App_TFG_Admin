@@ -68,13 +68,19 @@ export const typeDefs = gql`
     }
     
     type Query{
+        getAdmin: UserAdmin!
         getAdmins: [UserAdmin!]!
+        getAdminsFiltrados(filtro: String!): [UserAdmin!]!
         getUsuarios: [User!]
+        getUsuariosFiltrados(filtro: String!): [User!]!
+
         getMaderas: [Madera!]!
+        getMaderasFiltradas(filtro: String!): [Madera!]!
 
         getProductos: [Product!]!
         getProducto (id_product: ID!): Product!
         getProductosPedido(id_pedido: ID!, estado: String!): [ProductoComprado!]!
+        getProductosFiltrados(filtro: String!): [Product!]!
 
         getPedidosRecogidosUser(id_user: ID!): [Pedido!]
         getPedidosActivosUser(id_user: ID!): [Pedido!]
@@ -94,6 +100,7 @@ export const typeDefs = gql`
         ChangeLvlAuth(idUser: ID!, newNivel_auth: String!): UserAdmin!
         borraUserAdmin(idUser: ID!): UserAdmin!
         borraUser(idUser: ID!): User!
+        modificarUseraAdmin(nombre: String, apellido: String, newCorreo: String, password: String, newPassword: String): UserAdmin!
 
         darAltaMadera(img: String!, name: String!, description: String!): Madera!
         modificarMadera(id_madera: ID!, img: String, name: String, description: String): Madera!

@@ -3,6 +3,28 @@ import { Db, ObjectId } from "mongodb";
 
 export const Query = {
 
+    getAdmin: async (parent: any, args: any, context: { userAdmin: any }) => {
+        const userAdmin = context.userAdmin;
+
+        try {
+            if (userAdmin) {
+                    return {
+                        _id: userAdmin._id.toString(),
+                        nombre: userAdmin.Nombre,
+                        apellido: userAdmin.Apellido,
+                        email: userAdmin.Email,
+                        password: userAdmin.Password,
+                        nivel_auth: userAdmin.Nivel_auth,
+                        token: userAdmin.token || "",
+                    }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     getAdmins: async (parent: any, args: any, context: { db_admin: Db, userAdmin: any }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
@@ -24,6 +46,38 @@ export const Query = {
                     }))
                 } else {
                     throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getAdminsFiltrados: async (parent: any, args: { filtro: string}, context: { db_admin: Db, userAdmin: any }) => {
+        const { db_admin, userAdmin } = context;
+        const filtro = args.filtro;
+
+        try {
+
+            if (userAdmin) {
+                const filtradosNombre = await db_admin.collection("Usuarios_admins").find({ Nombre: {$regex: filtro, $options: 'i'}}).toArray();
+
+                if (filtradosNombre) {
+                    return filtradosNombre.map((u) => ({
+                        _id: u._id.toString(),
+                        nombre: u.Nombre,
+                        apellido: u.Apellido,
+                        email: u.Email,
+                        password: u.Password,
+                        nivel_auth: u.Nivel_auth,
+                        token: u.token || "",
+                    }))
+                } else {
+                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
                 }
             } else {
                 throw new ApolloError("Usuario no autorizado");
@@ -60,6 +114,37 @@ export const Query = {
         }
     },
 
+    getUsuariosFiltrados: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const filtro = args.filtro;
+
+        try {
+
+            if (userAdmin) {
+                const filtradosNombre = await db.collection("Usuarios").find({ Nombre: {$regex: filtro, $options: 'i'}}).toArray();
+
+                if (filtradosNombre) {
+                    return filtradosNombre.map((u: any) => ({
+                        _id: u._id.toString(),
+                        nombre: u.Nombre,
+                        apellido: u.Apellido,
+                        email: u.Email,
+                        password: u.Password,
+                        token: u.token || "",
+                    }))
+                } else {
+                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     getMaderas: async (parent: any, args: any, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
@@ -80,6 +165,36 @@ export const Query = {
             throw new ApolloError(e, e.extensions.code);
         }
     },
+
+    getMaderasFiltradas: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const filtro = args.filtro;
+
+        try {
+
+            if (userAdmin) {
+                const filtradosNombre = await db.collection("Tipos_Madera").find({ name: {$regex: filtro, $options: 'i'}}).toArray();
+
+                if (filtradosNombre) {
+                    return filtradosNombre.map((u: any) => ({
+                        _id: u._id.toString(),
+                        img: u.img,
+                        name: u.name,
+                        description: u.description,
+                    }))
+                } else {
+                    throw new ApolloError("No hay ninguna madera registrada en la bbdd con ese filtro");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
 
     getProductos: async (parent: any, args: any, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
@@ -177,6 +292,36 @@ export const Query = {
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getProductosFiltrados: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const filtro = args.filtro;
+
+        try {
+
+            if (userAdmin) {
+                const filtradosNombre = await db.collection("Productos_Venta").find({ name: {$regex: filtro, $options: 'i'}}).toArray();
+
+                if (filtradosNombre) {
+                    return filtradosNombre.map((u: any) => ({
+                        _id: u._id.toString(),
+                        img: u.img,
+                        name: u.name,
+                        stock: u.stock,
+                        precio: u.precio,
+                    }))
+                } else {
+                    throw new ApolloError("No hay ningun producto registrado en la bbdd con ese filtro");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }

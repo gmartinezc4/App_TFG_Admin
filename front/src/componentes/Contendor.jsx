@@ -1,11 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from "react";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
-import { Context } from '../context/Context'
-import IniciarSesion from './IniciarSesion';
-import MenuLateral from './MenuLateral';
-import RegistrarAdmin from './RegistrarAdmin';
-import PantallaPrincipal from './PantallaPrincipal';
-import Cabecera from './Cabecera';
+import { Context } from "../context/Context";
+import IniciarSesion from "./IniciarSesion";
+import MenuLateral from "./MenuLateral";
+import styled from "styled-components";
+import PantallaPrincipal from "./PantallaPrincipal";
+import Cabecera from "./Cabecera";
 
 function Contendor() {
   const client = new ApolloClient({
@@ -14,25 +14,33 @@ function Contendor() {
   });
   //localStorage.removeItem("token");
 
-  const { token } = useContext(Context);
+  const { token, reload } = useContext(Context);
 
+  useEffect(() => {
+  }, [reload])
+  
+  
   return (
     <ApolloProvider client={client}>
       <div className="">
-        <div >
+        <div>
           <Cabecera />
         </div>
 
-        {!token && <IniciarSesion />}
+        {!token && (
+          <ColorPantallaPrincipal>
+            <IniciarSesion />
+          </ColorPantallaPrincipal>
+        )}
         {token && (
           <div className="flex flex-row">
-            <div className="w-64 flex flex-row">
+            <ColorMenu className="w-64 flex flex-row">
               <MenuLateral />
-            </div>
+            </ColorMenu>
 
-            <div className="w-screen bg-gray-300 h-full">
-              <PantallaPrincipal/>
-            </div>
+            <ColorPantallaPrincipal className="w-screen">
+              <PantallaPrincipal />
+            </ColorPantallaPrincipal>
           </div>
         )}
       </div>
@@ -41,3 +49,13 @@ function Contendor() {
 }
 
 export default Contendor;
+
+const ColorPantallaPrincipal = styled.div`
+  background-color: rgb(209 213 219);
+  height: auto;
+`;
+
+const ColorMenu = styled.div`
+  background-color: rgb(75 85 99);
+  height: 100vh;
+`;

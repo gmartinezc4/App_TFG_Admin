@@ -3,14 +3,13 @@ import { Db, ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 const bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
-import { htmlRegistro } from '/home/guillermo/App_TFG/back/data/htmlCorreos'
+import correoRegistroAdmin from '/home/guillermo/App_TFG_Admin/back/data/htmlCorreos'
 
 export const Mutation = {
-
     RegistrarAdmin: async (parent: any, args: { nombre: string, apellido: string, correo: string, password: string, nivel_auth: string }, context: { db_admin: Db, userAdmin: any }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
-        const { nombre, apellido, correo, password, nivel_auth } = args;
+        const { nombre, apellido, correo, password, nivel_auth } = args;;
 
         try {
             if (userAdmin && userAdmin.Nivel_auth >= 2) {
@@ -24,7 +23,7 @@ export const Mutation = {
                     const encripted_pass = await bcrypt.hash(password, 12);
 
                     await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
-
+                    
                     //Creamos el objeto de transporte
                     var transporter = nodemailer.createTransport({
                         host: 'smtp.gmail.com',
@@ -41,8 +40,10 @@ export const Mutation = {
                         from: 'maderas.cobo.cuenca@gmail.com',
                         to: correo,
                         subject: 'Nuevo usuario administrador',
-                        html: htmlRegistro, // cambiar html
+                        html: correoRegistroAdmin(correo, password), 
                     };
+
+                    
 
                     transporter.sendMail(mailOptions, function (error: any, info: any) {
                         if (error) {
@@ -214,6 +215,97 @@ export const Mutation = {
                     }
                 } else {
                     throw new ApolloError("Usuario no encontrado");
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+
+    },
+
+    modificarUseraAdmin: async (parent: any, args: { nombre: string, apellido: string, newCorreo: string, password: string, newPassword: string }, context: { db_admin: Db, userAdmin: any }) => {
+        const { db_admin, userAdmin } = context;
+        const { nombre, apellido, newCorreo, password, newPassword } = args;
+
+        const encripted_pass = await bcrypt.hash(password, 12);
+        const encripted_new_pass = await bcrypt.hash(newPassword, 12);
+        
+        try {
+            if (userAdmin) {
+                if (nombre != "" && apellido != "" && nombre != null && apellido != null) {
+                    await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Nombre: nombre, Apellido: apellido } });
+                    
+                    return {
+                        _id: userAdmin._id.toString(),
+                        nombre: nombre,
+                        apellido: apellido,
+                        email: userAdmin.Email,
+                        password: userAdmin.Password,
+                        nivel_auth: userAdmin.Nivel_auth,
+                        token: userAdmin.token
+                    }
+                
+                } else if (apellido != "" && apellido != null) {
+                    await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Apellido: apellido } });
+                    return {
+                        _id: userAdmin._id.toString(),
+                        nombre: nombre,
+                        apellido: apellido,
+                        email: userAdmin.Email,
+                        password: userAdmin.Password,
+                        nivel_auth: userAdmin.Nivel_auth,
+                        token: userAdmin.token
+                    }
+                } else if (nombre != "" && nombre != null) {
+                    await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Nombre: nombre } });
+                    return {
+                        _id: userAdmin._id.toString(),
+                        nombre: nombre,
+                        apellido: apellido,
+                        email: userAdmin.Email,
+                        password: userAdmin.Password,
+                        nivel_auth: userAdmin.Nivel_auth,
+                        token: userAdmin.token
+                    }
+                } else if (newCorreo != "" && password != "" && newCorreo != null && password != null) {
+
+                    if (await bcrypt.compare(password, userAdmin.Password)) {
+                        const yaExisteCorreo = await db_admin.collection("Usuarios_admins").findOne({ Email: newCorreo });
+
+                        if (!yaExisteCorreo) {
+                            await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Email: newCorreo } });
+                            return {
+                                _id: userAdmin._id.toString(),
+                                nombre: userAdmin.Nombre,
+                                apellido: userAdmin.Apellido,
+                                email: newCorreo,
+                                password: encripted_pass,
+                                nivel_auth: userAdmin.Nivel_auth,
+                                token: userAdmin.token
+                            }
+                        } else {
+                            throw new ApolloError("Email ya registrado");
+                        }
+                    } else {
+                        throw new ApolloError("Contraseña incorrecta");
+                    }
+                } else if (password != "" && newPassword != "" && password != null && newPassword != null) {
+                    if (await bcrypt.compare(password, userAdmin.Password)) {
+                        await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Password: encripted_new_pass } });
+                        return {
+                            _id: userAdmin._id.toString(),
+                            nombre: userAdmin.Nombre,
+                            apellido: userAdmin.Apellido,
+                            email: userAdmin.Email,
+                            password: encripted_new_pass,
+                            nivel_auth: userAdmin.Nivel_auth,
+                            token: userAdmin.token
+                        }
+                    } else {
+                        throw new ApolloError("Contraseña incorrecta");
+                    }
                 }
             } else {
                 throw new ApolloError("Usuario no autorizado");

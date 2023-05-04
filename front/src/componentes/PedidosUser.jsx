@@ -180,11 +180,11 @@ function PedidosUser(props) {
   }, [])
   
 
-  const { changeViewProductosUser, changeViewUsuarios, changeReload, changeVolverDeProductos } =
+  const { changeViewProductosUser, changeViewUsuarios, changeReload, changeVolverDeProductos, changeEnviarCorreoConfirmacion } =
     useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
-    onCompleted: () => {
+    onCompleted: (data) => {
       console.log("Se ha cambiado el estado del pedido");
       changeReload();
       Swal.fire({
@@ -193,7 +193,10 @@ function PedidosUser(props) {
         title: "Estado del pedido cambiado",
         showConfirmButton: false,
         timer: 1000,
-      });
+      }).then(() => {
+        props.setPedidoUser(data.cambiarEstadoPedido)
+        changeEnviarCorreoConfirmacion(true);
+      })
     },
     onError: (error) => {
       //si hay un error, borrar el token
@@ -382,7 +385,13 @@ function PedidosUser(props) {
                         scope="col"
                         className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                       >
-                        Name
+                        Nombre
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Apellido
                       </th>
                       <th
                         scope="col"
@@ -398,7 +407,10 @@ function PedidosUser(props) {
                         {props.idUser}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                        {props.nombreUser + " " + props.apellidoUser}
+                        {props.nombreUser}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        {props.apellidoUser}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                         {props.correoUser}

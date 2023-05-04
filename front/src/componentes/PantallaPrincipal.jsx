@@ -7,6 +7,8 @@ import ProductosUser from "./ProductosUser";
 import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
 import MaderasWeb from "./MaderasWeb";
+import CorreoConfirmacion from "./CorreoConfirmacion";
+import PerfilAdmin from "./PerfilAdmin";
 
 function PantallaPrincipal() {
   const {
@@ -17,6 +19,8 @@ function PantallaPrincipal() {
     viewTodosPedidos,
     viewProductosWeb,
     viewMaderasWeb,
+    viewPerfilAdmin,
+    enviarCorreoConfirmacion,
   } = useContext(Context);
   
   const [idUser, setIdUser] = useState("");
@@ -37,6 +41,7 @@ function PantallaPrincipal() {
 
   return (
     <div>
+      <div className="m-10">{viewPerfilAdmin && <PerfilAdmin />} </div>
       <div className="flex justify-center">{viewRegistro && <RegistrarAdmin />}</div>
       <div className="m-10 ">
         {viewUsuarios && <MostrarUsuarios setDatosUser={setDatosUser} />}
@@ -49,6 +54,7 @@ function PantallaPrincipal() {
               nombreUser={nombreUser}
               apellidoUser={apellidoUser}
               correoUser={correoUser}
+              pedido={pedidoUser}
              setPedidoUser={setPedidoUser}
             />
           </div>
@@ -80,6 +86,8 @@ function PantallaPrincipal() {
           </div>
         )}
       </div>
+
+      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser}/>}
     </div>
   );
 }
