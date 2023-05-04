@@ -181,7 +181,13 @@ function ProductosUser(props) {
                         scope="col"
                         className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                       >
-                        Name
+                        Nombre
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Apellido
                       </th>
                       <th
                         scope="col"
@@ -197,7 +203,10 @@ function ProductosUser(props) {
                         {props.pedidoUser.id_user}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                        {props.pedidoUser.nombre + " " + props.pedidoUser.apellido}
+                        {props.pedidoUser.nombre}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        {props.pedidoUser.apellido}
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                         {props.pedidoUser.email}

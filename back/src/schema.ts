@@ -69,12 +69,17 @@ export const typeDefs = gql`
     
     type Query{
         getAdmins: [UserAdmin!]!
+        getAdminsFiltrados(filtro: String!): [UserAdmin!]!
         getUsuarios: [User!]
+        getUsuariosFiltrados(filtro: String!): [User!]!
+
         getMaderas: [Madera!]!
+        getMaderasFiltradas(filtro: String!): [Madera!]!
 
         getProductos: [Product!]!
         getProducto (id_product: ID!): Product!
         getProductosPedido(id_pedido: ID!, estado: String!): [ProductoComprado!]!
+        getProductosFiltrados(filtro: String!): [Product!]!
 
         getPedidosRecogidosUser(id_user: ID!): [Pedido!]
         getPedidosActivosUser(id_user: ID!): [Pedido!]

@@ -50,8 +50,23 @@ const ADD_PRODUCTO = gql`
 }
 `;
 
+const GET_PRODCUTOS_FILTRADOS = gql`
+ query Query($filtro: String!) {
+  getProductosFiltrados(filtro: $filtro) {
+    _id
+    img
+    name
+    precio
+    stock
+  }
+}
+`;
+
 function ProductosWeb() {
   const { changeReload } = useContext(Context);
+
+  const [buscarProducto, setBuscarProducto] = useState("");
+  const [buscarProductoAux, setBuscarProductoAux] = useState("");
 
   const [borrarProducto] = useMutation(BORRAR_PRODUCTO, {
     onCompleted: () => {
@@ -131,7 +146,7 @@ function ProductosWeb() {
     },
   });
 
-  const { data, loading, error } = useQuery(GET_ALL_PRODUCTOS, {
+  const { data: dataGetAllProductos, loading: loadingGetAllProductos, error: errorGetAllProductos } = useQuery(GET_ALL_PRODUCTOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
@@ -139,8 +154,22 @@ function ProductosWeb() {
     },
   });
 
-  if (loading) return <div></div>;
-  if (error) return console.log(error);
+  const { data: dataGetProductosFiltrados, loading: loadingGetProductosFiltrados, error: errorGetProductosFiltrados } = useQuery(GET_PRODCUTOS_FILTRADOS, {
+    context: {
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    },
+    variables: {
+      filtro: buscarProducto,
+    }
+  });
+
+  if (loadingGetAllProductos) return <div></div>;
+  if (errorGetAllProductos) return console.log(errorGetAllProductos);
+
+  if (loadingGetProductosFiltrados) return <div></div>;
+  if (errorGetProductosFiltrados) return console.log(errorGetProductosFiltrados);
 
   function modalBorrarProducto(idProd) {
     Swal.fire({
@@ -286,6 +315,41 @@ function ProductosWeb() {
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">
           PRODUCTOS
         </h1>
+
+        <div className="flex flex-row py-3 pl-2">
+          <div className="relative max-w-xs">
+            <input
+              type="text"
+              className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+              placeholder="Buscar por nombre..."
+              value={buscarProductoAux}
+              onChange={(e) => {
+                setBuscarProductoAux(e.target.value);
+              }}
+            />
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+              <svg
+                className="h-3.5 w-3.5 text-gray-400"
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                fill="currentColor"
+                viewBox="0 0 16 16"
+              >
+                <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+              </svg>
+            </div>
+          </div>
+          <div>
+            <button
+              className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+              onClick={() => setBuscarProducto(buscarProductoAux)}
+            >
+              Buscar
+            </button>
+          </div>
+        </div>
+
         <div className="flex flex-col">
           <div className="overflow-x-auto">
             <div className="p-1.5 w-full inline-block align-middle">
@@ -338,45 +402,99 @@ function ProductosWeb() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {data.getProductos.map((producto) => (
-                      <tr key={producto._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {producto._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre-wrap">
-                          {producto.img}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {producto.name}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {producto.stock}Kg
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {producto.precio}€/Kg
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-green-500 hover:text-green-700 cursor-pointer"
-                            onClick={() => {
-                              modalModificarProducto(producto._id, producto.img, producto.name, producto.stock, producto.precio);
-                            }}
-                          >
-                            Editar
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-red-500 hover:text-red-600 cursor-pointer"
-                            onClick={() => {
-                              modalBorrarProducto(producto._id);
-                            }}
-                          >
-                            Eliminar
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
+                    {!buscarProducto &&
+                      dataGetAllProductos.getProductos.map((producto) => (
+                        <tr key={producto._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {producto._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre-wrap">
+                            {producto.img}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.name}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.stock}Kg
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.precio}€/Kg
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-green-500 hover:text-green-700 cursor-pointer"
+                              onClick={() => {
+                                modalModificarProducto(
+                                  producto._id,
+                                  producto.img,
+                                  producto.name,
+                                  producto.stock,
+                                  producto.precio
+                                );
+                              }}
+                            >
+                              Editar
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-red-500 hover:text-red-600 cursor-pointer"
+                              onClick={() => {
+                                modalBorrarProducto(producto._id);
+                              }}
+                            >
+                              Eliminar
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+
+                    {buscarProducto &&
+                      dataGetProductosFiltrados.getProductosFiltrados.map((producto) => (
+                        <tr key={producto._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {producto._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre-wrap">
+                            {producto.img}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.name}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.stock}Kg
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {producto.precio}€/Kg
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-green-500 hover:text-green-700 cursor-pointer"
+                              onClick={() => {
+                                modalModificarProducto(
+                                  producto._id,
+                                  producto.img,
+                                  producto.name,
+                                  producto.stock,
+                                  producto.precio
+                                );
+                              }}
+                            >
+                              Editar
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-red-500 hover:text-red-600 cursor-pointer"
+                              onClick={() => {
+                                modalBorrarProducto(producto._id);
+                              }}
+                            >
+                              Eliminar
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               </div>
