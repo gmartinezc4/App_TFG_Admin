@@ -7,6 +7,7 @@ import ProductosUser from "./ProductosUser";
 import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
 import MaderasWeb from "./MaderasWeb";
+import CorreoConfirmacion from "./CorreoConfirmacion";
 
 function PantallaPrincipal() {
   const {
@@ -17,6 +18,7 @@ function PantallaPrincipal() {
     viewTodosPedidos,
     viewProductosWeb,
     viewMaderasWeb,
+    enviarCorreoConfirmacion,
   } = useContext(Context);
   
   const [idUser, setIdUser] = useState("");
@@ -49,6 +51,7 @@ function PantallaPrincipal() {
               nombreUser={nombreUser}
               apellidoUser={apellidoUser}
               correoUser={correoUser}
+              pedido={pedidoUser}
              setPedidoUser={setPedidoUser}
             />
           </div>
@@ -80,6 +83,8 @@ function PantallaPrincipal() {
           </div>
         )}
       </div>
+
+      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser}/>}
     </div>
   );
 }

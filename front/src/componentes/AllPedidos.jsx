@@ -1,8 +1,8 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState, useEffect, useRef } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
-import styled from 'styled-components'
+import emailjs from "@emailjs/browser";
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -181,10 +181,10 @@ function AllPedidos(props) {
   }, [])
   
 
-  const { changeViewProductosUser, changeReload, changeVolverDeProductos } = useContext(Context);
+  const { changeViewProductosUser, changeReload, changeVolverDeProductos, changeEnviarCorreoConfirmacion } = useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
-    onCompleted: () => {
+    onCompleted: (data) => {
       console.log("Se ha cambiado el estado del pedido");
       changeReload();
       Swal.fire({
@@ -193,7 +193,10 @@ function AllPedidos(props) {
         title: "Estado del pedido cambiado",
         showConfirmButton: false,
         timer: 1000,
-      });
+      }).then(() => {
+        props.setPedidoUser(data.cambiarEstadoPedido)
+        changeEnviarCorreoConfirmacion(true);
+      })
     },
     onError: (error) => {
       //si hay un error, borrar el token
@@ -342,7 +345,9 @@ function AllPedidos(props) {
 
   return (
     <div>
-      <h1 className="text-2xl font-mono text-orange-900 underline mb-10">Bases de datos Pedidos</h1>
+      <h1 className="text-2xl font-mono text-orange-900 underline mb-10">
+        Bases de datos Pedidos
+      </h1>
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">
           PEDIDOS ACTIVOS
@@ -793,8 +798,3 @@ function AllPedidos(props) {
 }
 
 export default AllPedidos;
-
-const ColorPantallaPrincipal = styled.div`
-background-color: rgb(209 213 219);
-height: 100%;
-`

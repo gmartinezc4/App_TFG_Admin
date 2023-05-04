@@ -3,14 +3,13 @@ import { Db, ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 const bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
-import { htmlRegistro } from '/home/guillermo/App_TFG/back/data/htmlCorreos'
+import correoRegistroAdmin from '/home/guillermo/App_TFG_Admin/back/data/htmlCorreos'
 
 export const Mutation = {
-
     RegistrarAdmin: async (parent: any, args: { nombre: string, apellido: string, correo: string, password: string, nivel_auth: string }, context: { db_admin: Db, userAdmin: any }) => {
         const db_admin = context.db_admin;
         const userAdmin = context.userAdmin;
-        const { nombre, apellido, correo, password, nivel_auth } = args;
+        const { nombre, apellido, correo, password, nivel_auth } = args;;
 
         try {
             if (userAdmin && userAdmin.Nivel_auth >= 2) {
@@ -23,8 +22,8 @@ export const Mutation = {
                 if (!user) {
                     const encripted_pass = await bcrypt.hash(password, 12);
 
-                    await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
-
+                    //await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
+                    
                     //Creamos el objeto de transporte
                     var transporter = nodemailer.createTransport({
                         host: 'smtp.gmail.com',
@@ -41,8 +40,10 @@ export const Mutation = {
                         from: 'maderas.cobo.cuenca@gmail.com',
                         to: correo,
                         subject: 'Nuevo usuario administrador',
-                        html: htmlRegistro, // cambiar html
+                        html: correoRegistroAdmin(correo, password), 
                     };
+
+                    
 
                     transporter.sendMail(mailOptions, function (error: any, info: any) {
                         if (error) {

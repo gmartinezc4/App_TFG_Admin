@@ -10,6 +10,7 @@ export function ContextProvider(props) {
   const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
   const [viewProductosWeb, setViewProductosWeb] = useState(false);
   const [viewMaderasWeb, setViewMaderasWeb] = useState(false);
+  const [enviarCorreoConfirmacion, setEnviarCorreoConfirmacion] = useState(false);
 
   const [volverDeProductos, setVolverDeProductos] = useState("");
 
@@ -92,6 +93,10 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
   }
 
+  function changeEnviarCorreoConfirmacion(setView){
+    setEnviarCorreoConfirmacion(setView);
+  }
+
   function changeVolverDeProductos(setVolver){
     setVolverDeProductos(setVolver);
   }
@@ -106,6 +111,7 @@ export function ContextProvider(props) {
         viewTodosPedidos,
         viewProductosWeb,
         viewMaderasWeb,
+        enviarCorreoConfirmacion,
         
         volverDeProductos,
         reload,
@@ -119,6 +125,7 @@ export function ContextProvider(props) {
         changeViewTodosPedidos,
         changeViewProductosWeb,
         changeViewMaderasWeb,
+        changeEnviarCorreoConfirmacion,
 
         changeVolverDeProductos,
         changeReload,

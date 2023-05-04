@@ -180,11 +180,11 @@ function PedidosUser(props) {
   }, [])
   
 
-  const { changeViewProductosUser, changeViewUsuarios, changeReload, changeVolverDeProductos } =
+  const { changeViewProductosUser, changeViewUsuarios, changeReload, changeVolverDeProductos, changeEnviarCorreoConfirmacion } =
     useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
-    onCompleted: () => {
+    onCompleted: (data) => {
       console.log("Se ha cambiado el estado del pedido");
       changeReload();
       Swal.fire({
@@ -193,7 +193,10 @@ function PedidosUser(props) {
         title: "Estado del pedido cambiado",
         showConfirmButton: false,
         timer: 1000,
-      });
+      }).then(() => {
+        props.setPedidoUser(data.cambiarEstadoPedido)
+        changeEnviarCorreoConfirmacion(true);
+      })
     },
     onError: (error) => {
       //si hay un error, borrar el token
