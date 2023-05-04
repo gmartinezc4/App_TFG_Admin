@@ -99,7 +99,7 @@ const GET_USERS_FILTRADOS = gql`
 `;
 
 function MostrarUsuarios(props) {
-  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser } =
+  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser, token } =
     useContext(Context);
 
   const [buscarUserAdmin, setBuscarUserAdmin] = useState("");
@@ -435,6 +435,12 @@ function MostrarUsuarios(props) {
                         >
                           Borrar
                         </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Sesión iniciada
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -467,14 +473,25 @@ function MostrarUsuarios(props) {
                               </a>
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                              <a
-                                className="text-red-500 hover:text-red-600 cursor-pointer"
-                                onClick={() => {
-                                  modalBorrarUserAdmin(userAdmin._id);
-                                }}
-                              >
-                                Borrar
-                              </a>
+                              {userAdmin.token != token && (
+                                <a
+                                  className="text-red-500 hover:text-red-600 cursor-pointer"
+                                  onClick={() => {
+                                    modalBorrarUserAdmin(userAdmin._id);
+                                  }}
+                                >
+                                  Borrar
+                                </a>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              {userAdmin.token == token && (
+                                <input
+                                  type="checkbox"
+                                  className="text-blue-600 border-gray-200 rounded focus:ring-blue-500"
+                                  checked
+                                />
+                              )}
                             </td>
                           </tr>
                         ))}
