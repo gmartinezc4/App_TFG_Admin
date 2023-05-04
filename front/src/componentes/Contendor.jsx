@@ -12,7 +12,7 @@ function Contendor() {
     uri: "http://localhost:4001/",
     cache: new InMemoryCache(),
   });
-  localStorage.removeItem("token");
+  //localStorage.removeItem("token");
 
   const { token, reload } = useContext(Context);
 
