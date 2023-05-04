@@ -10,10 +10,10 @@ export function ContextProvider(props) {
   const [viewTodosPedidos, setViewTodosPedidos] = useState(false);
   const [viewProductosWeb, setViewProductosWeb] = useState(false);
   const [viewMaderasWeb, setViewMaderasWeb] = useState(false);
+  const [viewPerfilAdmin, setViewPerfilAdmin] = useState(false);
+
   const [enviarCorreoConfirmacion, setEnviarCorreoConfirmacion] = useState(false);
-
   const [volverDeProductos, setVolverDeProductos] = useState("");
-
   const [reload, setReload] = useState(false);
 
   const token = localStorage.getItem("token");
@@ -31,6 +31,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewUsuarios(setView){
@@ -41,6 +42,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewPedidosUser(setView){
@@ -51,6 +53,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewProductosUser(setView){
@@ -61,6 +64,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewTodosPedidos(setView){
@@ -71,6 +75,7 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewProductosWeb(setView){
@@ -81,6 +86,7 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewTodosPedidos(false);
     setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeViewMaderasWeb(setView){
@@ -91,6 +97,29 @@ export function ContextProvider(props) {
     setViewProductosUser(false);
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
+    setViewPerfilAdmin(false);
+  }
+
+  function changeViewPerfilAdmin(setView){
+    setViewPerfilAdmin(setView);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
+  }
+
+  function verInicioSesion(){
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeEnviarCorreoConfirmacion(setView){
@@ -111,8 +140,9 @@ export function ContextProvider(props) {
         viewTodosPedidos,
         viewProductosWeb,
         viewMaderasWeb,
-        enviarCorreoConfirmacion,
+        viewPerfilAdmin,
         
+        enviarCorreoConfirmacion,
         volverDeProductos,
         reload,
         token,
@@ -125,8 +155,10 @@ export function ContextProvider(props) {
         changeViewTodosPedidos,
         changeViewProductosWeb,
         changeViewMaderasWeb,
+        changeViewPerfilAdmin,
+        
+        verInicioSesion,
         changeEnviarCorreoConfirmacion,
-
         changeVolverDeProductos,
         changeReload,
         

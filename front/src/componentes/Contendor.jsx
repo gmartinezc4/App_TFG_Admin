@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
 import { Context } from "../context/Context";
 import IniciarSesion from "./IniciarSesion";
@@ -12,10 +12,14 @@ function Contendor() {
     uri: "http://localhost:4001/",
     cache: new InMemoryCache(),
   });
-  //localStorage.removeItem("token");
+  localStorage.removeItem("token");
 
-  const { token } = useContext(Context);
+  const { token, reload } = useContext(Context);
 
+  useEffect(() => {
+  }, [reload])
+  
+  
   return (
     <ApolloProvider client={client}>
       <div className="">

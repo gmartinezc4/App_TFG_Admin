@@ -8,6 +8,7 @@ import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
 import MaderasWeb from "./MaderasWeb";
 import CorreoConfirmacion from "./CorreoConfirmacion";
+import PerfilAdmin from "./PerfilAdmin";
 
 function PantallaPrincipal() {
   const {
@@ -18,6 +19,7 @@ function PantallaPrincipal() {
     viewTodosPedidos,
     viewProductosWeb,
     viewMaderasWeb,
+    viewPerfilAdmin,
     enviarCorreoConfirmacion,
   } = useContext(Context);
   
@@ -39,6 +41,7 @@ function PantallaPrincipal() {
 
   return (
     <div>
+      <div className="m-10">{viewPerfilAdmin && <PerfilAdmin />} </div>
       <div className="flex justify-center">{viewRegistro && <RegistrarAdmin />}</div>
       <div className="m-10 ">
         {viewUsuarios && <MostrarUsuarios setDatosUser={setDatosUser} />}
