@@ -717,15 +717,9 @@ export const Mutation = {
                     const fecha = new Date();
 
 
-                    if (newEstado == "Activo"){ 
-                        newBbdd = "Pedidos_Activos"; 
-                        const fechaPartida = newFechaRecogida.split("/")
-                        const fechaMargen = ((parseInt(fechaPartida[0]) + 2).toString() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear());
-                        newFechaRecogida = newFechaRecogida + "-" + fechaMargen;
-                    }
-
+                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos"; 
+                      
                     if (newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
-
 
                     if (newEstado == "Cancelado"){ 
                         newBbdd = "Pedidos_Cancelados"
