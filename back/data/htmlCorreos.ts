@@ -1,6 +1,6 @@
 function correoRegistroAdmin(emailCorreoRegistro: any, contraseñaCorreoRegistro: any){
   return `
-  <<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
   <html xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
   <head>
   <meta name=x-apple-disable-message-reformatting>
@@ -126,7 +126,6 @@ function correoRegistroAdmin(emailCorreoRegistro: any, contraseñaCorreoRegistro
   <!--[if !mso]><!--><td class=t35 style="width:80px;padding:0 0 50px 0;">
   <!--<![endif]-->
   <!--[if mso]><td class=t35 style="width:80px;padding:0 0 50px 0;"><![endif]-->
-  <div style="font-size:0px;"><img class=t41 style="display:block;border:0;height:auto;width:100%;Margin:0;max-width:100%;" width=130 height=130 src=images/1.png /></div></td>
   </tr></table>
   </td></tr><tr><td>
   <table class=t14 role=presentation cellpadding=0 cellspacing=0 align=center><tr>
@@ -147,14 +146,14 @@ function correoRegistroAdmin(emailCorreoRegistro: any, contraseñaCorreoRegistro
   <!--[if !mso]><!--><td class=t55 style="width:600px;padding:0 0 34px 0;">
   <!--<![endif]-->
   <!--[if mso]><td class=t55 style="width:600px;padding:0 0 34px 0;"><![endif]-->
-  <p class=t61 style="font-family:BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif, 'Albert Sans';line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">Email: ${emailCorreoRegistro}</p></td>
+  <p class=t61 style="font-family:BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif, 'Albert Sans';line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">Email: <strong>${emailCorreoRegistro}</strong></p></td>
   </tr></table>
   </td></tr><tr><td>
   <table class=t44 role=presentation cellpadding=0 cellspacing=0 align=center><tr>
   <!--[if !mso]><!--><td class=t45 style="width:600px;padding:0 0 34px 0;">
   <!--<![endif]-->
   <!--[if mso]><td class=t45 style="width:600px;padding:0 0 34px 0;"><![endif]-->
-  <p class=t51 style="font-family:BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif, 'Albert Sans';line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">Contraseña: ${contraseñaCorreoRegistro}</p></td>
+  <p class=t51 style="font-family:BlinkMacSystemFont,Segoe UI,Helvetica Neue,Arial,sans-serif, 'Albert Sans';line-height:22px;font-weight:500;font-style:normal;font-size:14px;text-decoration:none;text-transform:none;letter-spacing:-0.56px;direction:ltr;color:#333333;text-align:left;mso-line-height-rule:exactly;mso-text-raise:2px;">Contraseña: <strong>${contraseñaCorreoRegistro}</strong></p></td>
   </tr></table>
   </td></tr></table></td>
   </tr></table>
