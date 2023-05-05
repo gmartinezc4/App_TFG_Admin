@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
-import Pikaday from 'pikaday'
+import Pikaday from "pikaday";
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -349,7 +349,7 @@ function AllPedidos(props) {
             idPedido: pedidoId,
             oldEstado: estadoActual,
             newEstado: "Cancelado",
-            newFechaRecogida: ""
+            newFechaRecogida: "",
           },
         });
       }
@@ -385,7 +385,7 @@ function AllPedidos(props) {
         modalCambiarEstadoPedido(estadoActual);
       });
     } else if (newEstado) {
-      if(newEstado == "Cancelado"){
+      if (newEstado == "Cancelado") {
         cambiarEstadoPedido({
           context: {
             headers: {
@@ -399,7 +399,7 @@ function AllPedidos(props) {
             newFechaRecogida: "",
           },
         });
-      } else if (newEstado == "Recogido"){
+      } else if (newEstado == "Recogido") {
         cambiarEstadoPedido({
           context: {
             headers: {
@@ -413,16 +413,19 @@ function AllPedidos(props) {
             newFechaRecogida: "",
           },
         });
-      }
-      else if(estadoActual == "Activo") modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia)
-      else if(estadoActual == "Pendiente") modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
-      if(estadoActual == "Cancelado" || estadoActual == "Recogido") modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado)
+      } else if (estadoActual == "Activo")
+        modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
+      else if (estadoActual == "Pendiente")
+        modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
+      else if (estadoActual == "Cancelado" || estadoActual == "Recogido")
+        modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
     }
   }
 
   async function modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia) {
     let fecha = new Date();
-    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
     const { value: newFechaRecogida } = await Swal.fire({
       title: "Nueva fecha de recogida",
@@ -434,72 +437,20 @@ function AllPedidos(props) {
       confirmButtonColor: "#3BD630",
       cancelButtonColor: "#DF0000",
     });
-    
-    if(newFechaRecogida  != undefined){
 
-        if (new Date(newFechaRecogida) <= new Date()) {
-          console.log("fecha incorrecta");
-          Swal.fire({
-            position: "center",
-            icon: "error",
-            title: "Fecha Invalida",
-            text: "La fecha de entrega ha de ser superior a hoy",
-            showConfirmButton: false,
-            timer: 2000,
-          }).then(() => {
-            modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
-          })
-        } else {
-          console.log(newFechaRecogida);
-  
-          cambiarEstadoPedido({
-            context: {
-              headers: {
-                authorization: localStorage.getItem("token"),
-              },
-            },
-            variables: {
-              idPedido: pedidoId,
-              oldEstado: estadoActual,
-              newEstado: newEstado,
-              newFechaRecogida: newFechaRecogida,
-            },
-          });
-          pedidoId = "";
-        }
-    }
-  }
-
-  async function modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia) {
-    let fecha = new Date();
-    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
-    
-    const { value: newFechaRecogida } = await Swal.fire({
-      title: "Nueva estimación de recogida",
-      text: `Antigua fecha de entrega: ${fechaReferencia}`,
-      input: "text",
-      inputValue: fechaMañana,
-      showCancelButton: true,
-      confirmButtonText: "Confirmar",
-      confirmButtonColor: "#3BD630",
-      cancelButtonColor: "#DF0000",
-    });
-    
-    if(newFechaRecogida  != undefined){
-      console.log("n f " +newFechaRecogida)
-      console.log("f ref "+fechaReferencia)
-      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+    if (newFechaRecogida != undefined) {
+      if (new Date(newFechaRecogida) <= new Date()) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
           icon: "error",
           title: "Fecha Invalida",
-          text: "La nueva estimación de entrega ha de ser mayor",
+          text: "La fecha de entrega ha de ser superior a hoy",
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
-          modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
-        })
+          modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
+        });
       } else {
         console.log(newFechaRecogida);
 
@@ -515,16 +466,76 @@ function AllPedidos(props) {
             newEstado: newEstado,
             newFechaRecogida: newFechaRecogida,
           },
+        }).then(() => {
+          pedidoId = "";
+        })
+      }
+    }
+  }
+
+  async function modalCambiarFechaPedidoPendiente(
+    estadoActual,
+    newEstado,
+    fechaReferencia
+  ) {
+    let fecha = new Date();
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva estimación de recogida",
+      text: `Antigua fecha de entrega: ${fechaReferencia}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+
+    if (newFechaRecogida != undefined) {
+      console.log("n f " + newFechaRecogida);
+      console.log("f ref " + fechaReferencia);
+      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La nueva estimación de entrega ha de ser mayor",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
         });
-        pedidoId = "";
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        }).then(() => {
+          pedidoId = "";
+        })
       }
     }
   }
 
   async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
-    let fechaHoy = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
-    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+    let fechaHoy =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
     const { value: newFechaRecogida } = await Swal.fire({
       title: "Nueva fecha o estimación de recogida",
@@ -536,39 +547,39 @@ function AllPedidos(props) {
       confirmButtonColor: "#3BD630",
       cancelButtonColor: "#DF0000",
     });
-    
-    if(newFechaRecogida  != undefined){
 
-        if (new Date(newFechaRecogida) <= new Date()) {
-          console.log("fecha incorrecta");
-          Swal.fire({
-            position: "center",
-            icon: "error",
-            title: "Fecha Invalida",
-            text: "La fecha de entrega ha de ser superior a hoy",
-            showConfirmButton: false,
-            timer: 2000,
-          }).then(() => {
-            modalCambiarFechaPedidoActivo(estadoActual, newEstado);
-          })
-        } else {
-          console.log(newFechaRecogida);
-  
-          cambiarEstadoPedido({
-            context: {
-              headers: {
-                authorization: localStorage.getItem("token"),
-              },
+    if (newFechaRecogida != undefined) {
+      if (new Date(newFechaRecogida) <= new Date()) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La fecha de entrega ha de ser superior a hoy",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+        });
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
             },
-            variables: {
-              idPedido: pedidoId,
-              oldEstado: estadoActual,
-              newEstado: newEstado,
-              newFechaRecogida: newFechaRecogida,
-            },
-          });
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        }).then(() => {
           pedidoId = "";
-        }
+        })
+      }
     }
   }
 
@@ -647,7 +658,17 @@ function AllPedidos(props) {
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {pedidos.fechaPedido}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        <td
+                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                          onClick={() => {
+                            pedidoId = pedidos._id;
+                            modalCambiarFechaPedidoActivo(
+                              pedidos.estado,
+                              "Activo",
+                              pedidos.fechaRecogida
+                            );
+                          }}
+                        >
                           {pedidos.fechaRecogida}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
@@ -770,7 +791,15 @@ function AllPedidos(props) {
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {pedidos.fechaPedido}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                        onClick={() => {
+                          pedidoId = pedidos._id;
+                          modalCambiarFechaPedidoPendiente(
+                            pedidos.estado,
+                            "Pendiente",
+                            pedidos.fechaRecogida
+                          );
+                        }}>
                           {pedidos.fechaRecogida}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
@@ -887,7 +916,14 @@ function AllPedidos(props) {
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {pedidos.fechaPedido}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                        onClick={() => {
+                          pedidoId = pedidos._id;
+                          modalCambiarFechaPedidoCanceladoRecogido(
+                            pedidos.estado,
+                            "Cancelado",
+                          );
+                        }}>
                           {pedidos.fechaRecogida}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
@@ -993,7 +1029,14 @@ function AllPedidos(props) {
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {pedidos.fechaPedido}
                         </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                        onClick={() => {
+                          pedidoId = pedidos._id;
+                          modalCambiarFechaPedidoCanceladoRecogido(
+                            pedidos.estado,
+                            "Recogido",
+                          );
+                        }}>
                           {pedidos.fechaRecogida}
                         </td>
                         <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">

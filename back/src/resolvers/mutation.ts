@@ -731,7 +731,7 @@ export const Mutation = {
                         newFechaRecogida = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
                     }
 
-                    if (oldEstado == "Activo" && newEstado != "Activo") {
+                    if (oldEstado == "Activo") {
                         const pedidoUser = await db.collection("Pedidos_Activos").findOne({ _id: new ObjectId(id_pedido) });
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
@@ -742,7 +742,7 @@ export const Mutation = {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
                         }
 
-                    } else if (oldEstado == "Pendiente" && newEstado != "Pendiente") {
+                    } else if (oldEstado == "Pendiente") {
                         const pedidoUser = await db.collection("Pedidos_Pendientes").findOne({ _id: new ObjectId(id_pedido) });
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
@@ -753,7 +753,7 @@ export const Mutation = {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
                         }
 
-                    } else if (oldEstado == "Cancelado" && newEstado != "Cancelado") {
+                    } else if (oldEstado == "Cancelado") {
                         const pedidoUser = await db.collection("Pedidos_Cancelados").findOne({ _id: new ObjectId(id_pedido) });
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
@@ -764,7 +764,7 @@ export const Mutation = {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
                         }
 
-                    } else if (oldEstado == "Recogido" && newEstado != "Recogido") {
+                    } else if (oldEstado == "Recogido") {
                         const pedidoUser = await db.collection("Pedidos_Recogidos").findOne({ _id: new ObjectId(id_pedido) });
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
@@ -791,7 +791,7 @@ export const Mutation = {
                             ciudad: pedidoUserCambiado.Ciudad,
                             pais: pedidoUserCambiado.Pais,
                             fechaPedido: pedidoUserCambiado.FechaPedido,
-                            fechaRecogida: pedidoUserCambiado.FechaRecogida,
+                            fechaRecogida: newFechaRecogida,
                             importePedido: pedidoUserCambiado.ImportePedido,
                             importeFreeIvaPedido: pedidoUserCambiado.ImporteFreeIvaPedido,
                             productos: pedidoUserCambiado.Productos.map((e: any) => ({
