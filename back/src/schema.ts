@@ -86,12 +86,14 @@ export const typeDefs = gql`
         getPedidosActivosUser(id_user: ID!): [Pedido!]
         getPedidosPendientesUser(id_user: ID!): [Pedido!]
         getPedidosCanceladosUser(id_user: ID!): [Pedido!]
+        getPedidosFiltradosUser(filtro: String!, bbdd: String!, id_user: String!): [Pedido!]!
 
         getPedidosRecogidos: [Pedido!]
         getPedidosActivos: [Pedido!]
         getPedidosPendientes: [Pedido!]
         getPedidosCancelados: [Pedido!]
         getPedidosEliminados: [Pedido!]!
+        getPedidosFiltrados(filtro: String!, bbdd: String!): [Pedido!]!
     }
 
     type Mutation{
