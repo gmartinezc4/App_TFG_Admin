@@ -71,8 +71,8 @@ function PerfilAdmin() {
   const [borrarUserAdmin] = useMutation(BORRAR_USER_ADMIN, {
     onCompleted: () => {
       console.log("Se ha borrado su usuario admininstrador");
-      localStorage.setItem("token", null);
-      verInicioSesion()
+      localStorage.removeItem("token");
+      localStorage.removeItem("nivel_auth");
       changeReload();
 
       Swal.fire({
@@ -80,7 +80,7 @@ function PerfilAdmin() {
         icon: "success",
         title: "Se ha borrado su usuario admininstrador",
         showConfirmButton: false,
-        timer: 1500,
+        timer: 2000,
       });
     },
     onError: (error) => {

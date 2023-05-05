@@ -23,7 +23,7 @@ export const Mutation = {
                     const encripted_pass = await bcrypt.hash(password, 12);
 
                     await db_admin.collection("Usuarios_admins").insertOne({ Nombre: nombre, Apellido: apellido, Email: correo, Password: encripted_pass, Nivel_auth: nivel_auth, token: null });
-                    
+
                     //Creamos el objeto de transporte
                     var transporter = nodemailer.createTransport({
                         host: 'smtp.gmail.com',
@@ -40,10 +40,10 @@ export const Mutation = {
                         from: 'maderas.cobo.cuenca@gmail.com',
                         to: correo,
                         subject: 'Nuevo usuario administrador',
-                        html: correoRegistroAdmin(correo, password), 
+                        html: correoRegistroAdmin(correo, password),
                     };
 
-                    
+
 
                     transporter.sendMail(mailOptions, function (error: any, info: any) {
                         if (error) {
@@ -195,6 +195,7 @@ export const Mutation = {
         const db = context.db;
         const userAdmin = context.userAdmin;
         const idUser = args.idUser;
+        let productos = [];
 
         try {
 
@@ -203,6 +204,107 @@ export const Mutation = {
                 const userDelete = await db.collection("Usuarios").findOne({ _id: new ObjectId(idUser) });
 
                 if (userDelete) {
+                    const pActivos = await db.collection("Pedidos_Activos").find({ Id_user: idUser }).toArray();
+                    const pRecogidos = await db.collection("Pedidos_Recogidos").find({ Id_user: idUser }).toArray();
+                    const pCancelados = await db.collection("Pedidos_Cancelados").find({ Id_user: idUser }).toArray();
+                    const pPendientes = await db.collection("Pedidos_Pendientes").find({ Id_user: idUser }).toArray();
+
+                    let fecha = new Date();
+                    let fechaEliminación = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+
+                    pActivos.map(async (a) => {
+                        a.Productos.map(async (e: any) => {
+                            let newStock: any;
+                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
+
+                            if (producto) {
+                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
+                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
+                            } else {
+                                throw new ApolloError("Ese producto no existe");
+                            }
+
+                        })
+
+                        productos = a.Productos;
+
+                        productos.map((e: any) => {
+                            e.Id_user = "usuario eliminado";
+                        })
+
+                        await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: fechaEliminación, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: productos })
+                    })
+
+                    pRecogidos.map(async (a) => {
+                        a.Productos.map(async (e: any) => {
+                            let newStock: any;
+                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
+
+                            if (producto) {
+                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
+                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
+                            } else {
+                                throw new ApolloError("Ese producto no existe");
+                            }
+
+                            productos = a.Productos;
+
+                            productos.map((e: any) => {
+                                e.Id_user = "usuario eliminado";
+                            })
+
+                        })
+                        await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: fechaEliminación, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: a.Productos })
+                    })
+
+                    pCancelados.map(async (a) => {
+                        a.Productos.map(async (e: any) => {
+                            let newStock: any;
+                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
+
+                            if (producto) {
+                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
+                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
+                            } else {
+                                throw new ApolloError("Ese producto no existe");
+                            }
+
+                            productos = a.Productos;
+
+                            productos.map((e: any) => {
+                                e.Id_user = "usuario eliminado";
+                            })
+
+                        })
+                        await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: fechaEliminación, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: a.Productos })
+                    })
+
+                    pPendientes.map(async (a) => {
+                        a.Productos.map(async (e: any) => {
+                            let newStock: any;
+                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
+
+                            if (producto) {
+                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
+                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
+                            } else {
+                                throw new ApolloError("Ese producto no existe");
+                            }
+
+                            productos = a.Productos;
+
+                            productos.map((e: any) => {
+                                e.Id_user = "usuario eliminado";
+                            })
+
+                        })
+                        await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: a.FechaPedido, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: a.Productos })
+                    })
+
+                    await db.collection("Pedidos_Activos").deleteMany({ Id_user: idUser });
+                    await db.collection("Pedidos_Recogidos").deleteMany({ Id_user: idUser });
+                    await db.collection("Pedidos_Cancelados").deleteMany({ Id_user: idUser });
+                    await db.collection("Pedidos_Pendientes").deleteMany({ Id_user: idUser });
                     await db.collection("Usuarios").deleteOne({ _id: new ObjectId(idUser) });
 
                     return {
@@ -231,12 +333,12 @@ export const Mutation = {
 
         const encripted_pass = await bcrypt.hash(password, 12);
         const encripted_new_pass = await bcrypt.hash(newPassword, 12);
-        
+
         try {
             if (userAdmin) {
                 if (nombre != "" && apellido != "" && nombre != null && apellido != null) {
                     await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Nombre: nombre, Apellido: apellido } });
-                    
+
                     return {
                         _id: userAdmin._id.toString(),
                         nombre: nombre,
@@ -246,7 +348,7 @@ export const Mutation = {
                         nivel_auth: userAdmin.Nivel_auth,
                         token: userAdmin.token
                     }
-                
+
                 } else if (apellido != "" && apellido != null) {
                     await db_admin.collection("Usuarios_admins").findOneAndUpdate({ _id: userAdmin._id }, { $set: { Apellido: apellido } });
                     return {
@@ -531,11 +633,22 @@ export const Mutation = {
 
                     if (pedido) {
                         if (pedido.Productos.length > 1) {
-                            pedido.Productos.map((p: any) => {
+                            pedido.Productos.map(async(p: any) => {
                                 if (p.Id_producto != id_product) {
                                     newProductos.push(p);
                                     console.log(p)
                                 }
+                                
+                                let newStock: any;
+                                const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(p.Id_producto) })
+    
+                                if (producto) {
+                                    newStock = parseInt(producto.stock) + parseInt(p.Cantidad);
+                                    await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(p.Id_producto) }, { $set: { stock: newStock.toString() } })
+                                } else {
+                                    throw new ApolloError("Ese producto no existe");
+                                }
+    
                             })
 
                             await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos } });

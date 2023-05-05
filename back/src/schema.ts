@@ -91,6 +91,7 @@ export const typeDefs = gql`
         getPedidosActivos: [Pedido!]
         getPedidosPendientes: [Pedido!]
         getPedidosCancelados: [Pedido!]
+        getPedidosEliminados: [Pedido!]!
     }
 
     type Mutation{
