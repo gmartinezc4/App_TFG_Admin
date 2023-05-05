@@ -111,7 +111,7 @@ export const typeDefs = gql`
         modificarProducto(id_product: ID!, img: String, name: String, stock: String, precio: String): Product!
         borrarProducto(id_product: ID!): Product!
 
-        cambiarEstadoPedido(id_pedido: ID!, oldEstado: String!, newEstado: String!): Pedido!
+        cambiarEstadoPedido(id_pedido: ID!, oldEstado: String!, newEstado: String!,newFechaRecogida: String!): Pedido!
         cancelarProductoPedido(id_pedido: ID!, id_product: ID!): Pedido!
     }
 `
