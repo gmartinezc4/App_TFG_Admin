@@ -111,17 +111,6 @@ export function ContextProvider(props) {
     setViewMaderasWeb(false);
   }
 
-  function verInicioSesion(){
-    setViewRegistro(false);
-    setViewUsuarios(false);
-    setViewPedidosUser(false);
-    setViewProductosUser(false);
-    setViewTodosPedidos(false);
-    setViewProductosWeb(false);
-    setViewMaderasWeb(false);
-    setViewPerfilAdmin(false);
-  }
-
   function changeEnviarCorreoConfirmacion(setView){
     setEnviarCorreoConfirmacion(setView);
   }
@@ -157,7 +146,6 @@ export function ContextProvider(props) {
         changeViewMaderasWeb,
         changeViewPerfilAdmin,
         
-        verInicioSesion,
         changeEnviarCorreoConfirmacion,
         changeVolverDeProductos,
         changeReload,
