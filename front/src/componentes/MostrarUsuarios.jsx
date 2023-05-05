@@ -488,8 +488,8 @@ function MostrarUsuarios(props) {
                               {userAdmin.token == token && (
                                 <input
                                   type="checkbox"
-                                  className="text-blue-600 border-gray-200 rounded focus:ring-blue-500"
-                                  checked
+                                  className="text-blue-600 border-black rounded focus:ring-blue-500"
+                                  checked disabled readOnly
                                 />
                               )}
                             </td>
