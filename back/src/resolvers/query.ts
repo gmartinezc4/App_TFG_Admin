@@ -263,9 +263,10 @@ export const Query = {
                     if (estado == "Pendiente") bbdd = "Pedidos_Pendientes"
                     if (estado == "Cancelado") bbdd = "Pedidos_Cancelados"
                     if (estado == "Recogido") bbdd = "Pedidos_Recogidos"
-                    
+                    if (estado == "Eliminado") bbdd = "Pedidos_Eliminados"
+
                     const pedido = await db.collection(bbdd).findOne({ _id: new ObjectId(id_pedido) });
-                    console.log(pedido)
+                    
                     if (pedido) {
                         if (pedido.Productos.length != 0) {
                              
@@ -699,6 +700,49 @@ export const Query = {
         try {
             if (userAdmin) {
                 const pedidos = await db.collection("Pedidos_Cancelados").find().toArray();
+
+                return pedidos.map(p => ({
+                    _id: p._id,
+                    id_user: p.Id_user,
+                    estado: p.Estado,
+                    nombre: p.Nombre,
+                    apellido: p.Apellido,
+                    email: p.Email,
+                    telefono: p.Telefono,
+                    direccion: p.Direccion,
+                    masInformacion: p.MasInformacion,
+                    codigoPostal: p.CodigoPostal,
+                    ciudad: p.Ciudad,
+                    pais: p.Pais,
+                    fechaPedido: p.FechaPedido,
+                    fechaRecogida: p.FechaRecogida,
+                    importePedido: p.ImportePedido,
+                    importeFreeIvaPedido: p.ImporteFreeIvaPedido,
+                    productos: p.Productos.map((e: any) => ({
+                        _id: e._id.toString(),
+                        id_user: e.Id_user,
+                        id_producto: e.Id_producto,
+                        img: e.Img,
+                        name: e.Name,
+                        cantidad: e.Cantidad,
+                        precioTotal: e.PrecioTotal,
+                        precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                    }))
+                }))
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getPedidosEliminados: async (parent: any, args: any, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+
+        try {
+            if (userAdmin) {
+                const pedidos = await db.collection("Pedidos_Eliminados").find().toArray();
 
                 return pedidos.map(p => ({
                     _id: p._id,

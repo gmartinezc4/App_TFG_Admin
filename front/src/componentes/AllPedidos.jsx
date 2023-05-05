@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
-import emailjs from "@emailjs/browser";
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -106,6 +105,39 @@ const GET_PEDIDOS_PENDIENTES = gql`
 const GET_PEDIDOS_CANCELADOS = gql`
   query Query {
     getPedidosCancelados {
+      _id
+      apellido
+      ciudad
+      codigoPostal
+      direccion
+      email
+      estado
+      fechaPedido
+      fechaRecogida
+      id_user
+      importeFreeIvaPedido
+      importePedido
+      masInformacion
+      nombre
+      pais
+      telefono
+      productos {
+        _id
+        cantidad
+        id_producto
+        id_user
+        img
+        name
+        precioTotal
+        precioTotal_freeIVA
+      }
+    }
+  }
+`;
+
+const GET_PEDIDOS_ELIMINADOS = gql`
+  query Query {
+    getPedidosEliminados {
       _id
       apellido
       ciudad
@@ -260,6 +292,18 @@ function AllPedidos(props) {
     },
   });
 
+  const {
+    data: dataEliminados,
+    loading: loadingEliminados,
+    error: erroEliminados,
+  } = useQuery(GET_PEDIDOS_ELIMINADOS, {
+    context: {
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    },
+  });
+
   if (loadingRecogidos) return <div></div>;
   if (errorRecogidos) return console.log(errorRecogidos);
 
@@ -271,6 +315,9 @@ function AllPedidos(props) {
 
   if (loadingCancelados) return <div></div>;
   if (errorCancelados) return console.log(errorCancelados);
+
+  if (loadingEliminados) return <div></div>;
+  if (erroEliminados) return console.log(erroEliminados);
 
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
@@ -771,6 +818,94 @@ function AllPedidos(props) {
                             modalCambiarEstadoPedido(pedidos.estado);
                           }}
                         >
+                          {pedidos.estado}
+                        </td>
+                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                          <a
+                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                            onClick={() => {
+                              props.setPedidoUser(pedidos);
+                              changeViewProductosUser(true);
+                            }}
+                          >
+                            Productos
+                          </a>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+          PEDIDOS ELIMINADOS
+        </h1>
+        <div className="flex flex-col">
+          <div className="overflow-x-auto">
+            <div className="p-1.5 w-full inline-block align-middle">
+              <div className="overflow-hidden border rounded-lg">
+                <table className="min-w-full divide-y divide-gray-200 border-2">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        ID pedido
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Fecha de eliminación
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Importe
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Importe &#40;Free Iva&#41;
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                      >
+                        Estado
+                      </th>
+                      <th
+                        scope="col"
+                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                      >
+                        Productos
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {dataEliminados.getPedidosEliminados.map((pedidos) => (
+                      <tr key={pedidos._id}>
+                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                          {pedidos._id}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {pedidos.fechaPedido}
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {pedidos.importePedido}€
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                          {pedidos.importeFreeIvaPedido}€
+                        </td>
+                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                           {pedidos.estado}
                         </td>
                         <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
