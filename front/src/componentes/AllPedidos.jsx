@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect, useRef } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import Pikaday from 'pikaday'
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -169,11 +170,17 @@ const GET_PEDIDOS_ELIMINADOS = gql`
 `;
 
 const CAMBIAR_ESTADO_PEDIDO = gql`
-  mutation Mutation($idPedido: ID!, $oldEstado: String!, $newEstado: String!) {
+  mutation CambiarEstadoPedido(
+    $idPedido: ID!
+    $oldEstado: String!
+    $newEstado: String!
+    $newFechaRecogida: String!
+  ) {
     cambiarEstadoPedido(
       id_pedido: $idPedido
       oldEstado: $oldEstado
       newEstado: $newEstado
+      newFechaRecogida: $newFechaRecogida
     ) {
       _id
       apellido
@@ -209,11 +216,15 @@ function AllPedidos(props) {
   let pedidoId = "";
 
   useEffect(() => {
-    changeVolverDeProductos("AllPedidos")
-  }, [])
-  
+    changeVolverDeProductos("AllPedidos");
+  }, []);
 
-  const { changeViewProductosUser, changeReload, changeVolverDeProductos, changeEnviarCorreoConfirmacion } = useContext(Context);
+  const {
+    changeViewProductosUser,
+    changeReload,
+    changeVolverDeProductos,
+    changeEnviarCorreoConfirmacion,
+  } = useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
     onCompleted: (data) => {
@@ -226,9 +237,9 @@ function AllPedidos(props) {
         showConfirmButton: false,
         timer: 1000,
       }).then(() => {
-        props.setPedidoUser(data.cambiarEstadoPedido)
+        props.setPedidoUser(data.cambiarEstadoPedido);
         changeEnviarCorreoConfirmacion(true);
-      })
+      });
     },
     onError: (error) => {
       //si hay un error, borrar el token
@@ -338,6 +349,7 @@ function AllPedidos(props) {
             idPedido: pedidoId,
             oldEstado: estadoActual,
             newEstado: "Cancelado",
+            newFechaRecogida: ""
           },
         });
       }
@@ -345,8 +357,8 @@ function AllPedidos(props) {
     });
   }
 
-  async function modalCambiarEstadoPedido(estadoActual) {
-    const { value: estado } = await Swal.fire({
+  async function modalCambiarEstadoPedido(estadoActual, fechaReferencia) {
+    const { value: newEstado } = await Swal.fire({
       title: "Nuevo estado del pedido",
       input: "select",
       inputOptions: {
@@ -361,7 +373,7 @@ function AllPedidos(props) {
       cancelButtonColor: "#DF0000",
     });
 
-    if (estado == estadoActual) {
+    if (newEstado == estadoActual) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -372,21 +384,191 @@ function AllPedidos(props) {
       }).then(() => {
         modalCambiarEstadoPedido(estadoActual);
       });
-    } else if (estado) {
-      cambiarEstadoPedido({
-        context: {
-          headers: {
-            authorization: localStorage.getItem("token"),
+    } else if (newEstado) {
+      if(newEstado == "Cancelado"){
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
           },
-        },
-        variables: {
-          idPedido: pedidoId,
-          oldEstado: estadoActual,
-          newEstado: estado,
-        },
-      });
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: "",
+          },
+        });
+      } else if (newEstado == "Recogido"){
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: "",
+          },
+        });
+      }
+      else if(estadoActual == "Activo") modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia)
+      else if(estadoActual == "Pendiente") modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
+      if(estadoActual == "Cancelado" || estadoActual == "Recogido") modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado)
+    }
+  }
 
-      pedidoId = "";
+  async function modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia) {
+    let fecha = new Date();
+    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva fecha de recogida",
+      text: `Estimación dada: ${fechaReferencia}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+    
+    if(newFechaRecogida  != undefined){
+
+        if (new Date(newFechaRecogida) <= new Date()) {
+          console.log("fecha incorrecta");
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Fecha Invalida",
+            text: "La fecha de entrega ha de ser superior a hoy",
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(() => {
+            modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
+          })
+        } else {
+          console.log(newFechaRecogida);
+  
+          cambiarEstadoPedido({
+            context: {
+              headers: {
+                authorization: localStorage.getItem("token"),
+              },
+            },
+            variables: {
+              idPedido: pedidoId,
+              oldEstado: estadoActual,
+              newEstado: newEstado,
+              newFechaRecogida: newFechaRecogida,
+            },
+          });
+          pedidoId = "";
+        }
+    }
+  }
+
+  async function modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia) {
+    let fecha = new Date();
+    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+    
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva estimación de recogida",
+      text: `Antigua fecha de entrega: ${fechaReferencia}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+    
+    if(newFechaRecogida  != undefined){
+      console.log("n f " +newFechaRecogida)
+      console.log("f ref "+fechaReferencia)
+      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La nueva estimación de entrega ha de ser mayor",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
+        })
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        });
+        pedidoId = "";
+      }
+    }
+  }
+
+  async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
+    let fecha = new Date();
+    let fechaHoy = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+    let fechaMañana = ((fecha.getDate() + 1) + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva fecha o estimación de recogida",
+      text: `Estimación dada: ${fechaHoy}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+    
+    if(newFechaRecogida  != undefined){
+
+        if (new Date(newFechaRecogida) <= new Date()) {
+          console.log("fecha incorrecta");
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Fecha Invalida",
+            text: "La fecha de entrega ha de ser superior a hoy",
+            showConfirmButton: false,
+            timer: 2000,
+          }).then(() => {
+            modalCambiarFechaPedidoActivo(estadoActual, newEstado);
+          })
+        } else {
+          console.log(newFechaRecogida);
+  
+          cambiarEstadoPedido({
+            context: {
+              headers: {
+                authorization: localStorage.getItem("token"),
+              },
+            },
+            variables: {
+              idPedido: pedidoId,
+              oldEstado: estadoActual,
+              newEstado: newEstado,
+              newFechaRecogida: newFechaRecogida,
+            },
+          });
+          pedidoId = "";
+        }
     }
   }
 
@@ -478,7 +660,10 @@ function AllPedidos(props) {
                           className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                           onClick={() => {
                             pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(pedidos.estado);
+                            modalCambiarEstadoPedido(
+                              pedidos.estado,
+                              pedidos.fechaRecogida
+                            );
                           }}
                         >
                           {pedidos.estado}
@@ -598,7 +783,10 @@ function AllPedidos(props) {
                           className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                           onClick={() => {
                             pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(pedidos.estado);
+                            modalCambiarEstadoPedido(
+                              pedidos.estado,
+                              pedidos.fechaRecogida
+                            );
                           }}
                         >
                           {pedidos.estado}
@@ -712,7 +900,10 @@ function AllPedidos(props) {
                           className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                           onClick={() => {
                             pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(pedidos.estado);
+                            modalCambiarEstadoPedido(
+                              pedidos.estado,
+                              pedidos.fechaRecogida
+                            );
                           }}
                         >
                           {pedidos.estado}
@@ -815,7 +1006,10 @@ function AllPedidos(props) {
                           className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                           onClick={() => {
                             pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(pedidos.estado);
+                            modalCambiarEstadoPedido(
+                              pedidos.estado,
+                              pedidos.fechaRecogida
+                            );
                           }}
                         >
                           {pedidos.estado}

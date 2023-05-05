@@ -702,10 +702,10 @@ export const Mutation = {
     },
 
 
-    cambiarEstadoPedido: async (parent: any, args: { id_pedido: string, oldEstado: string, newEstado: string }, context: { db: Db, userAdmin: any }) => {
+    cambiarEstadoPedido: async (parent: any, args: { id_pedido: string, oldEstado: string, newEstado: string, newFechaRecogida: string }, context: { db: Db, userAdmin: any }) => {
         const db = context.db;
         const userAdmin = context.userAdmin;
-        let { id_pedido, oldEstado, newEstado } = args;
+        let { id_pedido, oldEstado, newEstado, newFechaRecogida } = args;
 
         try {
             if (userAdmin) {
@@ -714,18 +714,29 @@ export const Mutation = {
                 } else {
                     let pedidoUserCambiado: any;
                     let newBbdd: any;
+                    const fecha = new Date();
 
-                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos";
+
+                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos"; 
+                      
                     if (newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
-                    if (newEstado == "Cancelado") newBbdd = "Pedidos_Cancelados";
-                    if (newEstado == "Recogido") newBbdd = "Pedidos_Recogidos";
+
+                    if (newEstado == "Cancelado"){ 
+                        newBbdd = "Pedidos_Cancelados"
+                        newFechaRecogida = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+                    }
+
+                    if (newEstado == "Recogido") {
+                        newBbdd = "Pedidos_Recogidos";
+                        newFechaRecogida = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+                    }
 
                     if (oldEstado == "Activo" && newEstado != "Activo") {
                         const pedidoUser = await db.collection("Pedidos_Activos").findOne({ _id: new ObjectId(id_pedido) });
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
                             pedidoUserCambiado = pedidoUser;
-                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Activos").findOneAndDelete({ _id: new ObjectId(id_pedido) });
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
@@ -736,7 +747,7 @@ export const Mutation = {
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
                             pedidoUserCambiado = pedidoUser;
-                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Pendientes").findOneAndDelete({ _id: new ObjectId(id_pedido) });
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
@@ -747,7 +758,7 @@ export const Mutation = {
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
                             pedidoUserCambiado = pedidoUser;
-                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Cancelados").findOneAndDelete({ _id: new ObjectId(id_pedido) });
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
@@ -758,7 +769,7 @@ export const Mutation = {
                         if (pedidoUser) {
                             pedidoUser.Estado = newEstado;
                             pedidoUserCambiado = pedidoUser;
-                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: pedidoUser.FechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
+                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Recogidos").findOneAndDelete({ _id: new ObjectId(id_pedido) });
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
