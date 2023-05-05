@@ -468,7 +468,7 @@ function AllPedidos(props) {
           },
         }).then(() => {
           pedidoId = "";
-        })
+        });
       }
     }
   }
@@ -525,7 +525,7 @@ function AllPedidos(props) {
           },
         }).then(() => {
           pedidoId = "";
-        })
+        });
       }
     }
   }
@@ -578,7 +578,7 @@ function AllPedidos(props) {
           },
         }).then(() => {
           pedidoId = "";
-        })
+        });
       }
     }
   }
@@ -588,583 +588,600 @@ function AllPedidos(props) {
       <h1 className="text-2xl font-mono text-orange-900 underline mb-10">
         Bases de datos Pedidos
       </h1>
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5">
-          PEDIDOS ACTIVOS
-        </h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha del pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha de recogida
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe &#40;Free Iva&#41;
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Estado
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Productos
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Cancelar pedido
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dataActivos.getPedidosActivos.map((pedidos) => (
-                      <tr key={pedidos._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {pedidos._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.fechaPedido}
-                        </td>
-                        <td
-                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                          onClick={() => {
-                            pedidoId = pedidos._id;
-                            modalCambiarFechaPedidoActivo(
-                              pedidos.estado,
-                              "Activo",
-                              pedidos.fechaRecogida
-                            );
-                          }}
+
+      {dataActivos.getPedidosActivos.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5">
+            PEDIDOS ACTIVOS
+          </h1>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          {pedidos.fechaRecogida}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importePedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importeFreeIvaPedido}€
-                        </td>
-                        <td
-                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                          onClick={() => {
-                            pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(
-                              pedidos.estado,
-                              pedidos.fechaRecogida
-                            );
-                          }}
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          {pedidos.estado}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                            onClick={() => {
-                              props.setPedidoUser(pedidos);
-                              changeViewProductosUser(true);
-                            }}
-                          >
-                            Productos
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-red-500 hover:text-red-600 cursor-pointer"
+                          Fecha del pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de recogida
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Cancelar pedido
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dataActivos.getPedidosActivos.map((pedidos) => (
+                        <tr key={pedidos._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {pedidos._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.fechaPedido}
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                             onClick={() => {
                               pedidoId = pedidos._id;
-                              modalCancelarPedido(pedidos.estado);
+                              modalCambiarFechaPedidoActivo(
+                                pedidos.estado,
+                                "Activo",
+                                pedidos.fechaRecogida
+                              );
                             }}
                           >
-                            Cancelar pedido
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-          PEDIDOS PENDIENTES DE RECOGER
-        </h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha del pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha de recogida
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe &#40;Free Iva&#41;
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Estado
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Productos
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Cancelar pedido
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dataPendientes.getPedidosPendientes.map((pedidos) => (
-                      <tr key={pedidos._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {pedidos._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.fechaPedido}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                        onClick={() => {
-                          pedidoId = pedidos._id;
-                          modalCambiarFechaPedidoPendiente(
-                            pedidos.estado,
-                            "Pendiente",
-                            pedidos.fechaRecogida
-                          );
-                        }}>
-                          {pedidos.fechaRecogida}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importePedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importeFreeIvaPedido}€
-                        </td>
-                        <td
-                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                          onClick={() => {
-                            pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(
-                              pedidos.estado,
-                              pedidos.fechaRecogida
-                            );
-                          }}
-                        >
-                          {pedidos.estado}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                            onClick={() => {
-                              props.setPedidoUser(pedidos);
-                              changeViewProductosUser(true);
-                            }}
-                          >
-                            Productos
-                          </a>
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-red-500 hover:text-red-600 cursor-pointer"
+                            {pedidos.fechaRecogida}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importePedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importeFreeIvaPedido}€
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                             onClick={() => {
                               pedidoId = pedidos._id;
-                              modalCancelarPedido(pedidos.estado);
+                              modalCambiarEstadoPedido(
+                                pedidos.estado,
+                                pedidos.fechaRecogida
+                              );
                             }}
                           >
-                            Cancelar pedido
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            {pedidos.estado}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                              onClick={() => {
+                                props.setPedidoUser(pedidos);
+                                changeViewProductosUser(true);
+                              }}
+                            >
+                              Productos
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCancelarPedido(pedidos.estado);
+                              }}
+                            >
+                              Cancelar pedido
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-          PEDIDOS CANCELADOS
-        </h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha del pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha de recogida
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe &#40;Free Iva&#41;
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Estado
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Productos
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dataCancelados.getPedidosCancelados.map((pedidos) => (
-                      <tr key={pedidos._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {pedidos._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.fechaPedido}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                        onClick={() => {
-                          pedidoId = pedidos._id;
-                          modalCambiarFechaPedidoCanceladoRecogido(
-                            pedidos.estado,
-                            "Cancelado",
-                          );
-                        }}>
-                          {pedidos.fechaRecogida}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importePedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importeFreeIvaPedido}€
-                        </td>
-                        <td
-                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                          onClick={() => {
-                            pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(
-                              pedidos.estado,
-                              pedidos.fechaRecogida
-                            );
-                          }}
+      {dataPendientes.getPedidosPendientes.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+            PEDIDOS PENDIENTES DE RECOGER
+          </h1>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          {pedidos.estado}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                            onClick={() => {
-                              props.setPedidoUser(pedidos);
-                              changeViewProductosUser(true);
-                            }}
-                          >
-                            Productos
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-          PEDIDOS RECOGIDOS
-        </h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha del pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha de recogida
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe &#40;Free Iva&#41;
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Estado
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Productos
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dataRecogidos.getPedidosRecogidos.map((pedidos) => (
-                      <tr key={pedidos._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {pedidos._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.fechaPedido}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                        onClick={() => {
-                          pedidoId = pedidos._id;
-                          modalCambiarFechaPedidoCanceladoRecogido(
-                            pedidos.estado,
-                            "Recogido",
-                          );
-                        }}>
-                          {pedidos.fechaRecogida}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importePedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importeFreeIvaPedido}€
-                        </td>
-                        <td
-                          className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                          onClick={() => {
-                            pedidoId = pedidos._id;
-                            modalCambiarEstadoPedido(
-                              pedidos.estado,
-                              pedidos.fechaRecogida
-                            );
-                          }}
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          {pedidos.estado}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                          Fecha del pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de recogida
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Cancelar pedido
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dataPendientes.getPedidosPendientes.map((pedidos) => (
+                        <tr key={pedidos._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {pedidos._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.fechaPedido}
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                             onClick={() => {
-                              props.setPedidoUser(pedidos);
-                              changeViewProductosUser(true);
+                              pedidoId = pedidos._id;
+                              modalCambiarFechaPedidoPendiente(
+                                pedidos.estado,
+                                "Pendiente",
+                                pedidos.fechaRecogida
+                              );
                             }}
                           >
-                            Productos
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            {pedidos.fechaRecogida}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importePedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importeFreeIvaPedido}€
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                            onClick={() => {
+                              pedidoId = pedidos._id;
+                              modalCambiarEstadoPedido(
+                                pedidos.estado,
+                                pedidos.fechaRecogida
+                              );
+                            }}
+                          >
+                            {pedidos.estado}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                              onClick={() => {
+                                props.setPedidoUser(pedidos);
+                                changeViewProductosUser(true);
+                              }}
+                            >
+                              Productos
+                            </a>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCancelarPedido(pedidos.estado);
+                              }}
+                            >
+                              Cancelar pedido
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      <div>
-        <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-          PEDIDOS ELIMINADOS
-        </h1>
-        <div className="flex flex-col">
-          <div className="overflow-x-auto">
-            <div className="p-1.5 w-full inline-block align-middle">
-              <div className="overflow-hidden border rounded-lg">
-                <table className="min-w-full divide-y divide-gray-200 border-2">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        ID pedido
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Fecha de eliminación
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Importe &#40;Free Iva&#41;
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                      >
-                        Estado
-                      </th>
-                      <th
-                        scope="col"
-                        className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                      >
-                        Productos
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {dataEliminados.getPedidosEliminados.map((pedidos) => (
-                      <tr key={pedidos._id}>
-                        <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                          {pedidos._id}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.fechaPedido}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importePedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.importeFreeIvaPedido}€
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                          {pedidos.estado}
-                        </td>
-                        <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                          <a
-                            className="text-orange-700 hover:text-orange-900 cursor-pointer"
+      {dataCancelados.getPedidosCancelados.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+            PEDIDOS CANCELADOS
+          </h1>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha del pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de recogida
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dataCancelados.getPedidosCancelados.map((pedidos) => (
+                        <tr key={pedidos._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {pedidos._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.fechaPedido}
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                             onClick={() => {
-                              props.setPedidoUser(pedidos);
-                              changeViewProductosUser(true);
+                              pedidoId = pedidos._id;
+                              modalCambiarFechaPedidoCanceladoRecogido(
+                                pedidos.estado,
+                                "Cancelado"
+                              );
                             }}
                           >
-                            Productos
-                          </a>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                            {pedidos.fechaRecogida}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importePedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importeFreeIvaPedido}€
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                            onClick={() => {
+                              pedidoId = pedidos._id;
+                              modalCambiarEstadoPedido(
+                                pedidos.estado,
+                                pedidos.fechaRecogida
+                              );
+                            }}
+                          >
+                            {pedidos.estado}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
+                            <a
+                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                              onClick={() => {
+                                props.setPedidoUser(pedidos);
+                                changeViewProductosUser(true);
+                              }}
+                            >
+                              Productos
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
+
+      {dataRecogidos.getPedidosRecogidos.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+            PEDIDOS RECOGIDOS
+          </h1>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha del pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de recogida
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dataRecogidos.getPedidosRecogidos.map((pedidos) => (
+                        <tr key={pedidos._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {pedidos._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.fechaPedido}
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                            onClick={() => {
+                              pedidoId = pedidos._id;
+                              modalCambiarFechaPedidoCanceladoRecogido(
+                                pedidos.estado,
+                                "Recogido"
+                              );
+                            }}
+                          >
+                            {pedidos.fechaRecogida}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importePedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importeFreeIvaPedido}€
+                          </td>
+                          <td
+                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                            onClick={() => {
+                              pedidoId = pedidos._id;
+                              modalCambiarEstadoPedido(
+                                pedidos.estado,
+                                pedidos.fechaRecogida
+                              );
+                            }}
+                          >
+                            {pedidos.estado}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                              onClick={() => {
+                                props.setPedidoUser(pedidos);
+                                changeViewProductosUser(true);
+                              }}
+                            >
+                              Productos
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {dataEliminados.getPedidosEliminados.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+            PEDIDOS ELIMINADOS
+          </h1>
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de eliminación
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {dataEliminados.getPedidosEliminados.map((pedidos) => (
+                        <tr key={pedidos._id}>
+                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                            {pedidos._id}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.fechaPedido}
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importePedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.importeFreeIvaPedido}€
+                          </td>
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            {pedidos.estado}
+                          </td>
+                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <a
+                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                              onClick={() => {
+                                props.setPedidoUser(pedidos);
+                                changeViewProductosUser(true);
+                              }}
+                            >
+                              Productos
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
