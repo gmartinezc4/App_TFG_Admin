@@ -11,7 +11,10 @@ export function ContextProvider(props) {
   const [viewProductosWeb, setViewProductosWeb] = useState(false);
   const [viewMaderasWeb, setViewMaderasWeb] = useState(false);
   const [viewPerfilAdmin, setViewPerfilAdmin] = useState(false);
+  const [viewRecuperarPass1, setViewRecuperarPass1] = useState(false);
+  const [viewRecuperarPass2, setViewRecuperarPass2] = useState(false);
 
+  const [emailUserRecuperaPass, setEmailUserRecuperaPass] = useState("");
   const [enviarCorreoConfirmacion, setEnviarCorreoConfirmacion] = useState(false);
   const [volverDeProductos, setVolverDeProductos] = useState("");
   const [reload, setReload] = useState(false);
@@ -122,6 +125,18 @@ export function ContextProvider(props) {
     setViewPerfilAdmin(false);
   }
 
+  function changeEmailUserRecuperaPass(setEmail){
+    setEmailUserRecuperaPass(setEmail);
+  }
+
+  function changeViewRecuperarPass1(setView){
+    setViewRecuperarPass1(setView);
+  }
+
+  function changeViewRecuperarPass2(setView){
+    setViewRecuperarPass2(setView)
+  }
+
   function changeEnviarCorreoConfirmacion(setView){
     setEnviarCorreoConfirmacion(setView);
   }
@@ -141,7 +156,10 @@ export function ContextProvider(props) {
         viewProductosWeb,
         viewMaderasWeb,
         viewPerfilAdmin,
+        viewRecuperarPass1,
+        viewRecuperarPass2,
         
+        emailUserRecuperaPass,
         enviarCorreoConfirmacion,
         volverDeProductos,
         reload,
@@ -156,7 +174,10 @@ export function ContextProvider(props) {
         changeViewProductosWeb,
         changeViewMaderasWeb,
         changeViewPerfilAdmin,
-        
+        changeViewRecuperarPass1,
+        changeViewRecuperarPass2,
+
+        changeEmailUserRecuperaPass,
         verInicioSesion,
         changeEnviarCorreoConfirmacion,
         changeVolverDeProductos,

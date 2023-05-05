@@ -26,7 +26,7 @@ function IniciarSesion() {
   const [noHayPassword, setNoHayPassword] = useState(false);
   const [passView, setPassView] = useState(false);
 
-  const { changeReload, nivel_auth } = useContext(Context);
+  const { changeReload, changeViewRecuperarPass1 } = useContext(Context);
 
   const [login] = useMutation(LOG_IN, {
     onCompleted: (data) => {
@@ -80,9 +80,7 @@ function IniciarSesion() {
   return (
     <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
       <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
-        <h1 className="text-3xl font-semibold text-center underline">
-          ADMINISTRADOR
-        </h1>
+        <h1 className="text-3xl font-semibold text-center underline">ADMINISTRADOR</h1>
 
         {errorUserOrPasswordIncorrect && (
           <p className="flex justify-center text-red-500 text-xs italic mt-5">
@@ -98,9 +96,7 @@ function IniciarSesion() {
           }}
         >
           <div className="mb-2">
-            <label className="block text-sm font-semibold text-gray-800">
-              Email
-            </label>
+            <label className="block text-sm font-semibold text-gray-800">Email</label>
             <input
               type="email"
               value={correo}
@@ -119,7 +115,7 @@ function IniciarSesion() {
               </p>
             )}
           </div>
-          
+
           <div className="mb-2">
             <label className="block text-sm font-semibold text-gray-800">
               Contraseña
@@ -152,7 +148,14 @@ function IniciarSesion() {
               </p>
             )}
           </div>
-
+          <a
+            className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800 cursor-pointer"
+            onClick={() => {
+              changeViewRecuperarPass1(true);
+            }}
+          >
+            Ha olvidado su contraseña?
+          </a>
           <div className="mt-6">
             <button
               type="submit"

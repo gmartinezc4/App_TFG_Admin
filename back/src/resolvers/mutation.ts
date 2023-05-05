@@ -111,6 +111,108 @@ export const Mutation = {
         }
     },
 
+    forgotPassword: async (parent: any, args: { email: string }, context: { db_admin: Db }) => {
+        const db_admin = context.db_admin;
+        const email = args.email;
+        const codigo = Math.floor(Math.random() * (9999 - 1000 + 1) + 1000);
+
+        try{
+            const user = await db_admin.collection("Usuarios_admins").findOne({Email: email});
+
+            if(user){      
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    ignoreTLS: false,
+                    secure: false,
+                    auth: {
+                        user: 'maderas.cobo.cuenca@gmail.com',
+                        pass: 'fllksawjvxgrncfp'
+                    }
+                })
+
+                var mailOptions = {
+                    from: 'maderas.cobo.cuenca@gmail.com',
+                    to: email,
+                    subject: 'Enlace para recuperar su contraseña de Maderas Cobo',
+                    text: `Su codigo de recuperación es: ${codigo}`
+                };
+
+                transporter.sendMail(mailOptions, function (error: any, info: any) {
+                    if (error) {
+                        console.log(error);
+                        return error;
+                    } else {
+                        console.log('Email enviado: ' + info.response);
+                    }
+                });
+
+            }else{
+                throw new ApolloError("User not exist", "USER_NOT_EXIST")
+            }
+
+        }catch(e: any){
+            throw new ApolloError(e, e.extensions.code);
+        }
+
+        return codigo;
+    },
+
+    recuperarPass: async (parent: any, args: { email: string, password: string }, context: { db_admin: Db }) => {
+        const db_admin = context.db_admin;
+        const { email, password } = args;
+
+        try{
+            const user = await db_admin.collection("Usuarios_admins").findOne({ Email: email });
+
+            if(user){      
+
+                try{
+                    const encripted_pass = await bcrypt.hash(password, 12);
+
+                    await db_admin.collection("Usuarios_admins").updateOne({ Email: email }, { $set: { Password: encripted_pass } });
+                }catch(e: any){
+                    throw new ApolloError(e, e.extensions.code);
+                }
+
+                const transporter = nodemailer.createTransport({
+                    host: 'smtp.gmail.com',
+                    port: 587,
+                    ignoreTLS: false,
+                    secure: false,
+                    auth: {
+                        user: 'maderas.cobo.cuenca@gmail.com',
+                        pass: 'fllksawjvxgrncfp'
+                    }
+                })
+
+                var mailOptions = {
+                    from: 'maderas.cobo.cuenca@gmail.com',
+                    to: email,
+                    subject: 'Contraseña cambiada',
+                    text: `¡Su contraseña ha sido cambiada con éxito! `
+                };
+
+                transporter.sendMail(mailOptions, function (error: any, info: any) {
+                    if (error) {
+                        console.log(error);
+                        return error;
+                    } else {
+                        console.log('Email enviado: ' + info.response);
+                    }
+                });
+
+            }else{
+                throw new ApolloError("User not exist", "USER_NOT_EXIST")
+            }
+
+        }catch(e: any){
+            throw new ApolloError(e, e.extensions.code);
+        }
+
+        return password;
+    },
+
     cerrarSesion: async (parent: any, args: any, context: { db_admin: Db, userAdmin: any }) => {
         const { db_admin, userAdmin } = context;
 

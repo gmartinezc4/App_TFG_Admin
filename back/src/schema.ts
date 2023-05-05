@@ -96,6 +96,8 @@ export const typeDefs = gql`
     type Mutation{
         RegistrarAdmin(nombre: String!, apellido: String!, correo: String!, nivel_auth: String!, password: String!): UserAdmin!
         logIn(correo: String!, password: String!): UserAdmin!
+        forgotPassword(email: String!): String!
+        recuperarPass(email: String!, password: String!): String!
         cerrarSesion: Boolean!
         ChangeLvlAuth(idUser: ID!, newNivel_auth: String!): UserAdmin!
         borraUserAdmin(idUser: ID!): UserAdmin!

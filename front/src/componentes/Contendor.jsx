@@ -6,6 +6,8 @@ import MenuLateral from "./MenuLateral";
 import styled from "styled-components";
 import PantallaPrincipal from "./PantallaPrincipal";
 import Cabecera from "./Cabecera";
+import ForgotPassword from "./ForgotPassword";
+import ForgotPassword2 from "./ForgotPassword2";
 
 function Contendor() {
   const client = new ApolloClient({
@@ -14,7 +16,7 @@ function Contendor() {
   });
   //localStorage.removeItem("token");
 
-  const { token, reload } = useContext(Context);
+  const { token, reload, viewRecuperarPass1, viewRecuperarPass2 } = useContext(Context);
 
   useEffect(() => {
   }, [reload])
@@ -28,9 +30,15 @@ function Contendor() {
         </div>
 
         {!token && (
-          <ColorPantallaPrincipal>
-            <IniciarSesion />
-          </ColorPantallaPrincipal>
+          <div>
+            <ColorPantallaPrincipal>
+              {!viewRecuperarPass1 && !viewRecuperarPass2 && <IniciarSesion />}
+            </ColorPantallaPrincipal>
+            <div className="bg-gray-300 h-screen">
+              {viewRecuperarPass1 && <ForgotPassword />}
+              {viewRecuperarPass2 && <ForgotPassword2 />}
+            </div>
+          </div>
         )}
         {token && (
           <div className="flex flex-row">
