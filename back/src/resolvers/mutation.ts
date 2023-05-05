@@ -633,11 +633,22 @@ export const Mutation = {
 
                     if (pedido) {
                         if (pedido.Productos.length > 1) {
-                            pedido.Productos.map((p: any) => {
+                            pedido.Productos.map(async(p: any) => {
                                 if (p.Id_producto != id_product) {
                                     newProductos.push(p);
                                     console.log(p)
                                 }
+                                
+                                let newStock: any;
+                                const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(p.Id_producto) })
+    
+                                if (producto) {
+                                    newStock = parseInt(producto.stock) + parseInt(p.Cantidad);
+                                    await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(p.Id_producto) }, { $set: { stock: newStock.toString() } })
+                                } else {
+                                    throw new ApolloError("Ese producto no existe");
+                                }
+    
                             })
 
                             await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos } });
