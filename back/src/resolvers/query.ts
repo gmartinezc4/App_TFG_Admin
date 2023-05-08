@@ -77,8 +77,7 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -133,8 +132,7 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -316,8 +314,7 @@ export const Query = {
                         precio: u.precio,
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun producto registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -620,8 +617,7 @@ export const Query = {
                         }))
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun producto registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -893,7 +889,7 @@ export const Query = {
                         }))
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun producto registrado en la bbdd con ese filtro");
+                    return [];
                 }
             } else {
                 throw new ApolloError("Usuario no autorizado");
