@@ -169,6 +169,39 @@ const GET_PEDIDOS_ELIMINADOS = gql`
   }
 `;
 
+const GET_PEDIDOS_FILTRADOS = gql`
+  query GetPedidosFiltrados($filtro: String!, $bbdd: String!) {
+    getPedidosFiltrados(filtro: $filtro, bbdd: $bbdd) {
+      _id
+      apellido
+      ciudad
+      codigoPostal
+      direccion
+      email
+      estado
+      fechaPedido
+      fechaRecogida
+      id_user
+      importeFreeIvaPedido
+      importePedido
+      masInformacion
+      nombre
+      pais
+      telefono
+      productos {
+        _id
+        cantidad
+        id_producto
+        img
+        id_user
+        name
+        precioTotal
+        precioTotal_freeIVA
+      }
+    }
+  }
+`;
+
 const CAMBIAR_ESTADO_PEDIDO = gql`
   mutation CambiarEstadoPedido(
     $idPedido: ID!
@@ -214,6 +247,19 @@ const CAMBIAR_ESTADO_PEDIDO = gql`
 
 function AllPedidos(props) {
   let pedidoId = "";
+
+const [buscarPedidosActivos, setBuscarPedidosActivos] = useState("");
+const [buscarPedidosActivosAux, setBuscarPedidosActivosAux] = useState("");
+const [buscarPedidosPendientes, setBuscarPedidosPendientes] = useState("");
+const [buscarPedidosPendientesAux, setBuscarPedidosPendientesAux] = useState("");
+const [buscarPedidosCancelados, setBuscarPedidosCancelados] = useState("");
+const [buscarPedidosCanceladosAux, setBuscarPedidosCanceladosAux] = useState("");
+const [buscarPedidosRecogidos, setBuscarPedidosRecogidos] = useState("");
+const [buscarPedidosRecogidosAux, setBuscarPedidosRecogidosAux] = useState("");
+const [buscarPedidosEliminados, setBuscarPedidosEliminados] = useState("");
+const [buscarPedidosEliminadosAux, setBuscarPedidosEliminadosAux] = useState("");
+const [bbddFiltro, setBbddFiltro] = useState("");
+
 
   useEffect(() => {
     changeVolverDeProductos("AllPedidos");
@@ -306,7 +352,7 @@ function AllPedidos(props) {
   const {
     data: dataEliminados,
     loading: loadingEliminados,
-    error: erroEliminados,
+    error: errorEliminados,
   } = useQuery(GET_PEDIDOS_ELIMINADOS, {
     context: {
       headers: {
@@ -314,6 +360,23 @@ function AllPedidos(props) {
       },
     },
   });
+
+  const {
+    data: dataFiltrados,
+    loading: loadingFiltrados,
+    error: errorFiltrados,
+  } = useQuery(GET_PEDIDOS_FILTRADOS, {
+    context: {
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    },
+    variables: {
+      filtro: buscarPedidosActivos,
+      bbdd: bbddFiltro,
+    }
+  });
+
 
   if (loadingRecogidos) return <div></div>;
   if (errorRecogidos) return console.log(errorRecogidos);
@@ -328,7 +391,10 @@ function AllPedidos(props) {
   if (errorCancelados) return console.log(errorCancelados);
 
   if (loadingEliminados) return <div></div>;
-  if (erroEliminados) return console.log(erroEliminados);
+  if (errorEliminados) return console.log(errorEliminados);
+
+  if (loadingFiltrados) return <div></div>;
+  if (errorFiltrados) console.log(errorFiltrados);
 
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
@@ -594,6 +660,44 @@ function AllPedidos(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5">
             PEDIDOS ACTIVOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosActivosAux}
+                onChange={(e) => {
+                  setBuscarPedidosActivosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Activos");
+                  setBuscarPedidosActivos(buscarPedidosActivosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -652,69 +756,135 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataActivos.getPedidosActivos.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarFechaPedidoActivo(
-                                pedidos.estado,
-                                "Activo",
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(
-                                pedidos.estado,
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
-                              onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
-                              }}
-                            >
-                              Productos
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                      {!buscarPedidosActivos &&
+                        dataActivos.getPedidosActivos.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCancelarPedido(pedidos.estado);
+                                modalCambiarFechaPedidoActivo(
+                                  pedidos.estado,
+                                  "Activo",
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
-                              Cancelar pedido
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosActivos &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoActivo(
+                                  pedidos.estado,
+                                  "Activo",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -729,6 +899,44 @@ function AllPedidos(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS PENDIENTES DE RECOGER
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosPendientesAux}
+                onChange={(e) => {
+                  setBuscarPedidosPendientesAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Pendientes");
+                  setBuscarPedidosPendientes(buscarPedidosPendientesAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -787,69 +995,135 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataPendientes.getPedidosPendientes.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarFechaPedidoPendiente(
-                                pedidos.estado,
-                                "Pendiente",
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(
-                                pedidos.estado,
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
-                              onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
-                              }}
-                            >
-                              Productos
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                      {!buscarPedidosPendientes &&
+                        dataPendientes.getPedidosPendientes.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCancelarPedido(pedidos.estado);
+                                modalCambiarFechaPedidoPendiente(
+                                  pedidos.estado,
+                                  "Pendiente",
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
-                              Cancelar pedido
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosPendientes &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoPendiente(
+                                  pedidos.estado,
+                                  "Pendiente",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer underline"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -864,6 +1138,44 @@ function AllPedidos(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS CANCELADOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de cancelación..."
+                value={buscarPedidosCanceladosAux}
+                onChange={(e) => {
+                  setBuscarPedidosCanceladosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Cancelados");
+                  setBuscarPedidosCancelados(buscarPedidosCanceladosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -887,7 +1199,7 @@ function AllPedidos(props) {
                           scope="col"
                           className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          Fecha de recogida
+                          Fecha de cancelación
                         </th>
                         <th
                           scope="col"
@@ -916,57 +1228,111 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataCancelados.getPedidosCancelados.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarFechaPedidoCanceladoRecogido(
-                                pedidos.estado,
-                                "Cancelado"
-                              );
-                            }}
-                          >
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(
-                                pedidos.estado,
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                      {!buscarPedidosCancelados &&
+                        dataCancelados.getPedidosCancelados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                               onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoCanceladoRecogido(
+                                  pedidos.estado,
+                                  "Cancelado"
+                                );
                               }}
                             >
-                              Productos
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosCancelados &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoCanceladoRecogido(
+                                  pedidos.estado,
+                                  "Cancelado"
+                                );
+                              }}
+                            >
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -981,6 +1347,44 @@ function AllPedidos(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS RECOGIDOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosRecogidosAux}
+                onChange={(e) => {
+                  setBuscarPedidosRecogidosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Recogidos");
+                  setBuscarPedidosRecogidos(buscarPedidosRecogidosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1033,57 +1437,111 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataRecogidos.getPedidosRecogidos.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarFechaPedidoCanceladoRecogido(
-                                pedidos.estado,
-                                "Recogido"
-                              );
-                            }}
-                          >
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(
-                                pedidos.estado,
-                                pedidos.fechaRecogida
-                              );
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                      {!buscarPedidosRecogidos &&
+                        dataRecogidos.getPedidosRecogidos.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
                               onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoCanceladoRecogido(
+                                  pedidos.estado,
+                                  "Recogido"
+                                );
                               }}
                             >
-                              Productos
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosRecogidos &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoCanceladoRecogido(
+                                  pedidos.estado,
+                                  "Recogido"
+                                );
+                              }}
+                            >
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -1098,6 +1556,44 @@ function AllPedidos(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS ELIMINADOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de eliminación..."
+                value={buscarPedidosEliminadosAux}
+                onChange={(e) => {
+                  setBuscarPedidosEliminadosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Eliminados");
+                  setBuscarPedidosEliminados(buscarPedidosEliminadosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1144,36 +1640,69 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataEliminados.getPedidosEliminados.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                              onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
-                              }}
-                            >
-                              Productos
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                      {!buscarPedidosEliminados &&
+                        dataEliminados.getPedidosEliminados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosEliminados &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>

@@ -77,8 +77,7 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -133,8 +132,7 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun usuario administrador registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -316,8 +314,7 @@ export const Query = {
                         precio: u.precio,
                     }))
                 } else {
-                    throw new ApolloError("No hay ningun producto registrado en la bbdd con ese filtro");
-                }
+                    return [];                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -565,6 +562,72 @@ export const Query = {
         }
     },
 
+    getPedidosFiltradosUser: async (parent: any, args: { filtro: string, bbdd: string, id_user: string }, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const { filtro, bbdd, id_user } = args;
+
+        try {
+
+            if (userAdmin) {
+                let filtradosFecha: any;
+
+                if (bbdd == "Pedidos_Activos")
+                    filtradosFecha = await db.collection("Pedidos_Activos").find({ FechaRecogida: { $eq: filtro.toString() }, Id_user: { $eq: id_user } }).toArray();
+
+                if (bbdd == "Pedidos_Pendientes")
+                    filtradosFecha = await db.collection("Pedidos_Pendientes").find({ FechaRecogida: { $eq: filtro.toString() }, Id_user: { $eq: id_user } }).toArray();
+
+                if (bbdd == "Pedidos_Cancelados")
+                    filtradosFecha = await db.collection("Pedidos_Cancelados").find({ FechaRecogida: { $eq: filtro.toString() }, Id_user: { $eq: id_user } }).toArray();
+
+                if (bbdd == "Pedidos_Recogidos")
+                    filtradosFecha = await db.collection("Pedidos_Recogidos").find({ FechaRecogida: { $eq: filtro.toString() }, Id_user: { $eq: id_user } }).toArray();
+
+                if (bbdd == "Pedidos_Eliminados")
+                    filtradosFecha = await db.collection("Pedidos_Eliminados").find({ FechaRecogida: { $eq: filtro.toString() }, Id_user: { $eq: id_user } }).toArray();
+
+
+                if (filtradosFecha) {
+                    return filtradosFecha.map((p: any) => ({
+                        _id: p._id,
+                        id_user: p.Id_user,
+                        estado: p.Estado,
+                        nombre: p.Nombre,
+                        apellido: p.Apellido,
+                        email: p.Email,
+                        telefono: p.Telefono,
+                        direccion: p.Direccion,
+                        masInformacion: p.MasInformacion,
+                        codigoPostal: p.CodigoPostal,
+                        ciudad: p.Ciudad,
+                        pais: p.Pais,
+                        fechaPedido: p.FechaPedido,
+                        fechaRecogida: p.FechaRecogida,
+                        importePedido: p.ImportePedido,
+                        importeFreeIvaPedido: p.ImporteFreeIvaPedido,
+                        productos: p.Productos.map((e: any) => ({
+                            _id: e._id.toString(),
+                            id_user: e.Id_user,
+                            id_producto: e.Id_producto,
+                            img: e.Img,
+                            name: e.Name,
+                            cantidad: e.Cantidad,
+                            precioTotal: e.PrecioTotal,
+                            precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                        }))
+                    }))
+                } else {
+                    return [];                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
     getPedidosRecogidos: async (parent: any, args: any, context: { db: Db, userAdmin: any }) => {
         const { db, userAdmin } = context;
 
@@ -744,7 +807,7 @@ export const Query = {
             if (userAdmin) {
                 const pedidos = await db.collection("Pedidos_Eliminados").find().toArray();
 
-                return pedidos.map(p => ({
+                return pedidos.map((p: any) => ({
                     _id: p._id,
                     id_user: p.Id_user,
                     estado: p.Estado,
@@ -775,6 +838,64 @@ export const Query = {
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
+        } catch (e: any) {
+            throw new ApolloError(e, e.extensions.code);
+        }
+    },
+
+    getPedidosFiltrados: async (parent: any, args: { filtro: string, bbdd: string }, context: { db: Db, userAdmin: any }) => {
+        const { db, userAdmin } = context;
+        const { filtro, bbdd } = args;
+
+        try {
+
+            if (userAdmin) {
+                let filtradosFecha: any;
+                
+                if(bbdd == "Pedidos_Activos") filtradosFecha = await db.collection("Pedidos_Activos").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+                if(bbdd == "Pedidos_Pendientes") filtradosFecha = await db.collection("Pedidos_Pendientes").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+                if(bbdd == "Pedidos_Cancelados") filtradosFecha = await db.collection("Pedidos_Cancelados").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+                if(bbdd == "Pedidos_Recogidos") filtradosFecha = await db.collection("Pedidos_Recogidos").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+                if(bbdd == "Pedidos_Eliminados") filtradosFecha = await db.collection("Pedidos_Eliminados").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+
+
+                if (filtradosFecha) {
+                    return filtradosFecha.map((p: any) => ({
+                        _id: p._id,
+                        id_user: p.Id_user,
+                        estado: p.Estado,
+                        nombre: p.Nombre,
+                        apellido: p.Apellido,
+                        email: p.Email,
+                        telefono: p.Telefono,
+                        direccion: p.Direccion,
+                        masInformacion: p.MasInformacion,
+                        codigoPostal: p.CodigoPostal,
+                        ciudad: p.Ciudad,
+                        pais: p.Pais,
+                        fechaPedido: p.FechaPedido,
+                        fechaRecogida: p.FechaRecogida,
+                        importePedido: p.ImportePedido,
+                        importeFreeIvaPedido: p.ImporteFreeIvaPedido,
+                        productos: p.Productos.map((e: any) => ({
+                            _id: e._id.toString(),
+                            id_user: e.Id_user,
+                            id_producto: e.Id_producto,
+                            img: e.Img,
+                            name: e.Name,
+                            cantidad: e.Cantidad,
+                            precioTotal: e.PrecioTotal,
+                            precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                        }))
+                    }))
+                } else {
+                    return [];
+                }
+            } else {
+                throw new ApolloError("Usuario no autorizado");
+            }
+
+
         } catch (e: any) {
             throw new ApolloError(e, e.extensions.code);
         }

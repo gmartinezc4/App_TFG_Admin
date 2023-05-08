@@ -102,6 +102,39 @@ const GET_PEDIDOS_PENDIENTES_USER = gql`
   }
 `;
 
+const GET_PEDIDOS_FILTRADOS_USER = gql`
+  query GetPedidosFiltradosUser($filtro: String!, $bbdd: String!, $idUser: String!) {
+    getPedidosFiltradosUser(filtro: $filtro, bbdd: $bbdd, id_user: $idUser) {
+      _id
+      apellido
+      ciudad
+      codigoPostal
+      direccion
+      email
+      estado
+      fechaPedido
+      fechaRecogida
+      id_user
+      importeFreeIvaPedido
+      importePedido
+      masInformacion
+      nombre
+      pais
+      telefono
+      productos {
+        _id
+        cantidad
+        id_producto
+        img
+        id_user
+        name
+        precioTotal
+        precioTotal_freeIVA
+      }
+    }
+  }
+`;
+
 const GET_PEDIDOS_CANCELADOS_USER = gql`
   query Query($idUser: ID!) {
     getPedidosCanceladosUser(id_user: $idUser) {
@@ -174,6 +207,16 @@ const CAMBIAR_ESTADO_PEDIDO = gql`
 
 function PedidosUser(props) {
   let pedidoId = "";
+
+  const [buscarPedidosActivos, setBuscarPedidosActivos] = useState("");
+  const [buscarPedidosActivosAux, setBuscarPedidosActivosAux] = useState("");
+  const [buscarPedidosPendientes, setBuscarPedidosPendientes] = useState("");
+  const [buscarPedidosPendientesAux, setBuscarPedidosPendientesAux] = useState("");
+  const [buscarPedidosCancelados, setBuscarPedidosCancelados] = useState("");
+  const [buscarPedidosCanceladosAux, setBuscarPedidosCanceladosAux] = useState("");
+  const [buscarPedidosRecogidos, setBuscarPedidosRecogidos] = useState("");
+  const [buscarPedidosRecogidosAux, setBuscarPedidosRecogidosAux] = useState("");
+  const [bbddFiltro, setBbddFiltro] = useState("");
 
   useEffect(() => {
     changeVolverDeProductos("PedidosUser");
@@ -276,6 +319,23 @@ function PedidosUser(props) {
     },
   });
 
+  const {
+    data: dataFiltrados,
+    loading: loadingFiltrados,
+    error: errorFiltrados,
+  } = useQuery(GET_PEDIDOS_FILTRADOS_USER, {
+    context: {
+      headers: {
+        authorization: localStorage.getItem("token"),
+      },
+    },
+    variables: {
+      filtro: buscarPedidosActivos,
+      bbdd: bbddFiltro,
+      idUser: props.idUser,
+    },
+  });
+
   if (loadingRecogidos) return <div></div>;
   if (errorRecogidos) return console.log(errorRecogidos);
 
@@ -287,6 +347,9 @@ function PedidosUser(props) {
 
   if (loadingCancelados) return <div></div>;
   if (errorCancelados) return console.log(errorCancelados);
+
+  if (loadingFiltrados) return <div></div>;
+  if (errorFiltrados) console.log(errorFiltrados);
 
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
@@ -432,6 +495,44 @@ function PedidosUser(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS ACTIVOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosActivosAux}
+                onChange={(e) => {
+                  setBuscarPedidosActivosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Activos");
+                  setBuscarPedidosActivos(buscarPedidosActivosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -490,56 +591,109 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataActivos.getPedidosActivosUser.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(pedidos.estado);
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                              onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
-                              }}
-                            >
-                              Productos
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-red-500 hover:text-red-600 cursor-pointer"
+                      {!buscarPedidosActivos &&
+                        dataActivos.getPedidosActivosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCancelarPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado);
                               }}
                             >
-                              Cancelar pedido
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosActivos &&
+                        dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -554,6 +708,44 @@ function PedidosUser(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS PENDIENTES DE RECOGER
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosPendientesAux}
+                onChange={(e) => {
+                  setBuscarPedidosPendientesAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Pendientes");
+                  setBuscarPedidosPendientes(buscarPedidosPendientesAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+          
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -612,56 +804,109 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataPendientes.getPedidosPendientesUser.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(pedidos.estado);
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                              onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
-                              }}
-                            >
-                              Productos
-                            </a>
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-red-500 hover:text-red-600 cursor-pointer"
+                      {!buscarPedidosPendientes &&
+                        dataPendientes.getPedidosPendientesUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCancelarPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado);
                               }}
                             >
-                              Cancelar pedido
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosPendientes &&
+                        dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                onClick={() => {
+                                  pedidoId = pedidos._id;
+                                  modalCancelarPedido(pedidos.estado);
+                                }}
+                              >
+                                Cancelar pedido
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -676,6 +921,44 @@ function PedidosUser(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS CANCELADOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de cancelación..."
+                value={buscarPedidosCanceladosAux}
+                onChange={(e) => {
+                  setBuscarPedidosCanceladosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Cancelados");
+                  setBuscarPedidosCancelados(buscarPedidosCanceladosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+          
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -728,45 +1011,87 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataCancelados.getPedidosCanceladosUser.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(pedidos.estado);
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                      {!buscarPedidosCancelados &&
+                        dataCancelados.getPedidosCanceladosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
                               }}
                             >
-                              Productos
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosCancelados &&
+                        dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
@@ -781,6 +1106,44 @@ function PedidosUser(props) {
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS RECOGIDOS
           </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de recogida..."
+                value={buscarPedidosRecogidosAux}
+                onChange={(e) => {
+                  setBuscarPedidosRecogidosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Recogidos");
+                  setBuscarPedidosRecogidos(buscarPedidosRecogidosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -833,45 +1196,87 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {dataRecogidos.getPedidosRecogidosUser.map((pedidos) => (
-                        <tr key={pedidos._id}>
-                          <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                            {pedidos._id}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaPedido}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.fechaRecogida}
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importePedido}€
-                          </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {pedidos.importeFreeIvaPedido}€
-                          </td>
-                          <td
-                            className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                            onClick={() => {
-                              pedidoId = pedidos._id;
-                              modalCambiarEstadoPedido(pedidos.estado);
-                            }}
-                          >
-                            {pedidos.estado}
-                          </td>
-                          <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                            <a
-                              className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                      {!buscarPedidosRecogidos &&
+                        dataRecogidos.getPedidosRecogidosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
-                                props.setPedidoUser(pedidos);
-                                changeViewProductosUser(true);
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
                               }}
                             >
-                              Productos
-                            </a>
-                          </td>
-                        </tr>
-                      ))}
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosRecogidos &&
+                        dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(pedidos.estado);
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
                     </tbody>
                   </table>
                 </div>
