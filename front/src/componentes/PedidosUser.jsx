@@ -169,11 +169,17 @@ const GET_PEDIDOS_CANCELADOS_USER = gql`
 `;
 
 const CAMBIAR_ESTADO_PEDIDO = gql`
-  mutation Mutation($idPedido: ID!, $oldEstado: String!, $newEstado: String!) {
+  mutation CambiarEstadoPedido(
+    $idPedido: ID!
+    $oldEstado: String!
+    $newEstado: String!
+    $newFechaRecogida: String!
+  ) {
     cambiarEstadoPedido(
       id_pedido: $idPedido
       oldEstado: $oldEstado
       newEstado: $newEstado
+      newFechaRecogida: $newFechaRecogida
     ) {
       _id
       apellido
@@ -242,7 +248,7 @@ function PedidosUser(props) {
         timer: 1000,
       }).then(() => {
         props.setPedidoUser(data.cambiarEstadoPedido);
-        changeEnviarCorreoConfirmacion(true);
+        //changeEnviarCorreoConfirmacion(true);
       });
     },
     onError: (error) => {
@@ -377,8 +383,8 @@ function PedidosUser(props) {
     });
   }
 
-  async function modalCambiarEstadoPedido(estadoActual) {
-    const { value: estado } = await Swal.fire({
+  async function modalCambiarEstadoPedido(estadoActual, fechaReferencia) {
+    const { value: newEstado } = await Swal.fire({
       title: "Nuevo estado del pedido",
       input: "select",
       inputOptions: {
@@ -393,7 +399,7 @@ function PedidosUser(props) {
       cancelButtonColor: "#DF0000",
     });
 
-    if (estado == estadoActual) {
+    if (newEstado == estadoActual) {
       Swal.fire({
         position: "center",
         icon: "error",
@@ -404,21 +410,202 @@ function PedidosUser(props) {
       }).then(() => {
         modalCambiarEstadoPedido(estadoActual);
       });
-    } else if (estado) {
-      cambiarEstadoPedido({
-        context: {
-          headers: {
-            authorization: localStorage.getItem("token"),
+    } else if (newEstado) {
+      if (newEstado == "Cancelado") {
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
           },
-        },
-        variables: {
-          idPedido: pedidoId,
-          oldEstado: estadoActual,
-          newEstado: estado,
-        },
-      });
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: "",
+          },
+        });
+      } else if (newEstado == "Recogido") {
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: "",
+          },
+        });
+      } else if (estadoActual == "Activo")
+        modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
+      else if (estadoActual == "Pendiente")
+        modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
+      else if (estadoActual == "Cancelado" || estadoActual == "Recogido")
+        modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+    }
+  }
 
-      pedidoId = "";
+  async function modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia) {
+    let fecha = new Date();
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva fecha de recogida",
+      text: `Estimación dada: ${fechaReferencia}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+
+    if (newFechaRecogida != undefined) {
+      if (new Date(newFechaRecogida) <= new Date()) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La fecha de entrega ha de ser superior a hoy",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia);
+        });
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        }).then(() => {
+          pedidoId = "";
+        });
+      }
+    }
+  }
+
+  async function modalCambiarFechaPedidoPendiente(
+    estadoActual,
+    newEstado,
+    fechaReferencia
+  ) {
+    let fecha = new Date();
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva estimación de recogida",
+      text: `Antigua fecha de entrega: ${fechaReferencia}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+
+    if (newFechaRecogida != undefined) {
+      console.log("n f " + newFechaRecogida);
+      console.log("f ref " + fechaReferencia);
+      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La nueva estimación de entrega ha de ser mayor",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
+        });
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        }).then(() => {
+          pedidoId = "";
+        });
+      }
+    }
+  }
+
+  async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
+    let fecha = new Date();
+    let fechaHoy =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+    let fechaMañana =
+      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
+
+    const { value: newFechaRecogida } = await Swal.fire({
+      title: "Nueva fecha o estimación de recogida",
+      text: `Estimación dada: ${fechaHoy}`,
+      input: "text",
+      inputValue: fechaMañana,
+      showCancelButton: true,
+      confirmButtonText: "Confirmar",
+      confirmButtonColor: "#3BD630",
+      cancelButtonColor: "#DF0000",
+    });
+
+    if (newFechaRecogida != undefined) {
+      if (new Date(newFechaRecogida) <= new Date()) {
+        console.log("fecha incorrecta");
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Fecha Invalida",
+          text: "La fecha de entrega ha de ser superior a hoy",
+          showConfirmButton: false,
+          timer: 2000,
+        }).then(() => {
+          modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+        });
+      } else {
+        console.log(newFechaRecogida);
+
+        cambiarEstadoPedido({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idPedido: pedidoId,
+            oldEstado: estadoActual,
+            newEstado: newEstado,
+            newFechaRecogida: newFechaRecogida,
+          },
+        }).then(() => {
+          pedidoId = "";
+        });
+      }
     }
   }
 
