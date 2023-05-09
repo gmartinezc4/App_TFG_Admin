@@ -376,6 +376,7 @@ function PedidosUser(props) {
             idPedido: pedidoId,
             oldEstado: estadoActual,
             newEstado: "Cancelado",
+            newFechaRecogida: "",
           },
         });
       }
@@ -411,21 +412,7 @@ function PedidosUser(props) {
         modalCambiarEstadoPedido(estadoActual);
       });
     } else if (newEstado) {
-      if (newEstado == "Cancelado") {
-        cambiarEstadoPedido({
-          context: {
-            headers: {
-              authorization: localStorage.getItem("token"),
-            },
-          },
-          variables: {
-            idPedido: pedidoId,
-            oldEstado: estadoActual,
-            newEstado: newEstado,
-            newFechaRecogida: "",
-          },
-        });
-      } else if (newEstado == "Recogido") {
+      if (newEstado == "Recogido") {
         cambiarEstadoPedido({
           context: {
             headers: {
@@ -787,14 +774,24 @@ function PedidosUser(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoActivo(
+                                  pedidos.estado,
+                                  "Activo",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -839,14 +836,24 @@ function PedidosUser(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoActivo(
+                                  pedidos.estado,
+                                  "Activo",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -932,7 +939,7 @@ function PedidosUser(props) {
               </button>
             </div>
           </div>
-          
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1000,14 +1007,24 @@ function PedidosUser(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoPendiente(
+                                  pedidos.estado,
+                                  "Pendiente",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -1052,14 +1069,24 @@ function PedidosUser(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarFechaPedidoPendiente(
+                                  pedidos.estado,
+                                  "Pendiente",
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -1145,7 +1172,7 @@ function PedidosUser(props) {
               </button>
             </div>
           </div>
-          
+
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1169,7 +1196,7 @@ function PedidosUser(props) {
                           scope="col"
                           className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
                         >
-                          Fecha de recogida
+                          Fecha de cancelación
                         </th>
                         <th
                           scope="col"
@@ -1214,7 +1241,7 @@ function PedidosUser(props) {
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -1255,7 +1282,7 @@ function PedidosUser(props) {
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -1399,7 +1426,7 @@ function PedidosUser(props) {
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
@@ -1440,7 +1467,7 @@ function PedidosUser(props) {
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"

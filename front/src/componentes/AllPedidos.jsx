@@ -451,21 +451,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
         modalCambiarEstadoPedido(estadoActual);
       });
     } else if (newEstado) {
-      if (newEstado == "Cancelado") {
-        cambiarEstadoPedido({
-          context: {
-            headers: {
-              authorization: localStorage.getItem("token"),
-            },
-          },
-          variables: {
-            idPedido: pedidoId,
-            oldEstado: estadoActual,
-            newEstado: newEstado,
-            newFechaRecogida: "",
-          },
-        });
-      } else if (newEstado == "Recogido") {
+      if (newEstado == "Recogido") {
         cambiarEstadoPedido({
           context: {
             headers: {
@@ -598,14 +584,12 @@ const [bbddFiltro, setBbddFiltro] = useState("");
 
   async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
-    let fechaHoy =
-      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
     let fechaMañana =
       fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
     const { value: newFechaRecogida } = await Swal.fire({
       title: "Nueva fecha o estimación de recogida",
-      text: `Estimación dada: ${fechaHoy}`,
+      text: `Fecha mínima: ${fechaMañana}`,
       input: "text",
       inputValue: fechaMañana,
       showCancelButton: true,
@@ -782,7 +766,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -847,7 +831,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1021,7 +1005,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1086,7 +1070,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1238,14 +1222,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.fechaPedido}
                             </td>
                             <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Cancelado"
-                                );
-                              }}
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
                             >
                               {pedidos.fechaRecogida}
                             </td>
@@ -1253,7 +1230,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1291,14 +1268,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.fechaPedido}
                             </td>
                             <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Cancelado"
-                                );
-                              }}
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
                             >
                               {pedidos.fechaRecogida}
                             </td>
@@ -1306,7 +1276,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1447,14 +1417,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.fechaPedido}
                             </td>
                             <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Recogido"
-                                );
-                              }}
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
                             >
                               {pedidos.fechaRecogida}
                             </td>
@@ -1462,7 +1425,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1500,14 +1463,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.fechaPedido}
                             </td>
                             <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Recogido"
-                                );
-                              }}
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
                             >
                               {pedidos.fechaRecogida}
                             </td>
@@ -1515,17 +1471,10 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(
-                                  pedidos.estado,
-                                  pedidos.fechaRecogida
-                                );
-                              }}
                             >
                               {pedidos.estado}
                             </td>
@@ -1653,7 +1602,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
@@ -1685,7 +1634,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
