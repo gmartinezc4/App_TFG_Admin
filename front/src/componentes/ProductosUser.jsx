@@ -138,6 +138,8 @@ function ProductosUser(props) {
     });
   }
 
+  console.log(props.pedidoUser)
+
   return (
     <div>
       {volverDeProductos == "AllPedidos" && (
@@ -220,7 +222,7 @@ function ProductosUser(props) {
         </div>
       </div>
 
-      {props.pedidoUser.estado != "Eliminado" && (
+      {(props.pedidoUser.estado == "Activo" || props.pedidoUser.estado == "Pendiente") && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PRODUCTOS PEDIDO
@@ -286,7 +288,7 @@ function ProductosUser(props) {
                             {producto.precioTotal}€
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {producto.precioTotal_freeIVA}€
+                            {producto.precioTotal_freeIVA.substr(0,5)}€
                           </td>
                           <td className="px-6 py-3 text-sm font-medium whitespace-nowrap">
                             <a
@@ -312,7 +314,7 @@ function ProductosUser(props) {
         </div>
       )}
 
-      {props.pedidoUser.estado == "Eliminado" && (
+      {props.pedidoUser.estado != "Activo" && props.pedidoUser.estado != "Pendiente" && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PRODUCTOS PEDIDO
@@ -372,7 +374,7 @@ function ProductosUser(props) {
                             {producto.precioTotal}€
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                            {producto.precioTotal_freeIVA}€
+                            {producto.precioTotal_freeIVA.substr(0,5)}€
                           </td>
                         </tr>
                       ))}
