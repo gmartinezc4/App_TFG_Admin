@@ -248,7 +248,7 @@ function PedidosUser(props) {
         timer: 1000,
       }).then(() => {
         props.setPedidoUser(data.cambiarEstadoPedido);
-        //changeEnviarCorreoConfirmacion(true);
+        changeEnviarCorreoConfirmacion(true);
       });
     },
     onError: (error) => {
