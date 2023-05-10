@@ -236,45 +236,19 @@ export const Mutation = {
                     })
 
                     pRecogidos.map(async (a) => {
-                        a.Productos.map(async (e: any) => {
-                            let newStock: any;
-                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
-
-                            if (producto) {
-                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
-                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
-                            } else {
-                                throw new ApolloError("Ese producto no existe");
-                            }
-
-                            productos = a.Productos;
-
-                            productos.map((e: any) => {
-                                e.Id_user = "usuario eliminado";
-                            })
-
+                        productos = a.Productos;
+                        productos.map((e: any) => {
+                            e.Id_user = "usuario eliminado";
                         })
+
                         await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: fechaEliminación, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: a.Productos })
                     })
 
                     pCancelados.map(async (a) => {
-                        a.Productos.map(async (e: any) => {
-                            let newStock: any;
-                            const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) })
+                        productos = a.Productos;
 
-                            if (producto) {
-                                newStock = parseInt(producto.stock) + parseInt(e.Cantidad);
-                                await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(e.Id_producto) }, { $set: { stock: newStock.toString() } })
-                            } else {
-                                throw new ApolloError("Ese producto no existe");
-                            }
-
-                            productos = a.Productos;
-
-                            productos.map((e: any) => {
-                                e.Id_user = "usuario eliminado";
-                            })
-
+                        productos.map((e: any) => {
+                            e.Id_user = "usuario eliminado";
                         })
                         await db.collection("Pedidos_Eliminados").insertOne({ Id_user: "usuario eliminado", Estado: "Eliminado", Nombre: a.Nombre, Apellido: a.Apellido, Email: a.Email, Telefono: a.Telefono, Direccion: a.Direccion, MasInformacion: a.MasInformacion, CodigoPostal: a.CodigoPostal, Ciudad: a.Ciudad, Pais: a.Pais, FechaPedido: fechaEliminación, FechaRecogida: "", ImportePedido: a.ImportePedido, ImporteFreeIvaPedido: a.ImporteFreeIvaPedido, Productos: a.Productos })
                     })
@@ -633,22 +607,22 @@ export const Mutation = {
 
                     if (pedido) {
                         if (pedido.Productos.length > 1) {
-                            pedido.Productos.map(async(p: any) => {
+                            pedido.Productos.map(async (p: any) => {
                                 if (p.Id_producto != id_product) {
                                     newProductos.push(p);
                                     console.log(p)
                                 }
-                                
+
                                 let newStock: any;
                                 const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(p.Id_producto) })
-    
+
                                 if (producto) {
                                     newStock = parseInt(producto.stock) + parseInt(p.Cantidad);
                                     await db.collection("Productos_Venta").updateOne({ _id: new ObjectId(p.Id_producto) }, { $set: { stock: newStock.toString() } })
                                 } else {
                                     throw new ApolloError("Ese producto no existe");
                                 }
-    
+
                             })
 
                             await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos } });
@@ -717,11 +691,11 @@ export const Mutation = {
                     const fecha = new Date();
 
 
-                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos"; 
-                      
+                    if (newEstado == "Activo") newBbdd = "Pedidos_Activos";
+
                     if (newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
 
-                    if (newEstado == "Cancelado"){ 
+                    if (newEstado == "Cancelado") {
                         newBbdd = "Pedidos_Cancelados"
                         newFechaRecogida = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
                     }
