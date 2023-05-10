@@ -249,6 +249,8 @@ function RegistrarAdmin() {
                   ? "block w-full px-4 py-2 mt-2 bg-white border rounded-md border-red-500"
                   : "block w-full px-4 py-2 mt-2 bg-white border rounded-md"
               }
+              maxLength={1}
+              max={2}
             />
 
             {noHayNivelAuth && (
