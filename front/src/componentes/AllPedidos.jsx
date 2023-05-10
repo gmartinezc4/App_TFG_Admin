@@ -248,18 +248,17 @@ const CAMBIAR_ESTADO_PEDIDO = gql`
 function AllPedidos(props) {
   let pedidoId = "";
 
-const [buscarPedidosActivos, setBuscarPedidosActivos] = useState("");
-const [buscarPedidosActivosAux, setBuscarPedidosActivosAux] = useState("");
-const [buscarPedidosPendientes, setBuscarPedidosPendientes] = useState("");
-const [buscarPedidosPendientesAux, setBuscarPedidosPendientesAux] = useState("");
-const [buscarPedidosCancelados, setBuscarPedidosCancelados] = useState("");
-const [buscarPedidosCanceladosAux, setBuscarPedidosCanceladosAux] = useState("");
-const [buscarPedidosRecogidos, setBuscarPedidosRecogidos] = useState("");
-const [buscarPedidosRecogidosAux, setBuscarPedidosRecogidosAux] = useState("");
-const [buscarPedidosEliminados, setBuscarPedidosEliminados] = useState("");
-const [buscarPedidosEliminadosAux, setBuscarPedidosEliminadosAux] = useState("");
-const [bbddFiltro, setBbddFiltro] = useState("");
-
+  const [buscarPedidosActivos, setBuscarPedidosActivos] = useState("");
+  const [buscarPedidosActivosAux, setBuscarPedidosActivosAux] = useState("");
+  const [buscarPedidosPendientes, setBuscarPedidosPendientes] = useState("");
+  const [buscarPedidosPendientesAux, setBuscarPedidosPendientesAux] = useState("");
+  const [buscarPedidosCancelados, setBuscarPedidosCancelados] = useState("");
+  const [buscarPedidosCanceladosAux, setBuscarPedidosCanceladosAux] = useState("");
+  const [buscarPedidosRecogidos, setBuscarPedidosRecogidos] = useState("");
+  const [buscarPedidosRecogidosAux, setBuscarPedidosRecogidosAux] = useState("");
+  const [buscarPedidosEliminados, setBuscarPedidosEliminados] = useState("");
+  const [buscarPedidosEliminadosAux, setBuscarPedidosEliminadosAux] = useState("");
+  const [bbddFiltro, setBbddFiltro] = useState("");
 
   useEffect(() => {
     changeVolverDeProductos("AllPedidos");
@@ -374,9 +373,8 @@ const [bbddFiltro, setBbddFiltro] = useState("");
     variables: {
       filtro: buscarPedidosActivos,
       bbdd: bbddFiltro,
-    }
+    },
   });
-
 
   if (loadingRecogidos) return <div></div>;
   if (errorRecogidos) return console.log(errorRecogidos);
@@ -451,21 +449,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
         modalCambiarEstadoPedido(estadoActual);
       });
     } else if (newEstado) {
-      if (newEstado == "Cancelado") {
-        cambiarEstadoPedido({
-          context: {
-            headers: {
-              authorization: localStorage.getItem("token"),
-            },
-          },
-          variables: {
-            idPedido: pedidoId,
-            oldEstado: estadoActual,
-            newEstado: newEstado,
-            newFechaRecogida: "",
-          },
-        });
-      } else if (newEstado == "Recogido") {
+      if (newEstado == "Recogido") {
         cambiarEstadoPedido({
           context: {
             headers: {
@@ -598,14 +582,12 @@ const [bbddFiltro, setBbddFiltro] = useState("");
 
   async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
-    let fechaHoy =
-      fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
     let fechaMañana =
       fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
 
     const { value: newFechaRecogida } = await Swal.fire({
       title: "Nueva fecha o estimación de recogida",
-      text: `Estimación dada: ${fechaHoy}`,
+      text: `Fecha mínima: ${fechaMañana}`,
       input: "text",
       inputValue: fechaMañana,
       showCancelButton: true,
@@ -782,7 +764,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -847,7 +829,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1021,7 +1003,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1086,7 +1068,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1120,215 +1102,6 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                                 }}
                               >
                                 Cancelar pedido
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {dataCancelados.getPedidosCancelados.length != 0 && (
-        <div>
-          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-            PEDIDOS CANCELADOS
-          </h1>
-
-          <div className="flex flex-row py-3 pl-2">
-            <div className="relative max-w-xs">
-              <input
-                type="text"
-                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
-                placeholder="Buscar por fecha de cancelación..."
-                value={buscarPedidosCanceladosAux}
-                onChange={(e) => {
-                  setBuscarPedidosCanceladosAux(e.target.value);
-                }}
-              />
-              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                <svg
-                  className="h-3.5 w-3.5 text-gray-400"
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  fill="currentColor"
-                  viewBox="0 0 16 16"
-                >
-                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                </svg>
-              </div>
-            </div>
-            <div>
-              <button
-                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
-                onClick={() => {
-                  setBbddFiltro("Pedidos_Cancelados");
-                  setBuscarPedidosCancelados(buscarPedidosCanceladosAux);
-                }}
-              >
-                Buscar
-              </button>
-            </div>
-          </div>
-
-          <div className="flex flex-col">
-            <div className="overflow-x-auto">
-              <div className="p-1.5 w-full inline-block align-middle">
-                <div className="overflow-hidden border rounded-lg">
-                  <table className="min-w-full divide-y divide-gray-200 border-2">
-                    <thead className="bg-gray-50">
-                      <tr>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          ID pedido
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          Fecha del pedido
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          Fecha de cancelación
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          Importe
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          Importe &#40;Free Iva&#41;
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
-                        >
-                          Estado
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                        >
-                          Productos
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-gray-200">
-                      {!buscarPedidosCancelados &&
-                        dataCancelados.getPedidosCancelados.map((pedidos) => (
-                          <tr key={pedidos._id}>
-                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                              {pedidos._id}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.fechaPedido}
-                            </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Cancelado"
-                                );
-                              }}
-                            >
-                              {pedidos.fechaRecogida}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importePedido}€
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
-                            </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(
-                                  pedidos.estado,
-                                  pedidos.fechaRecogida
-                                );
-                              }}
-                            >
-                              {pedidos.estado}
-                            </td>
-                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
-                              <a
-                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                                onClick={() => {
-                                  props.setPedidoUser(pedidos);
-                                  changeViewProductosUser(true);
-                                }}
-                              >
-                                Productos
-                              </a>
-                            </td>
-                          </tr>
-                        ))}
-
-                      {buscarPedidosCancelados &&
-                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
-                          <tr key={pedidos._id}>
-                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
-                              {pedidos._id}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.fechaPedido}
-                            </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Cancelado"
-                                );
-                              }}
-                            >
-                              {pedidos.fechaRecogida}
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importePedido}€
-                            </td>
-                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
-                            </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(
-                                  pedidos.estado,
-                                  pedidos.fechaRecogida
-                                );
-                              }}
-                            >
-                              {pedidos.estado}
-                            </td>
-                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
-                              <a
-                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
-                                onClick={() => {
-                                  props.setPedidoUser(pedidos);
-                                  changeViewProductosUser(true);
-                                }}
-                              >
-                                Productos
                               </a>
                             </td>
                           </tr>
@@ -1446,23 +1219,14 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Recogido"
-                                );
-                              }}
-                            >
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1499,23 +1263,152 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaPedido}
                             </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarFechaPedidoCanceladoRecogido(
-                                  pedidos.estado,
-                                  "Recogido"
-                                );
-                              }}
-                            >
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.fechaRecogida}
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer">
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {dataCancelados.getPedidosCancelados.length != 0 && (
+        <div>
+          <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
+            PEDIDOS CANCELADOS
+          </h1>
+
+          <div className="flex flex-row py-3 pl-2">
+            <div className="relative max-w-xs">
+              <input
+                type="text"
+                className="block w-full p-3 pl-10 text-sm border-gray-200 rounded-md focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400"
+                placeholder="Buscar por fecha de cancelación..."
+                value={buscarPedidosCanceladosAux}
+                onChange={(e) => {
+                  setBuscarPedidosCanceladosAux(e.target.value);
+                }}
+              />
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
+                <svg
+                  className="h-3.5 w-3.5 text-gray-400"
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  viewBox="0 0 16 16"
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+            </div>
+            <div>
+              <button
+                className="rounded border-2 border-black ml-3 bg-white p-2 hover:bg-transparent"
+                onClick={() => {
+                  setBbddFiltro("Pedidos_Cancelados");
+                  setBuscarPedidosCancelados(buscarPedidosCanceladosAux);
+                }}
+              >
+                Buscar
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          ID pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha del pedido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Fecha de cancelación
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Importe &#40;Free Iva&#41;
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Estado
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Productos
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {!buscarPedidosCancelados &&
+                        dataCancelados.getPedidosCancelados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
@@ -1529,9 +1422,53 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                             >
                               {pedidos.estado}
                             </td>
-                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
                               <a
-                                className="text-orange-700 hover:text-orange-900 cursor-pointer underline"
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
+                                onClick={() => {
+                                  props.setPedidoUser(pedidos);
+                                  changeViewProductosUser(true);
+                                }}
+                              >
+                                Productos
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarPedidosCancelados &&
+                        dataFiltrados.getPedidosFiltrados.map((pedidos) => (
+                          <tr key={pedidos._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {pedidos._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaPedido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.fechaRecogida}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importePedido}€
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
+                            </td>
+                            <td
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
+                              onClick={() => {
+                                pedidoId = pedidos._id;
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
+                              }}
+                            >
+                              {pedidos.estado}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
+                              <a
+                                className="text-orange-700 hover:text-orange-900 cursor-pointer"
                                 onClick={() => {
                                   props.setPedidoUser(pedidos);
                                   changeViewProductosUser(true);
@@ -1653,7 +1590,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
@@ -1685,7 +1622,7 @@ const [bbddFiltro, setBbddFiltro] = useState("");
                               {pedidos.importePedido}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
-                              {pedidos.importeFreeIvaPedido}€
+                              {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
