@@ -688,9 +688,11 @@ export const Mutation = {
                 } else {
                     let pedidoUserCambiado: any;
                     let newBbdd: any;
+                    let oldBbdd: any;
                     const fecha = new Date();
+                    let stockProductoBorrado: any;
 
-
+                    
                     if (newEstado == "Activo") newBbdd = "Pedidos_Activos";
 
                     if (newEstado == "Pendiente") newBbdd = "Pedidos_Pendientes";
@@ -698,6 +700,28 @@ export const Mutation = {
                     if (newEstado == "Cancelado") {
                         newBbdd = "Pedidos_Cancelados"
                         newFechaRecogida = (fecha.getDate() + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear())
+
+                        if(oldEstado == "Activo") oldBbdd = "Pedidos_Activos"
+                        if(oldEstado == "Pendiente") oldBbdd = "Pedidos_Pendientes"
+                        if(oldEstado == "Recogido") oldBbdd = "Pedidos_Recogidos"
+                        console.log(oldBbdd)
+                        const pedidoUser = await db.collection(oldBbdd).findOne({ _id: new ObjectId(id_pedido) });
+                        
+                        if (pedidoUser) {
+                            pedidoUser.Productos.map(async(e: any) => {
+                                stockProductoBorrado = e.Cantidad;
+                                
+                                const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(e.Id_producto) });
+    
+                                if(producto){
+                                console.log(stockProductoBorrado)
+                                    const nuevoStock = parseInt(producto.stock) + parseInt(stockProductoBorrado);
+                                    await db.collection("Productos_Venta").findOneAndUpdate({ _id: new ObjectId(e.Id_producto) }, { $set: {stock: nuevoStock.toString() }})                                
+                                }else{
+                                    throw new ApolloError("Ha ocurrido un error al recuperar los productos del pedido");
+                                }
+                            })
+                        }
                     }
 
                     if (newEstado == "Recogido") {
@@ -712,6 +736,7 @@ export const Mutation = {
                             pedidoUserCambiado = pedidoUser;
                             await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Activos").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
                         }
@@ -723,17 +748,7 @@ export const Mutation = {
                             pedidoUserCambiado = pedidoUser;
                             await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
                             await db.collection("Pedidos_Pendientes").findOneAndDelete({ _id: new ObjectId(id_pedido) });
-                        } else {
-                            throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
-                        }
-
-                    } else if (oldEstado == "Cancelado") {
-                        const pedidoUser = await db.collection("Pedidos_Cancelados").findOne({ _id: new ObjectId(id_pedido) });
-                        if (pedidoUser) {
-                            pedidoUser.Estado = newEstado;
-                            pedidoUserCambiado = pedidoUser;
-                            await db.collection(newBbdd).insertOne({ Id_user: pedidoUser.Id_user.toString(), Estado: newEstado, Nombre: pedidoUser.Nombre, Apellido: pedidoUser.Apellido, Email: pedidoUser.Email, Telefono: pedidoUser.Telefono, Direccion: pedidoUser.Direccion, MasInformacion: pedidoUser.MasInformacion, CodigoPostal: pedidoUser.CodigoPostal, Ciudad: pedidoUser.Ciudad, Pais: pedidoUser.Pais, FechaPedido: pedidoUser.FechaPedido, FechaRecogida: newFechaRecogida, ImportePedido: pedidoUser.ImportePedido, ImporteFreeIvaPedido: pedidoUser.ImporteFreeIvaPedido, Productos: pedidoUser.Productos });
-                            await db.collection("Pedidos_Cancelados").findOneAndDelete({ _id: new ObjectId(id_pedido) });
+                            
                         } else {
                             throw new ApolloError("Ha ocurrido un error al recuperar el pedido");
                         }

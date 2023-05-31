@@ -33,8 +33,8 @@ function CorreoConfirmacion(props) {
       title: "Correo de confirmación",
       text: "Se le va a enviar un correo de confirmación al usuario",
       icon: "success",
-      confirmButtonColor: "#3085d6",
-      confirmButtonText: "Aceptar",
+      showConfirmButton: false,
+      timer: 2000,
     }).then(() => {
         sendEmail();
     });
