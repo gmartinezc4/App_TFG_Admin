@@ -446,7 +446,7 @@ function AllPedidos(props) {
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        modalCambiarEstadoPedido(estadoActual);
+        modalCambiarEstadoPedido(estadoActual, fechaReferencia);
       });
     } else if (newEstado) {
       if (newEstado == "Recogido") {
@@ -468,7 +468,7 @@ function AllPedidos(props) {
       else if (estadoActual == "Pendiente")
         modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
       else if (estadoActual == "Cancelado" || estadoActual == "Recogido")
-        modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+        modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
     }
   }
 
@@ -489,7 +489,14 @@ function AllPedidos(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      if (new Date(newFechaRecogida) <= new Date()) {
+      const dateRecogida = newFechaRecogida.split("/");
+      
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
@@ -544,9 +551,14 @@ function AllPedidos(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      console.log("n f " + newFechaRecogida);
-      console.log("f ref " + fechaReferencia);
-      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+      const dateRecogida = newFechaRecogida.split("/");
+
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
@@ -580,7 +592,7 @@ function AllPedidos(props) {
     }
   }
 
-  async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
+  async function modalCambiarFechaPedidoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
     let fechaMañana =
       fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
@@ -597,7 +609,14 @@ function AllPedidos(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      if (new Date(newFechaRecogida) <= new Date()) {
+      const dateRecogida = newFechaRecogida.split("/");
+
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
@@ -607,7 +626,7 @@ function AllPedidos(props) {
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
-          modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+          modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
         });
       } else {
         console.log(newFechaRecogida);
@@ -1410,16 +1429,7 @@ function AllPedidos(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(
-                                  pedidos.estado,
-                                  pedidos.fechaRecogida
-                                );
-                              }}
-                            >
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap underline">
