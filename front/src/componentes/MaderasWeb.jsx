@@ -452,7 +452,7 @@ function MaderasWeb() {
                           <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
                             {madera._id}
                           </td>
-                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre-wrap">
+                          <td className="px-6 py-4 text-sm text-gray-800 whitespace-pre">
                             {madera.img}
                           </td>
                           <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
