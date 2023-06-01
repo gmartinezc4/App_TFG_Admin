@@ -409,7 +409,7 @@ function PedidosUser(props) {
         showConfirmButton: false,
         timer: 1500,
       }).then(() => {
-        modalCambiarEstadoPedido(estadoActual);
+        modalCambiarEstadoPedido(estadoActual, fechaReferencia);
       });
     } else if (newEstado) {
       if (newEstado == "Recogido") {
@@ -431,7 +431,7 @@ function PedidosUser(props) {
       else if (estadoActual == "Pendiente")
         modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
       else if (estadoActual == "Cancelado" || estadoActual == "Recogido")
-        modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+      modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
     }
   }
 
@@ -452,7 +452,14 @@ function PedidosUser(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      if (new Date(newFechaRecogida) <= new Date()) {
+      const dateRecogida = newFechaRecogida.split("/");
+
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
@@ -507,15 +514,20 @@ function PedidosUser(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      console.log("n f " + newFechaRecogida);
-      console.log("f ref " + fechaReferencia);
-      if (new Date(newFechaRecogida) <= new Date(fechaReferencia)) {
+      const dateRecogida = newFechaRecogida.split("/");
+
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
           icon: "error",
           title: "Fecha Invalida",
-          text: "La nueva estimación de entrega ha de ser mayor",
+          text: "La nueva estimación de entrega ha de ser después de hoy",
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
@@ -543,7 +555,7 @@ function PedidosUser(props) {
     }
   }
 
-  async function modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado) {
+  async function modalCambiarFechaPedidoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
     let fechaHoy =
       fecha.getDate() + 1 + "/" + (fecha.getMonth() + 1) + "/" + fecha.getFullYear();
@@ -562,7 +574,14 @@ function PedidosUser(props) {
     });
 
     if (newFechaRecogida != undefined) {
-      if (new Date(newFechaRecogida) <= new Date()) {
+      const dateRecogida = newFechaRecogida.split("/");
+
+      if (
+        dateRecogida[2] < fecha.getFullYear().toString() ||
+        dateRecogida[1] < fecha.getMonth() ||
+        (dateRecogida[1] == (fecha.getMonth() + 1) &&
+        dateRecogida[0] < fecha.getDate())
+      ) {
         console.log("fecha incorrecta");
         Swal.fire({
           position: "center",
@@ -572,7 +591,7 @@ function PedidosUser(props) {
           showConfirmButton: false,
           timer: 2000,
         }).then(() => {
-          modalCambiarFechaPedidoCanceladoRecogido(estadoActual, newEstado);
+          modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
         });
       } else {
         console.log(newFechaRecogida);
@@ -797,7 +816,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -859,7 +878,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -1030,7 +1049,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -1092,7 +1111,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -1247,7 +1266,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -1288,7 +1307,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
@@ -1429,11 +1448,7 @@ function PedidosUser(props) {
                               {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
                             <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
-                              onClick={() => {
-                                pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
-                              }}
+                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
                             >
                               {pedidos.estado}
                             </td>
@@ -1473,7 +1488,7 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado);
+                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
                               }}
                             >
                               {pedidos.estado}
