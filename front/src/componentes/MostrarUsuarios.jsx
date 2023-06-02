@@ -654,7 +654,7 @@ function MostrarUsuarios(props) {
                                   );
                                 }}
                               >
-                                Pedidios
+                                Pedidos
                               </a>
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap ">
