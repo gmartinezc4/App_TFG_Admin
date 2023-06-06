@@ -3,7 +3,7 @@ import { Db, ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 const bcrypt = require('bcrypt');
 var nodemailer = require('nodemailer');
-import correoRegistroAdmin from '/home/guillermo/App_TFG_Admin/back/data/htmlCorreos'
+import correoRegistroAdmin from '../../data/htmlCorreos'
 
 export const Mutation = {
     RegistrarAdmin: async (parent: any, args: { nombre: string, apellido: string, correo: string, password: string, nivel_auth: string }, context: { db_admin: Db, userAdmin: any }) => {
