@@ -99,7 +99,7 @@ const GET_USERS_FILTRADOS = gql`
 `;
 
 function MostrarUsuarios(props) {
-  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser, token } =
+  const { changeReload, reload, viewPedidosUser, changeViewPedidosUser, token, nivel_auth } =
     useContext(Context);
 
   const [buscarUserAdmin, setBuscarUserAdmin] = useState("");
@@ -386,7 +386,9 @@ function MostrarUsuarios(props) {
             </div>
           </div>
 
-          <div className="flex flex-col">
+          {/* Si el nivel de autorización es 2 o más */}
+          {nivel_auth >= 2 && (
+            <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
                 <div className="overflow-hidden border rounded-lg">
@@ -429,6 +431,7 @@ function MostrarUsuarios(props) {
                         >
                           Editar
                         </th>
+
                         <th
                           scope="col"
                           className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
@@ -488,8 +491,9 @@ function MostrarUsuarios(props) {
                               {userAdmin.token == token && (
                                 <input
                                   type="checkbox"
-                                  className="text-blue-600 border-black rounded focus:ring-blue-500"
-                                  checked disabled readOnly
+                                  className="text-blue-600 border-black rounded"
+                                  checked
+                                  readOnly
                                 />
                               )}
                             </td>
@@ -542,6 +546,153 @@ function MostrarUsuarios(props) {
               </div>
             </div>
           </div>
+          )}
+
+           {/* Si el nivel de autorización menor que 2 */}
+           {nivel_auth < 2 && (
+            <div className="flex flex-col">
+            <div className="overflow-x-auto">
+              <div className="p-1.5 w-full inline-block align-middle">
+                <div className="overflow-hidden border rounded-lg">
+                  <table className="min-w-full divide-y divide-gray-200 border-2">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          ID
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Nombre
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Apellido
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          Email
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-left text-gray-500 uppercase "
+                        >
+                          N. Autorización
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Borrar
+                        </th>
+                        <th
+                          scope="col"
+                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
+                        >
+                          Sesión iniciada
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {!buscarUserAdmin &&
+                        dataGetAdmins.getAdmins.map((userAdmin) => (
+                          <tr key={userAdmin._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {userAdmin._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.nombre}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.apellido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.email}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.nivel_auth}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              {userAdmin.token != token && (
+                                <a
+                                  className="text-red-500 hover:text-red-600 cursor-pointer"
+                                  onClick={() => {
+                                    modalBorrarUserAdmin(userAdmin._id);
+                                  }}
+                                >
+                                  Borrar
+                                </a>
+                              )}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              {userAdmin.token == token && (
+                                <input
+                                  type="checkbox"
+                                  className="text-blue-600 border-black rounded"
+                                  checked
+                                  readOnly
+                                />
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+
+                      {buscarUserAdmin &&
+                        dataGetAdminsFiltrados.getAdminsFiltrados.map((userAdmin) => (
+                          <tr key={userAdmin._id}>
+                            <td className="px-6 py-4 text-sm font-medium text-gray-800 whitespace-nowrap">
+                              {userAdmin._id}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.nombre}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.apellido}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.email}
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
+                              {userAdmin.nivel_auth}
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-green-500 hover:text-green-700 cursor-pointer"
+                                onClick={() => {
+                                  modalCambiarNivelAuthAdmin(userAdmin._id);
+                                }}
+                              >
+                                Editar
+                              </a>
+                            </td>
+                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+                              <a
+                                className="text-red-500 hover:text-red-600 cursor-pointer"
+                                onClick={() => {
+                                  modalBorrarUserAdmin(userAdmin._id);
+                                }}
+                              >
+                                Borrar
+                              </a>
+                            </td>
+                          </tr>
+                        ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+          )}
+          
 
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             USUARIOS
@@ -654,7 +805,7 @@ function MostrarUsuarios(props) {
                                   );
                                 }}
                               >
-                                Pedidos
+                                Pedidios
                               </a>
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap ">
