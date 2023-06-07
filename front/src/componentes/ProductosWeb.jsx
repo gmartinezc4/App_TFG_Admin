@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import Cargando from "./Cargando";
 
 const GET_ALL_PRODUCTOS = gql`
   query Query {
@@ -28,38 +29,50 @@ const BORRAR_PRODUCTO = gql`
 `;
 
 const MODIFICAR_PRODUCTO = gql`
-  mutation Mutation($idProduct: ID!, $img: String, $name: String, $stock: String, $precio: String) {
-  modificarProducto(id_product: $idProduct, img: $img, name: $name, stock: $stock, precio: $precio) {
-    _id
-    img
-    name
-    precio
-    stock
+  mutation Mutation(
+    $idProduct: ID!
+    $img: String
+    $name: String
+    $stock: String
+    $precio: String
+  ) {
+    modificarProducto(
+      id_product: $idProduct
+      img: $img
+      name: $name
+      stock: $stock
+      precio: $precio
+    ) {
+      _id
+      img
+      name
+      precio
+      stock
+    }
   }
-}
 `;
 
 const ADD_PRODUCTO = gql`
   mutation AddProducto($img: String!, $name: String!, $stock: String!, $precio: String!) {
-  addProducto(img: $img, name: $name, stock: $stock, precio: $precio) {
-    img
-    name
-    precio
-    stock
+    addProducto(img: $img, name: $name, stock: $stock, precio: $precio) {
+      img
+      name
+      precio
+      stock
+    }
   }
-}
 `;
 
 const GET_PRODCUTOS_FILTRADOS = gql`
- query Query($filtro: String!) {
-  getProductosFiltrados(filtro: $filtro) {
-    _id
-    img
-    name
-    precio
-    stock
+  query Query($filtro: String!) {
+    getProductosFiltrados(filtro: $filtro) {
+      _id
+      img
+      name
+      precio
+      stock
+    }
   }
-}
 `;
 
 function ProductosWeb() {
@@ -146,7 +159,11 @@ function ProductosWeb() {
     },
   });
 
-  const { data: dataGetAllProductos, loading: loadingGetAllProductos, error: errorGetAllProductos } = useQuery(GET_ALL_PRODUCTOS, {
+  const {
+    data: dataGetAllProductos,
+    loading: loadingGetAllProductos,
+    error: errorGetAllProductos,
+  } = useQuery(GET_ALL_PRODUCTOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
@@ -154,7 +171,11 @@ function ProductosWeb() {
     },
   });
 
-  const { data: dataGetProductosFiltrados, loading: loadingGetProductosFiltrados, error: errorGetProductosFiltrados } = useQuery(GET_PRODCUTOS_FILTRADOS, {
+  const {
+    data: dataGetProductosFiltrados,
+    loading: loadingGetProductosFiltrados,
+    error: errorGetProductosFiltrados,
+  } = useQuery(GET_PRODCUTOS_FILTRADOS, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
@@ -162,15 +183,31 @@ function ProductosWeb() {
     },
     variables: {
       filtro: buscarProducto,
-    }
+    },
   });
 
-  if (loadingGetAllProductos) return <div></div>;
-  if (errorGetAllProductos) return console.log(errorGetAllProductos);
+  if (loadingGetAllProductos || loadingGetProductosFiltrados)
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
+    
+  if (errorGetAllProductos)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorGetAllProductos.message)}
+      </div>
+    );
 
-  if (loadingGetProductosFiltrados) return <div></div>;
-  if (errorGetProductosFiltrados) return console.log(errorGetProductosFiltrados);
-
+  if (errorGetProductosFiltrados)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorGetProductosFiltrados.message)}
+      </div>
+    );
   function modalBorrarProducto(idProd) {
     Swal.fire({
       icon: "warning",
@@ -178,7 +215,7 @@ function ProductosWeb() {
       showCancelButton: true,
       confirmButtonText: "Eliminar",
       confirmButtonColor: "#DF0000",
-      cancelButtonText: "Cancelar"
+      cancelButtonText: "Cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
         borrarProducto({
@@ -200,11 +237,14 @@ function ProductosWeb() {
       title: "Editar Producto",
       html:
         "<label><strong>Imagen</strong></label>" +
-        `<input id="img" value="${img}" class="swal2-input">` + '<br></br>' +
+        `<input id="img" value="${img}" class="swal2-input">` +
+        "<br></br>" +
         "<label><strong>Nombre</strong></label>" +
-        `<input id="name" value="${name}" class="swal2-input">` + '<br></br>' +
+        `<input id="name" value="${name}" class="swal2-input">` +
+        "<br></br>" +
         "<label><strong>Stock</strong></label>" +
-        `<input type="number" id="stock" value="${stock}" class="swal2-input">` + '<br></br>' +
+        `<input type="number" id="stock" value="${stock}" class="swal2-input">` +
+        "<br></br>" +
         "<label><strong>Precio</strong></label>" +
         `<input type="number" id="precio" value="${precio}" class="swal2-input">`,
       focusConfirm: false,
@@ -212,33 +252,31 @@ function ProductosWeb() {
       confirmButtonText: "Editar",
       confirmButtonColor: "#3BD630",
       cancelButtonColor: "#DF0000",
-      cancelButtonText: "Cancelar"
-    })
-        if(formValues){
-            if (
-                document.getElementById("img").value != "" ||
-                document.getElementById("name").value != "" ||
-                document.getElementById("stock").value != ""||
-                document.getElementById("precio").value != ""
-              ) {
-                modificarProducto({
-                  context: {
-                    headers: {
-                      authorization: localStorage.getItem("token"),
-                    },
-                  },
-                  variables: {
-                    idProduct: idProd,
-                    img: document.getElementById("img").value || "",
-                    name: document.getElementById("name").value || "",
-                    stock: document.getElementById("stock").value || "",
-                    precio: document.getElementById("precio").value || "",
-                  },
-                });
-              }
-        }
-        
-   
+      cancelButtonText: "Cancelar",
+    });
+    if (formValues) {
+      if (
+        document.getElementById("img").value != "" ||
+        document.getElementById("name").value != "" ||
+        document.getElementById("stock").value != "" ||
+        document.getElementById("precio").value != ""
+      ) {
+        modificarProducto({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            idProduct: idProd,
+            img: document.getElementById("img").value || "",
+            name: document.getElementById("name").value || "",
+            stock: document.getElementById("stock").value || "",
+            precio: document.getElementById("precio").value || "",
+          },
+        });
+      }
+    }
   }
 
   async function modalAddProducto() {
@@ -246,11 +284,14 @@ function ProductosWeb() {
       title: "Añadir Producto",
       html:
         "<label><strong>Imagen</strong></label>" +
-        '<input id="img" class="swal2-input" placeholder="Url...">' + '<br></br>' +
+        '<input id="img" class="swal2-input" placeholder="Url...">' +
+        "<br></br>" +
         "<label><strong>Nombre</strong></label>" +
-        '<input id="name" class="swal2-input" placeholder="Nombre...">' + '<br></br>' +
+        '<input id="name" class="swal2-input" placeholder="Nombre...">' +
+        "<br></br>" +
         "<label><strong>Stock</strong></label>" +
-        '<input type="number" id="stock" class="swal2-input" placeholder="Stock...">' + '<br></br>' +
+        '<input type="number" id="stock" class="swal2-input" placeholder="Stock...">' +
+        "<br></br>" +
         "<label><strong>Precio</strong></label>" +
         '<input type="number" id="precio" class="swal2-input" placeholder="Precio...">',
       focusConfirm: false,
@@ -258,41 +299,40 @@ function ProductosWeb() {
       confirmButtonText: "Añadir",
       confirmButtonColor: "#3BD630",
       cancelButtonColor: "#DF0000",
-      cancelButtonText: "Cancelar"
-    })
-        if(formValues){
-            if (
-              document.getElementById("img").value != "" &&
-              document.getElementById("name").value != "" &&
-              document.getElementById("stock").value != "" &&
-              document.getElementById("precio").value != ""
-            ) {
-              addProducto({
-                context: {
-                  headers: {
-                    authorization: localStorage.getItem("token"),
-                  },
-                },
-                variables: {
-                  img: document.getElementById("img").value,
-                  name: document.getElementById("name").value,
-                  stock: document.getElementById("stock").value,
-                  precio: document.getElementById("precio").value,
-                },
-              });
-            }else{
-                Swal.fire({
-                    position: "center",
-                    icon: "error",
-                    title: "Rellene todos los campos",
-                    showConfirmButton: false,
-                    timer: 1500,
-                  }).then(() => {
-                    modalAddProducto();
-                  })
-            }
-        }
-    
+      cancelButtonText: "Cancelar",
+    });
+    if (formValues) {
+      if (
+        document.getElementById("img").value != "" &&
+        document.getElementById("name").value != "" &&
+        document.getElementById("stock").value != "" &&
+        document.getElementById("precio").value != ""
+      ) {
+        addProducto({
+          context: {
+            headers: {
+              authorization: localStorage.getItem("token"),
+            },
+          },
+          variables: {
+            img: document.getElementById("img").value,
+            name: document.getElementById("name").value,
+            stock: document.getElementById("stock").value,
+            precio: document.getElementById("precio").value,
+          },
+        });
+      } else {
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: "Rellene todos los campos",
+          showConfirmButton: false,
+          timer: 1500,
+        }).then(() => {
+          modalAddProducto();
+        });
+      }
+    }
   }
 
   return (

@@ -16,6 +16,10 @@ export function ContextProvider(props) {
   const [volverDeProductos, setVolverDeProductos] = useState("");
   const [reload, setReload] = useState(false);
 
+  const [viewError, setViewError] = useState(false);
+  const [codigoError, setCodigoError] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
+
   const token = localStorage.getItem("token");
   const nivel_auth = localStorage.getItem("nivel_auth");
   
@@ -119,6 +123,18 @@ export function ContextProvider(props) {
     setVolverDeProductos(setVolver);
   }
 
+  function changeErrorFalse(){
+    setViewError(false);
+  }
+
+  function changeCodigoError(codigo){
+    setCodigoError(codigo);
+  }
+
+  function changeMensajeError(mensaje){
+    setMensajeError(mensaje);
+  }
+
   return (
     <Context.Provider
       value={{
@@ -136,6 +152,10 @@ export function ContextProvider(props) {
         reload,
         token,
         nivel_auth,
+
+        viewError,
+        codigoError,
+        mensajeError,
         
         changeViewRegistro,
         changeViewUsuarios,
@@ -149,6 +169,10 @@ export function ContextProvider(props) {
         changeEnviarCorreoConfirmacion,
         changeVolverDeProductos,
         changeReload,
+
+        changeErrorFalse,
+        changeCodigoError,
+        changeMensajeError,
         
       }}
     >

@@ -3,6 +3,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
 import Pikaday from "pikaday";
+import Cargando from "./Cargando";
 
 const GET_PEDIDOS_RECOGIDOS = gql`
   query Query {
@@ -376,23 +377,65 @@ function AllPedidos(props) {
     },
   });
 
-  if (loadingRecogidos) return <div></div>;
-  if (errorRecogidos) return console.log(errorRecogidos);
+  if (
+    loadingRecogidos ||
+    loadingActivos ||
+    loadingPendientes ||
+    loadingCancelados ||
+    loadingEliminados ||
+    loadingFiltrados
+  )
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
 
-  if (loadingActivos) return <div></div>;
-  if (errorActivos) return console.log(errorActivos);
+  if (errorRecogidos)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorRecogidos.message)}
+      </div>
+    );
 
-  if (loadingPendientes) return <div></div>;
-  if (errorPendientes) return console.log(errorPendientes);
+  if (errorActivos)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorActivos.message)}
+      </div>
+    );
 
-  if (loadingCancelados) return <div></div>;
-  if (errorCancelados) return console.log(errorCancelados);
+  if (errorPendientes)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorPendientes.message)}
+      </div>
+    );
 
-  if (loadingEliminados) return <div></div>;
-  if (errorEliminados) return console.log(errorEliminados);
+  if (errorCancelados)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorCancelados.message)}
+      </div>
+    );
 
-  if (loadingFiltrados) return <div></div>;
-  if (errorFiltrados) console.log(errorFiltrados);
+  if (errorEliminados)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorEliminados.message)}
+      </div>
+    );
+
+  if (errorFiltrados)
+    <div>
+      {changeErrorTrue()} {changeCodigoError(404)}
+      {changeMensajeError(errorFiltrados.message)}
+    </div>;
 
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
@@ -490,12 +533,11 @@ function AllPedidos(props) {
 
     if (newFechaRecogida != undefined) {
       const dateRecogida = newFechaRecogida.split("/");
-      
+
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
@@ -556,8 +598,7 @@ function AllPedidos(props) {
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
@@ -614,8 +655,7 @@ function AllPedidos(props) {
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
