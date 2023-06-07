@@ -212,7 +212,7 @@ function RegistrarAdmin() {
             <label className="block text-sm font-semibold text-gray-800">Email</label>
             <input
               type="text"
-              pattern="[a-zA-Z0-9!#$%&'*_+-]([\.]?[a-zA-Z0-9!#$%&'*_+-])+@[a-zA-Z0-9]([^@&%$\/()=?¿!.,:;]|\d)+[a-zA-Z0-9][\.][a-zA-Z]{2,4}([\.][a-zA-Z]{2})?"
+              pattern="^[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,4}(\.[a-zA-Z]{2})?$"
               value={correo}
               onChange={(e) => setCorreo(e.target.value)}
               onInvalid={() => {

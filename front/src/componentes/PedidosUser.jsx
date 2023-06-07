@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import Cargando from "./Cargando";
 
 const GET_PEDIDOS_RECOGIDOS_USER = gql`
   query Query($idUser: ID!) {
@@ -342,20 +343,56 @@ function PedidosUser(props) {
     },
   });
 
-  if (loadingRecogidos) return <div></div>;
-  if (errorRecogidos) return console.log(errorRecogidos);
+  if (
+    loadingRecogidos ||
+    loadingActivos ||
+    loadingPendientes ||
+    loadingCancelados ||
+    loadingFiltrados
+  )
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
 
-  if (loadingActivos) return <div></div>;
-  if (errorActivos) return console.log(errorActivos);
+  if (errorRecogidos)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorRecogidos.message)}
+      </div>
+    );
 
-  if (loadingPendientes) return <div></div>;
-  if (errorPendientes) return console.log(errorPendientes);
+  if (errorActivos)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorActivos.message)}
+      </div>
+    );
 
-  if (loadingCancelados) return <div></div>;
-  if (errorCancelados) return console.log(errorCancelados);
+  if (errorPendientes)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorPendientes.message)}
+      </div>
+    );
 
-  if (loadingFiltrados) return <div></div>;
-  if (errorFiltrados) console.log(errorFiltrados);
+  if (errorCancelados)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorCancelados.message)}
+      </div>
+    );
+
+  if (errorFiltrados)
+    <div>
+      {changeErrorTrue()} {changeCodigoError(404)}
+      {changeMensajeError(errorFiltrados.message)}
+    </div>;
 
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
@@ -431,7 +468,7 @@ function PedidosUser(props) {
       else if (estadoActual == "Pendiente")
         modalCambiarFechaPedidoPendiente(estadoActual, newEstado, fechaReferencia);
       else if (estadoActual == "Cancelado" || estadoActual == "Recogido")
-      modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
+        modalCambiarFechaPedidoRecogido(estadoActual, newEstado);
     }
   }
 
@@ -457,8 +494,7 @@ function PedidosUser(props) {
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
@@ -519,8 +555,7 @@ function PedidosUser(props) {
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
@@ -579,8 +614,7 @@ function PedidosUser(props) {
       if (
         dateRecogida[2] < fecha.getFullYear().toString() ||
         dateRecogida[1] < fecha.getMonth() ||
-        (dateRecogida[1] == (fecha.getMonth() + 1) &&
-        dateRecogida[0] < fecha.getDate())
+        (dateRecogida[1] == fecha.getMonth() + 1 && dateRecogida[0] < fecha.getDate())
       ) {
         console.log("fecha incorrecta");
         Swal.fire({
@@ -816,7 +850,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -878,7 +915,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -1049,7 +1089,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -1111,7 +1154,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -1266,7 +1312,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -1307,7 +1356,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
@@ -1447,9 +1499,7 @@ function PedidosUser(props) {
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.importeFreeIvaPedido.substr(0, 5)}€
                             </td>
-                            <td
-                              className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap"
-                            >
+                            <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {pedidos.estado}
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
@@ -1488,7 +1538,10 @@ function PedidosUser(props) {
                               className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap hover:text-green-500 hover:underline cursor-pointer"
                               onClick={() => {
                                 pedidoId = pedidos._id;
-                                modalCambiarEstadoPedido(pedidos.estado, pedidos.fechaRecogida);
+                                modalCambiarEstadoPedido(
+                                  pedidos.estado,
+                                  pedidos.fechaRecogida
+                                );
                               }}
                             >
                               {pedidos.estado}
