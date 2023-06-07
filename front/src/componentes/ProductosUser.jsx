@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import Cargando from "./Cargando";
 
 const CANCELAR_PRODUCTO_PEDIDO = gql`
   mutation Mutation($idPedido: ID!, $idProduct: ID!) {
@@ -111,8 +112,19 @@ function ProductosUser(props) {
     },
   });
   
-  if (loading) return <div></div>;
-  if (error) return <div>{console.log(error)}</div>;
+  if (loading)
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
+    
+  if (error) return (
+    <div>
+      {changeErrorTrue()} {changeCodigoError(404)}
+      {changeMensajeError(error.message)}
+    </div>
+  );
 
   function modalCancelarProductoPedido(idPedido, idProduct) {
     Swal.fire({

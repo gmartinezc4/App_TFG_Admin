@@ -2,6 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import { Context } from "../context/Context";
 import Swal from "sweetalert2";
+import Cargando from "./Cargando";
 
 const GET_ALL_MADERAS = gql`
   query Query {
@@ -178,11 +179,27 @@ function MaderasWeb() {
     },
   });
 
-  if (loadingGetAllMaderas) return <div></div>;
-  if (errorGetAllMaderas) return console.log(errorGetAllMaderas);
+  if (loadingGetAllMaderas || loadingGetMaderasFiltradas)
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
+  if (errorGetAllMaderas)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorGetAllMaderas.message)}
+      </div>
+    );
 
-  if (loadingGetMaderasFiltradas) return <div></div>;
-  if (errorGetMaderasFiltradas) return console.log(errorGetMaderasFiltradas);
+  if (errorGetMaderasFiltradas)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(errorGetMaderasFiltradas.message)}
+      </div>
+    );
 
   function modalBorrarMadera(idMadera) {
     Swal.fire({

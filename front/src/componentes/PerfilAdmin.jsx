@@ -7,6 +7,7 @@ import { BsPencil } from "react-icons/bs";
 import { RiLockPasswordLine } from "react-icons/ri";
 import ModalesPerfilAdmin from "./ModalesPerfilAdmin";
 import Swal from "sweetalert2";
+import Cargando from "./Cargando";
 
 const GET_ADMIN = gql`
   query GetAdmin {
@@ -109,8 +110,19 @@ function PerfilAdmin() {
     },
   });
 
-  if(loading) return <div></div>
-  if(error) return console.log(error);
+  if (loading)
+    return (
+      <div>
+        <Cargando />
+      </div>
+    );
+
+  if(error) return (
+    <div>
+      {changeErrorTrue()} {changeCodigoError(404)}
+      {changeMensajeError(error.message)}
+    </div>
+  );
 
   function modalDarBajaUserAdmin(AdminId) {
     Swal.fire({

@@ -22,7 +22,7 @@ function Contendor() {
   
   return (
     <ApolloProvider client={client}>
-      <div className="">
+      <div>
         <div>
           <Cabecera />
         </div>
