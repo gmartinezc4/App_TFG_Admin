@@ -37,14 +37,22 @@ const BORRAR_USER_ADMIN = gql`
   }
 `;
 
-
+//
+// * Componente PerfilAdmin.
+// * Se encarga de mostrar el perfil de usuario del administrador.
+//
 function PerfilAdmin() {
   const [modalIsOpenNombreApellido, setIsOpenNombreApellido] = useState(false);
   const [modalIsOpenCorreo, setIsOpenCorreo] = useState(false);
   const [modalIsOpenPassword, setIsOpenPassword] = useState(false);
 
-  const { changeReload, verInicioSesion } = useContext(Context);
+  // Variables del contexto usadas por el usuario.
+  const { changeReload } = useContext(Context);
 
+  //
+  // * Funciones encargadas de abrir y cerrar los modales para
+  // * modificar los datos del usuario administrador.
+  //
   function openModalNombreApellido() {
     setIsOpenNombreApellido(true);
   }
@@ -69,6 +77,7 @@ function PerfilAdmin() {
     setIsOpenPassword(false);
   }
 
+  // Mutation para borrar el usuario administrador
   const [borrarUserAdmin] = useMutation(BORRAR_USER_ADMIN, {
     onCompleted: () => {
       console.log("Se ha borrado su usuario admininstrador");
@@ -98,11 +107,8 @@ function PerfilAdmin() {
     },
   });
 
-  const {
-    data,
-    loading,
-    error,
-  } = useQuery(GET_ADMIN, {
+  // Query para traer el usuario administrador.
+  const { data, loading, error } = useQuery(GET_ADMIN, {
     context: {
       headers: {
         authorization: localStorage.getItem("token"),
@@ -117,13 +123,20 @@ function PerfilAdmin() {
       </div>
     );
 
-  if(error) return (
-    <div>
-      {changeErrorTrue()} {changeCodigoError(404)}
-      {changeMensajeError(error.message)}
-    </div>
-  );
+  if (error)
+    return (
+      <div>
+        {changeErrorTrue()} {changeCodigoError(404)}
+        {changeMensajeError(error.message)}
+      </div>
+    );
 
+  //
+  // * Función para dar de baja el usuario administrador.
+  // * Realiza la mutation borrarUserAdmin.
+  //
+  // * AdminId: ID del administrador a borrar, el administrador con la sesión iniciada.
+  //
   function modalDarBajaUserAdmin(AdminId) {
     Swal.fire({
       icon: "warning",
@@ -158,7 +171,8 @@ function PerfilAdmin() {
             contraseña
           </span>
 
-          <div className="grid grid-rows-1 grid-flow-col">
+          <div className="grid grid-flow-col">
+            {/* Columna izquierda, datos */}
             <div>
               <div className="mt-10 flex flex-row">
                 <CgProfile className="w-10 h-10 mr-16 " />
@@ -199,6 +213,7 @@ function PerfilAdmin() {
               </div>
             </div>
 
+            {/* Columna derecha, botones */}
             <div>
               <button
                 className="border border-black h-14 w-40 hover:bg-slate-500 hover:text-white -ml-20 mt-9"
@@ -236,14 +251,19 @@ function PerfilAdmin() {
         </div>
       </div>
 
+      {/* Boton para darse de baja */}
       <div className="flex justify-center mt-32">
-        <button className="rounded border-2 border-red-800 bg-red-600 p-5 font-bold hover:bg-red-800 hover:border-red-400"
-        onClick={() => {
-          modalDarBajaUserAdmin(data.getAdmin._id)
-        }}
-        >Darse de baja</button>
+        <button
+          className="rounded border-2 border-red-800 bg-red-600 p-5 font-bold hover:bg-red-800 hover:border-red-400"
+          onClick={() => {
+            modalDarBajaUserAdmin(data.getAdmin._id);
+          }}
+        >
+          Darse de baja
+        </button>
       </div>
 
+      {/* Si se cumple la condición renderiza el componente <ModalesPerfilAdmin /> */}
       {modalIsOpenNombreApellido && (
         <ModalesPerfilAdmin
           closeModalNombreApellido={closeModalNombreApellido}
@@ -251,6 +271,7 @@ function PerfilAdmin() {
         />
       )}
 
+      {/* Si se cumple la condición renderiza el componente <ModalesPerfilAdmin /> */}
       {modalIsOpenCorreo && (
         <ModalesPerfilAdmin
           closeModalCorreo={closeModalCorreo}
@@ -258,6 +279,7 @@ function PerfilAdmin() {
         />
       )}
 
+      {/* Si se cumple la condición renderiza el componente <ModalesPerfilAdmin /> */}
       {modalIsOpenPassword && (
         <ModalesPerfilAdmin
           closeModalPassword={closeModalPassword}
@@ -268,4 +290,4 @@ function PerfilAdmin() {
   );
 }
 
-export default PerfilAdmin
+export default PerfilAdmin;

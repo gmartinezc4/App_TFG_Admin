@@ -394,6 +394,12 @@ function PedidosUser(props) {
       {changeMensajeError(errorFiltrados.message)}
     </div>;
 
+  //
+  // * Función para cancelar el pedido de un usuario.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // estadoActual: estadoa actual del pedido
+  //
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
       icon: "warning",
@@ -421,6 +427,13 @@ function PedidosUser(props) {
     });
   }
 
+  //
+  // * Función para cambiar el estado de un pedido de un usuario.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarEstadoPedido(estadoActual, fechaReferencia) {
     const { value: newEstado } = await Swal.fire({
       title: "Nuevo estado del pedido",
@@ -472,6 +485,14 @@ function PedidosUser(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de los pedidos activos del usuario.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia) {
     let fecha = new Date();
     let fechaMañana =
@@ -529,6 +550,14 @@ function PedidosUser(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de los pedidos pendientes de un usuario.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoPendiente(
     estadoActual,
     newEstado,
@@ -590,6 +619,14 @@ function PedidosUser(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de los pedidos recogidos de un usuario.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
     let fechaHoy =
@@ -651,6 +688,7 @@ function PedidosUser(props) {
 
   return (
     <div>
+      {/* Volver a las tablas de los usuarios */}
       <button
         className="bg-black hover:bg-gray-900 text-white font-bold py-2 px-4 border border-black hover:border-white rounded"
         onClick={() => {
@@ -659,7 +697,9 @@ function PedidosUser(props) {
       >
         volver
       </button>
+
       <div>
+        {/* Usuario del que se muestran los pedidos */}
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">USUARIO</h1>
         <div className="flex flex-col">
           <div className="overflow-x-auto">
@@ -717,12 +757,14 @@ function PedidosUser(props) {
         </div>
       </div>
 
+      {/* Si el usuario tiene pedidos activos */}
       {dataActivos.getPedidosActivosUser.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS ACTIVOS
           </h1>
 
+          {/* Bucar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -760,6 +802,7 @@ function PedidosUser(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos activos */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -818,6 +861,7 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosActivos &&
                         dataActivos.getPedidosActivosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -883,6 +927,7 @@ function PedidosUser(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosActivos &&
                         dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -956,12 +1001,14 @@ function PedidosUser(props) {
         </div>
       )}
 
+      {/* Si el usuario tiene pedidos pendientes */}
       {dataPendientes.getPedidosPendientesUser.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS PENDIENTES DE RECOGER
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -999,6 +1046,7 @@ function PedidosUser(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos pendientes */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1057,6 +1105,7 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosPendientes &&
                         dataPendientes.getPedidosPendientesUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1122,6 +1171,7 @@ function PedidosUser(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosPendientes &&
                         dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1195,12 +1245,14 @@ function PedidosUser(props) {
         </div>
       )}
 
+      {/* Si el usuario tiene pedidos recogidos */}
       {dataRecogidos.getPedidosRecogidosUser.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS RECOGIDOS
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -1238,6 +1290,7 @@ function PedidosUser(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos recogidos */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1290,6 +1343,7 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosRecogidos &&
                         dataRecogidos.getPedidosRecogidosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1334,6 +1388,7 @@ function PedidosUser(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosRecogidos &&
                         dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1386,12 +1441,14 @@ function PedidosUser(props) {
         </div>
       )}
 
+      {/* Si el usuario tiene pedidos cancelados */}
       {dataCancelados.getPedidosCanceladosUser.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS CANCELADOS
           </h1>
 
+          {/* Bucar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -1429,6 +1486,7 @@ function PedidosUser(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos cancelados */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1481,6 +1539,7 @@ function PedidosUser(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si  no hay filtro para buscar */}
                       {!buscarPedidosCancelados &&
                         dataCancelados.getPedidosCanceladosUser.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1516,6 +1575,7 @@ function PedidosUser(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosCancelados &&
                         dataFiltrados.getPedidosFiltradosUser.map((pedidos) => (
                           <tr key={pedidos._id}>

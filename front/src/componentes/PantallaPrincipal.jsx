@@ -10,7 +10,13 @@ import MaderasWeb from "./MaderasWeb";
 import CorreoConfirmacion from "./CorreoConfirmacion";
 import PerfilAdmin from "./PerfilAdmin";
 
+
+// 
+// * Componente PantallaPrincipal.
+// * Se encarga de mostrar el componente elegido en el menú lateral,
+//
 function PantallaPrincipal() {
+  // Variables del contexto usadas
   const {
     viewRegistro,
     viewUsuarios,
@@ -22,7 +28,7 @@ function PantallaPrincipal() {
     viewPerfilAdmin,
     enviarCorreoConfirmacion,
   } = useContext(Context);
-  
+
   const [idUser, setIdUser] = useState("");
   const [nombreUser, setNombreUser] = useState("");
   const [apellidoUser, setApellidoUser] = useState("");
@@ -30,9 +36,15 @@ function PantallaPrincipal() {
 
   const [pedidoUser, setPedidoUser] = useState();
 
-  
-
-  function setDatosUser(idUser, nombreUser, apellidoUser, correoUser){
+  //
+  // * Funcińo para darle valor las variables de estado desde otros componentes.
+  //
+  // * idUser: ID del usuario.
+  // * nombreUser: nombre del usuario.
+  // * apellidoUser: apellido del usuario.
+  // * correoUser: correo del usuario.
+  //
+  function setDatosUser(idUser, nombreUser, apellidoUser, correoUser) {
     setIdUser(idUser);
     setNombreUser(nombreUser);
     setApellidoUser(apellidoUser);
@@ -55,15 +67,13 @@ function PantallaPrincipal() {
               apellidoUser={apellidoUser}
               correoUser={correoUser}
               pedido={pedidoUser}
-             setPedidoUser={setPedidoUser}
+              setPedidoUser={setPedidoUser}
             />
           </div>
         )}
       </div>
       <div className="m-10">
-        {viewProductosUser && (
-          <ProductosUser pedidoUser={pedidoUser} />
-        )}
+        {viewProductosUser && <ProductosUser pedidoUser={pedidoUser} />}
       </div>
       <div className="m-10">
         {viewTodosPedidos && (
@@ -87,7 +97,7 @@ function PantallaPrincipal() {
         )}
       </div>
 
-      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser}/>}
+      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser} />}
     </div>
   );
 }

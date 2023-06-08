@@ -7,13 +7,18 @@ import styled from "styled-components";
 import PantallaPrincipal from "./PantallaPrincipal";
 import Cabecera from "./Cabecera";
 
+
+//
+// * Componente contenedor de todos los demás componentes.
+// * Desde aqui se renderiazan los demás componentes de la web.
+//
 function Contendor() {
   const client = new ApolloClient({
     uri: "http://localhost:4001/",
     cache: new InMemoryCache(),
   });
-  //localStorage.removeItem("token");
 
+  //Variables de contexto usadas
   const { token, reload } = useContext(Context);
 
   useEffect(() => {
@@ -27,11 +32,14 @@ function Contendor() {
           <Cabecera />
         </div>
 
+        {/* Si no hay token */}
         {!token && (
           <ColorPantallaPrincipal>
             <IniciarSesion />
           </ColorPantallaPrincipal>
         )}
+
+        {/* Si hay token */}
         {token && (
           <div className="flex flex-row">
             <ColorMenu className="w-64 flex flex-row">
