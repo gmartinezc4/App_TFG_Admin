@@ -2,6 +2,8 @@ import React, { useContext, useState } from "react";
 import { Context } from "../context/Context";
 import { gql, useMutation } from "@apollo/client";
 import Swal from "sweetalert2";
+import logo from '../assets/logo.png'
+import fotoPerfil from '../assets/fotoPerfil.png'
 
 const CERRAR_SESION = gql`
   mutation Mutation {
@@ -64,13 +66,14 @@ function Cabecera() {
     <div className="h-20 bg-orange-900">
       <div className="grid grid-cols-2">
         <div className="grid col-start-2">
-          <div
+          <img
             className={
               token
-                ? "bg-[url('/home/guillermo/App_TFG_Admin/front/src/assets/logo.png')] bg-no-repeat bg-cover h-14 w-14 mt-3 ml-40"
-                : "bg-[url('/home/guillermo/App_TFG_Admin/front/src/assets/logo.png')] bg-no-repeat bg-cover h-14 w-14 mt-3"
+                ? "h-14 w-14 mt-3 ml-40"
+                : "h-14 w-14 mt-3"
             }
-          ></div>
+            src={logo}
+          ></img>
         </div>
 
         {/* Si hay token */}
@@ -83,13 +86,14 @@ function Cabecera() {
                 </button>
 
                 {/* Boton para abrir el sub menú */}
-                <button
-                  className="bg-[url('/home/guillermo/App_TFG_Admin/front/src/assets/fotoPerfil.png')] bg-no-repeat bg-cover h-12 w-12"
+                <img
+                  className="h-12 w-12"
                   id="menu-button-perfil"
                   aria-expanded="true"
                   aria-haspopup="true"
                   onClick={() => setOpenSubMenuPerfil(!OpenSubMenuPerfil)}
-                ></button>
+                  src={fotoPerfil}
+                ></img>
               </div>
 
               {/* Si está abierto el sub menú */}
