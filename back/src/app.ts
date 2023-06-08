@@ -5,6 +5,11 @@ import { typeDefs } from "./schema"
 import { Query } from "./resolvers/query"
 import { Mutation } from "./resolvers/mutation"
 
+//
+// * Clase principal. 
+// * Inicializa ApolloServer.
+//
+
 const resolvers = {
    Query,
    Mutation

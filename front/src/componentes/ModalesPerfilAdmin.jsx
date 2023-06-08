@@ -48,6 +48,11 @@ const MODIFICAR_USER_ADMIN = gql`
   }
 `;
 
+//
+// * Componente MOdalesPerfilAdmin.
+// * Se encarga de los modales usasdos para cambiar
+// * los datos del usuario administrador.
+//
 function ModalesPerfilAdmin(props) {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
@@ -79,8 +84,10 @@ function ModalesPerfilAdmin(props) {
   const [passViewNew, setPassViewNew] = useState(false);
   const [passViewNewRep, setPassViewNewRep] = useState(false);
 
+  // Variables del contexto usadas
   const { changeReload } = useContext(Context);
 
+  // Mutation para modificar los datos del usuario.
   const [modificarUserAdmin] = useMutation(MODIFICAR_USER_ADMIN, {
     onCompleted: () => {
       setErrorPasswordIcorrecta(true);
@@ -105,6 +112,12 @@ function ModalesPerfilAdmin(props) {
     },
   });
 
+  //
+  // * Función para comprobar que al menos se haya introducido
+  // * el nombre o el apellido nuevo.
+//
+// * Realiza la mutation modificarUserAdmin.
+  //
   function comprobarUserNombreApellido() {
     if (nombre == "" && apellido == "") {
       setNoHayNombre(true);
@@ -130,7 +143,10 @@ function ModalesPerfilAdmin(props) {
     }
   }
 
-  //falta el caso de cuando el correo existe y el de cuando la contraseña no es correcta
+  //
+  // * Función para modificar el correo del usuario.
+  // * Realiza la mutation modicarUserAdmin.
+  //
   function comprobarUserCorreo() {
     if (correo == "") {
       setNoHayCorreo(true);
@@ -197,6 +213,10 @@ function ModalesPerfilAdmin(props) {
     }
   }
 
+  //
+  // * Función para modificar la contraseña del usuario.
+  // * Realiza la mutation modicarUserAdmin.
+  //
   function comprobarUserPassword() {
     if (password == "") {
       setNoHayPassword(true);
@@ -271,6 +291,9 @@ function ModalesPerfilAdmin(props) {
     }
   }
 
+  //
+  // * Función que muestra la confirmación del cambio de los datos
+  //
   function mostrarConfirmación() {
     Swal.fire({
       position: 'center',
@@ -310,6 +333,7 @@ function ModalesPerfilAdmin(props) {
             type="text"
             name="nombre"
           ></input>
+          
           {noHayNombre && (
             <p className="text-red-500 text-xs italic mt-3">Porfavor introduzca el nuevo nombre</p>
           )}

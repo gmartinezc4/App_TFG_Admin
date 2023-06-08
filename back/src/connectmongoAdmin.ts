@@ -1,5 +1,8 @@
 import { Db, MongoClient } from "mongodb";
 
+//
+// * Clase para conectarnos a la base de datos TFG_Admin
+//
 export const connectDB_Admin = async (): Promise<Db> => {
   const dbName: string = "TFG_Admin";
 

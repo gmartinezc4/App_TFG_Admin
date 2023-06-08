@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 
 // 
-// * Componente para mostrar pñagina de errores.
+// * Componente para mostrar paginas de errores.
 // 
 function PaginasErrores(props) {
 
