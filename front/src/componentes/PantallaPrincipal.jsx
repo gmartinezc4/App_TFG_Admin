@@ -8,6 +8,7 @@ import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
 import MaderasWeb from "./MaderasWeb";
 import CorreoConfirmacion from "./CorreoConfirmacion";
+import CorreoCancelacionProducto from './CorreoCancelacionProducto'
 import PerfilAdmin from "./PerfilAdmin";
 
 
@@ -27,6 +28,7 @@ function PantallaPrincipal() {
     viewMaderasWeb,
     viewPerfilAdmin,
     enviarCorreoConfirmacion,
+    enviarCorreoCancelacion,
   } = useContext(Context);
 
   const [idUser, setIdUser] = useState("");
@@ -35,6 +37,7 @@ function PantallaPrincipal() {
   const [correoUser, setCorreoUser] = useState("");
 
   const [pedidoUser, setPedidoUser] = useState();
+  const [productoPedido, setProductoPedido] = useState()
 
   //
   // * Funcińo para darle valor las variables de estado desde otros componentes.
@@ -73,7 +76,7 @@ function PantallaPrincipal() {
         )}
       </div>
       <div className="m-10">
-        {viewProductosUser && <ProductosUser pedidoUser={pedidoUser} />}
+        {viewProductosUser && <ProductosUser pedidoUser={pedidoUser} setProductoPedido={setProductoPedido} />}
       </div>
       <div className="m-10">
         {viewTodosPedidos && (
@@ -98,6 +101,9 @@ function PantallaPrincipal() {
       </div>
 
       {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser} />}
+
+      {enviarCorreoCancelacion && <CorreoCancelacionProducto pedido={pedidoUser} producto={productoPedido}/>}
+
     </div>
   );
 }

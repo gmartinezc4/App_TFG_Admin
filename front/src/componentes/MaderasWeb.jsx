@@ -74,7 +74,8 @@ const GET_MADERAS_FILTRADAS = gql`
 //
 function MaderasWeb() {
   // Variables usadas del contexto.
-  const { changeReload } = useContext(Context);
+  const { changeReload, changeErrorTrue, changeCodigoError, changeMensajeError } =
+    useContext(Context);
 
   const [buscarMadera, setBuscarMadera] = useState("");
   const [buscarMaderaAux, setBuscarMaderaAux] = useState("");

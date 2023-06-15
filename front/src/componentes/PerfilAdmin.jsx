@@ -47,7 +47,8 @@ function PerfilAdmin() {
   const [modalIsOpenPassword, setIsOpenPassword] = useState(false);
 
   // Variables del contexto usadas por el usuario.
-  const { changeReload } = useContext(Context);
+  const { changeReload, changeErrorTrue, changeCodigoError, changeMensajeError } =
+    useContext(Context);
 
   //
   // * Funciones encargadas de abrir y cerrar los modales para

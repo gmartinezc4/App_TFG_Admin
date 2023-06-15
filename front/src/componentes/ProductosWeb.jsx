@@ -81,7 +81,8 @@ const GET_PRODCUTOS_FILTRADOS = gql`
 //
 function ProductosWeb() {
   // Variables del contexto usadas.
-  const { changeReload } = useContext(Context);
+  const { changeReload, changeErrorTrue, changeCodigoError, changeMensajeError } =
+    useContext(Context);
 
   const [buscarProducto, setBuscarProducto] = useState("");
   const [buscarProductoAux, setBuscarProductoAux] = useState("");

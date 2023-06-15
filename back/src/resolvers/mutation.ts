@@ -600,6 +600,10 @@ export const Mutation = {
         const userAdmin = context.userAdmin;
         const { id_pedido, id_product } = args;
         let newProductos: any = [];
+        let productoEliminado: any;
+        let newStock: any;
+        let newImporte: number;
+        let newImporteFreeIVA: number;
 
         try {
             if (userAdmin) {
@@ -614,9 +618,11 @@ export const Mutation = {
                             pedido.Productos.map(async (p: any) => {
                                 if (p.Id_producto != id_product) {
                                     newProductos.push(p);
+                                }else{
+                                    productoEliminado = p;
                                 }
 
-                                let newStock: any;
+                                
                                 const producto = await db.collection("Productos_Venta").findOne({ _id: new ObjectId(p.Id_producto) })
 
                                 if (producto) {
@@ -628,7 +634,12 @@ export const Mutation = {
 
                             })
 
-                            await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos } });
+                            if(productoEliminado){
+                                newImporte = parseInt(pedido.ImportePedido) - parseInt(productoEliminado.PrecioTotal);
+                                newImporteFreeIVA = parseFloat(pedido.ImporteFreeIvaPedido) - parseFloat(productoEliminado.PrecioTotal_freeIVA);
+                                await db.collection("Pedidos_Activos").findOneAndUpdate({ _id: new ObjectId(id_pedido) }, { $set: { Productos: newProductos,  ImportePedido: newImporte, ImporteFreeIvaPedido: newImporteFreeIVA} });
+                            }
+
 
                             return {
                                 _id: pedido._id,
@@ -665,7 +676,7 @@ export const Mutation = {
 
 
                     } else {
-                        throw new ApolloError("No se ha recuperado ningún peido con ese ID");
+                        throw new ApolloError("No se ha recuperado ningún pedido con ese ID");
                     }
                 }
 

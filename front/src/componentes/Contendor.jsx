@@ -6,6 +6,7 @@ import MenuLateral from "./MenuLateral";
 import styled from "styled-components";
 import PantallaPrincipal from "./PantallaPrincipal";
 import Cabecera from "./Cabecera";
+import PaginasErrores from "./PaginasErrores";
 
 
 //
@@ -19,7 +20,7 @@ function Contendor() {
   });
 
   //Variables de contexto usadas
-  const { token, reload } = useContext(Context);
+  const { token, reload, viewError, codigoError, mensajeError } = useContext(Context);
 
   useEffect(() => {
   }, [reload])
@@ -28,6 +29,7 @@ function Contendor() {
   return (
     <ApolloProvider client={client}>
       <div>
+        {viewError && <PaginasErrores codigo={codigoError} mensaje={mensajeError} />}
         <div>
           <Cabecera />
         </div>

@@ -6,7 +6,7 @@ import React, { useEffect } from 'react'
 function PaginasErrores(props) {
 
   useEffect(() => {
-    if(props.mensaje == "Ha ocurrido un error con el usuario"){
+    if(props.mensaje == "Usuario no autorizado"){
       localStorage.removeItem("token");
     }
   }, [])

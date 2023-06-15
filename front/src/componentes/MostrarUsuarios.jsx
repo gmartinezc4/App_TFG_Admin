@@ -111,10 +111,12 @@ function MostrarUsuarios(props) {
   const {
     changeReload,
     reload,
-    viewPedidosUser,
     changeViewPedidosUser,
     token,
     nivel_auth,
+    changeErrorTrue,
+    changeCodigoError,
+    changeMensajeError,
   } = useContext(Context);
 
   const [buscarUserAdmin, setBuscarUserAdmin] = useState("");
@@ -416,7 +418,7 @@ function MostrarUsuarios(props) {
 
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">
-          ADMINISTRADORES
+          USUARIOS ADMINISTRADORES
         </h1>
 
         {/* Buscar en la tabla */}
@@ -455,7 +457,7 @@ function MostrarUsuarios(props) {
         </div>
 
         {/* Si el nivel de autorización es 2 o más */}
-        {/* Tabla usuarios adminsitradores con opción a editar */}
+        {/* Tabla usuarios adminsitradores con opción a editar y eliminar */}
         {nivel_auth >= 2 && (
           <div className="flex flex-col">
             <div className="overflow-x-auto">
@@ -620,7 +622,7 @@ function MostrarUsuarios(props) {
         )}
 
         {/* Si el nivel de autorización menor que 2 */}
-        {/* Tabla usuarios adminsitradores sin opción a editar */}
+        {/* Tabla usuarios adminsitradores sin opción a editar y eliminar */}
         {nivel_auth < 2 && (
           <div className="flex flex-col">
             <div className="overflow-x-auto">
@@ -663,12 +665,6 @@ function MostrarUsuarios(props) {
                           scope="col"
                           className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
                         >
-                          Borrar
-                        </th>
-                        <th
-                          scope="col"
-                          className="px-6 py-3 text-xs font-bold text-right text-gray-500 uppercase "
-                        >
                           Sesión iniciada
                         </th>
                       </tr>
@@ -692,18 +688,6 @@ function MostrarUsuarios(props) {
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap">
                               {userAdmin.nivel_auth}
-                            </td>
-                            <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
-                              {userAdmin.token != token && (
-                                <a
-                                  className="text-red-500 hover:text-red-600 cursor-pointer"
-                                  onClick={() => {
-                                    modalBorrarUserAdmin(userAdmin._id);
-                                  }}
-                                >
-                                  Borrar
-                                </a>
-                              )}
                             </td>
                             <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
                               {userAdmin.token == token && (
@@ -768,7 +752,7 @@ function MostrarUsuarios(props) {
         )}
 
         <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
-          USUARIOS
+          USUARIOS CLIENTES
         </h1>
 
         {/* Buscar en la tabla */}
