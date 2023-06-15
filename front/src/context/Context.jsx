@@ -13,6 +13,7 @@ export function ContextProvider(props) {
   const [viewPerfilAdmin, setViewPerfilAdmin] = useState(false);
 
   const [enviarCorreoConfirmacion, setEnviarCorreoConfirmacion] = useState(false);
+  const [enviarCorreoCancelacion, setEnviarCorreoCancelacion] = useState(false);
   const [volverDeProductos, setVolverDeProductos] = useState("");
   const [reload, setReload] = useState(false);
 
@@ -36,6 +37,7 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewUsuarios(setView){
@@ -47,6 +49,7 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewPedidosUser(setView){
@@ -58,6 +61,7 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewProductosUser(setView){
@@ -69,6 +73,7 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewTodosPedidos(setView){
@@ -80,6 +85,7 @@ export function ContextProvider(props) {
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewProductosWeb(setView){
@@ -91,6 +97,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewMaderasWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewMaderasWeb(setView){
@@ -102,6 +109,7 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewPerfilAdmin(false);
+    changeErrorFalse();
   }
 
   function changeViewPerfilAdmin(setView){
@@ -113,14 +121,31 @@ export function ContextProvider(props) {
     setViewTodosPedidos(false);
     setViewProductosWeb(false);
     setViewMaderasWeb(false);
+    changeErrorFalse();
   }
 
   function changeEnviarCorreoConfirmacion(setView){
     setEnviarCorreoConfirmacion(setView);
   }
 
+  function changeEnviarCorreoCancelacion(setView){
+    setEnviarCorreoCancelacion(setView);
+  }
+
   function changeVolverDeProductos(setVolver){
     setVolverDeProductos(setVolver);
+  }
+
+  function changeErrorTrue(){
+    setViewError(true);
+    setViewRegistro(false);
+    setViewUsuarios(false);
+    setViewPedidosUser(false);
+    setViewProductosUser(false);
+    setViewTodosPedidos(false);
+    setViewProductosWeb(false);
+    setViewMaderasWeb(false);
+    setViewPerfilAdmin(false);
   }
 
   function changeErrorFalse(){
@@ -135,6 +160,7 @@ export function ContextProvider(props) {
     setMensajeError(mensaje);
   }
 
+
   return (
     <Context.Provider
       value={{
@@ -148,6 +174,7 @@ export function ContextProvider(props) {
         viewPerfilAdmin,
         
         enviarCorreoConfirmacion,
+        enviarCorreoCancelacion,
         volverDeProductos,
         reload,
         token,
@@ -167,9 +194,11 @@ export function ContextProvider(props) {
         changeViewPerfilAdmin,
         
         changeEnviarCorreoConfirmacion,
+        changeEnviarCorreoCancelacion,
         changeVolverDeProductos,
         changeReload,
 
+        changeErrorTrue,
         changeErrorFalse,
         changeCodigoError,
         changeMensajeError,

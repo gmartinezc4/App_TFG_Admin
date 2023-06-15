@@ -235,6 +235,9 @@ function PedidosUser(props) {
     changeReload,
     changeVolverDeProductos,
     changeEnviarCorreoConfirmacion,
+    changeErrorTrue,
+    changeCodigoError,
+    changeMensajeError,
   } = useContext(Context);
 
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {

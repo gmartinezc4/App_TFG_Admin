@@ -277,6 +277,9 @@ function AllPedidos(props) {
     changeReload,
     changeVolverDeProductos,
     changeEnviarCorreoConfirmacion,
+    changeErrorTrue,
+    changeCodigoError,
+    changeMensajeError,
   } = useContext(Context);
 
   // Mutation para cambiar el estado de un pedido.

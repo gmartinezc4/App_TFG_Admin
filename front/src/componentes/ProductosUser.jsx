@@ -56,6 +56,8 @@ const GET_PREODUCTOS_PEDIDO = gql`
 // * Componente ProductosUser.
 // * Se encarga de motrar las tablas de los productos de
 // * los pedidos del usuario.
+// 
+// * props: pedidoUser y setProductoPedido.
 //
 function ProductosUser(props) {
   // Variables del contexto usadas
@@ -64,6 +66,10 @@ function ProductosUser(props) {
     changeViewTodosPedidos,
     volverDeProductos,
     changeReload,
+    changeErrorTrue,
+    changeCodigoError,
+    changeMensajeError,
+    changeEnviarCorreoCancelacion
   } = useContext(Context);
 
   // Mutatuion para cancelar un producto del pedido.
@@ -77,6 +83,8 @@ function ProductosUser(props) {
         title: "Se ha retirado el producto del pedido",
         showConfirmButton: false,
         timer: 1500,
+      }).then(() => {
+        changeEnviarCorreoCancelacion(true);
       });
     },
     onError: (error) => {
@@ -142,7 +150,7 @@ function ProductosUser(props) {
   // * idPedido: ID del pedido del que se quiere borrar el producto.
   // * idProduct: ID del producto que se quiere borrar.
   //
-  function modalCancelarProductoPedido(idPedido, idProduct) {
+  function modalCancelarProductoPedido(idPedido, idProduct, producto) {
     Swal.fire({
       icon: "warning",
       title: "¿Confirmar cambios?",
@@ -161,7 +169,9 @@ function ProductosUser(props) {
             idPedido: idPedido,
             idProduct: idProduct,
           },
-        });
+        }).then(() => {
+          props.setProductoPedido(producto);
+        })
       }
     });
   }
@@ -252,8 +262,7 @@ function ProductosUser(props) {
       </div>
 
       {/* Si el pedido esta activo o pendiente, se muestra la opción de cancelar producto */}
-      {(props.pedidoUser.estado == "Activo" ||
-        props.pedidoUser.estado == "Pendiente") && (
+      {props.pedidoUser.estado == "Activo" && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PRODUCTOS PEDIDO
@@ -329,7 +338,8 @@ function ProductosUser(props) {
                               onClick={() => {
                                 modalCancelarProductoPedido(
                                   props.pedidoUser._id,
-                                  producto.id_producto
+                                  producto.id_producto,
+                                  producto
                                 );
                               }}
                             >
@@ -348,7 +358,7 @@ function ProductosUser(props) {
       )}
 
       {/* Si el pedido no esta activo o pendiente, no se muetra la opción de cancelar producto */}
-      {props.pedidoUser.estado != "Activo" && props.pedidoUser.estado != "Pendiente" && (
+      {props.pedidoUser.estado != "Activo" && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PRODUCTOS PEDIDO
