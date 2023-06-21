@@ -18,6 +18,8 @@ Esta aplicación está desarrollada para el trabajo de fin de curso del grado de
    
    ```
     cd front
+   ```
+   ```
     cd back
    ```
    
