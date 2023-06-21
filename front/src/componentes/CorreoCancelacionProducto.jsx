@@ -37,16 +37,10 @@ function CorreoCancelacionProducto(props) {
         }
       );
   };
-
-  let importeFreeIva_redonded = props.pedido.importeFreeIvaPedido.toString();
-
-  console.log(props.pedido.importePedido )
-  console.log(props.producto.precioTotal)
   
   let nuevo_importe = props.pedido.importePedido - props.producto.precioTotal;
   let nuevo_importe_freeIVA = props.pedido.importeFreeIvaPedido.toString() - props.producto.precioTotal_freeIVA.toString();
-  
-  console.log(nuevo_importe_freeIVA)
+
   //
   // * Función que muestra que el email de confirmación se ha enviado.
   // * Tras mostrar la confirmación envia el email.
@@ -151,7 +145,7 @@ function CorreoCancelacionProducto(props) {
             <input
               type="text"
               name="subtotal"
-              defaultValue={nuevo_importe_freeIVA.toPrecision(5)}
+              defaultValue={nuevo_importe_freeIVA.toPrecision(4)}
               hidden
             />
             <input

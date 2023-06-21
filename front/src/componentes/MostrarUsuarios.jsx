@@ -123,6 +123,7 @@ function MostrarUsuarios(props) {
   const [buscarUserAdminAux, setBuscarUserAdminAux] = useState("");
   const [buscarUser, setBuscarUser] = useState("");
   const [buscarUserAux, setBuscarUserAux] = useState("");
+  const [nivelAuth, setNivelAuth] = useState("");
 
   useEffect(() => {}, [reload]);
 
@@ -338,6 +339,7 @@ function MostrarUsuarios(props) {
           modalCambiarNivelAuthAdmin(AdminId);
         });
       } else {
+        setNivelAuth(nivelAuth);
         changeLvlAuthUserAdmin({
           context: {
             headers: {
@@ -348,7 +350,7 @@ function MostrarUsuarios(props) {
             idUser: AdminId,
             newNivelAuth: nivelAuth,
           },
-        });
+        })
       }
     }
   }
