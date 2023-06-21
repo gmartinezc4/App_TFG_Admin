@@ -246,6 +246,12 @@ const CAMBIAR_ESTADO_PEDIDO = gql`
   }
 `;
 
+//
+// * Componente AllPedidos.
+// * Se encarga de mostrar las tablas de los pedidos.
+//
+// * props: pedidoUser
+//
 function AllPedidos(props) {
   let pedidoId = "";
 
@@ -265,13 +271,18 @@ function AllPedidos(props) {
     changeVolverDeProductos("AllPedidos");
   }, []);
 
+  // Variables de contexto usadas.
   const {
     changeViewProductosUser,
     changeReload,
     changeVolverDeProductos,
     changeEnviarCorreoConfirmacion,
+    changeErrorTrue,
+    changeCodigoError,
+    changeMensajeError,
   } = useContext(Context);
 
+  // Mutation para cambiar el estado de un pedido.
   const [cambiarEstadoPedido] = useMutation(CAMBIAR_ESTADO_PEDIDO, {
     onCompleted: (data) => {
       console.log("Se ha cambiado el estado del pedido");
@@ -288,7 +299,7 @@ function AllPedidos(props) {
       });
     },
     onError: (error) => {
-      //si hay un error, borrar el token
+      // Si hay un error, borrar el token.
       console.log(error);
       Swal.fire({
         position: "center",
@@ -301,6 +312,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos recogidos.
   const {
     data: dataRecogidos,
     loading: loadingRecogidos,
@@ -313,6 +325,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos activos.
   const {
     data: dataActivos,
     loading: loadingActivos,
@@ -325,6 +338,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos pendientes.
   const {
     data: dataPendientes,
     loading: loadingPendientes,
@@ -337,6 +351,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos cancelados.
   const {
     data: dataCancelados,
     loading: loadingCancelados,
@@ -349,6 +364,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos eliminados.
   const {
     data: dataEliminados,
     loading: loadingEliminados,
@@ -361,6 +377,7 @@ function AllPedidos(props) {
     },
   });
 
+  // Query para traer los pedidos con un filtro aplicado.
   const {
     data: dataFiltrados,
     loading: loadingFiltrados,
@@ -437,6 +454,10 @@ function AllPedidos(props) {
       {changeMensajeError(errorFiltrados.message)}
     </div>;
 
+  //
+  // * Función para confirmar la cancelación el pedido.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
   function modalCancelarPedido(estadoActual) {
     Swal.fire({
       icon: "warning",
@@ -464,6 +485,13 @@ function AllPedidos(props) {
     });
   }
 
+  //
+  // * Función para cambiar el estado del pedido.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarEstadoPedido(estadoActual, fechaReferencia) {
     const { value: newEstado } = await Swal.fire({
       title: "Nuevo estado del pedido",
@@ -515,6 +543,14 @@ function AllPedidos(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de pedidos activos.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoActivo(estadoActual, newEstado, fechaReferencia) {
     let fecha = new Date();
     let fechaMañana =
@@ -572,6 +608,14 @@ function AllPedidos(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de pedidos pendientes.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoPendiente(
     estadoActual,
     newEstado,
@@ -633,6 +677,14 @@ function AllPedidos(props) {
     }
   }
 
+  //
+  // * Función para cambia la fecha de recogida de pedidos recogidos.
+  // * Realiza la mutation cambiarEstadoPedido.
+  //
+  // * estadoActual: estado actual del pedido
+  // * newEstado: nuevo estado del pedido.
+  // * fechaReferencia: fecha de recogida actual del pedido
+  //
   async function modalCambiarFechaPedidoRecogido(estadoActual, newEstado) {
     let fecha = new Date();
     let fechaMañana =
@@ -696,12 +748,14 @@ function AllPedidos(props) {
         Bases de datos Pedidos
       </h1>
 
+      {/* Si hay pedidos activos */}
       {dataActivos.getPedidosActivos.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5">
             PEDIDOS ACTIVOS
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -739,6 +793,7 @@ function AllPedidos(props) {
             </div>
           </div>
 
+          {/* tabla pedidos activos */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -797,6 +852,7 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro  para buscar */}
                       {!buscarPedidosActivos &&
                         dataActivos.getPedidosActivos.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -862,6 +918,7 @@ function AllPedidos(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar*/}
                       {buscarPedidosActivos &&
                         dataFiltrados.getPedidosFiltrados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -935,12 +992,14 @@ function AllPedidos(props) {
         </div>
       )}
 
+      {/* Si hay pedidos pendientes */}
       {dataPendientes.getPedidosPendientes.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS PENDIENTES DE RECOGER
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -978,6 +1037,7 @@ function AllPedidos(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos pendientes */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1036,6 +1096,7 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosPendientes &&
                         dataPendientes.getPedidosPendientes.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1101,6 +1162,7 @@ function AllPedidos(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosPendientes &&
                         dataFiltrados.getPedidosFiltrados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1174,12 +1236,14 @@ function AllPedidos(props) {
         </div>
       )}
 
+      {/* Si hay pedidos recogidos */}
       {dataRecogidos.getPedidosRecogidos.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS RECOGIDOS
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -1217,6 +1281,7 @@ function AllPedidos(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos recogidos */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1269,6 +1334,7 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosRecogidos &&
                         dataRecogidos.getPedidosRecogidos.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1313,6 +1379,7 @@ function AllPedidos(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosRecogidos &&
                         dataFiltrados.getPedidosFiltrados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1356,12 +1423,14 @@ function AllPedidos(props) {
         </div>
       )}
 
+      {/* Si hay pedidos cancelados */}
       {dataCancelados.getPedidosCancelados.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS CANCELADOS
           </h1>
 
+          {/* buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -1399,6 +1468,7 @@ function AllPedidos(props) {
             </div>
           </div>
 
+          {/* Tabal pedidos cancelados */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1451,6 +1521,7 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscar */}
                       {!buscarPedidosCancelados &&
                         dataCancelados.getPedidosCancelados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1486,6 +1557,7 @@ function AllPedidos(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosCancelados &&
                         dataFiltrados.getPedidosFiltrados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1538,12 +1610,14 @@ function AllPedidos(props) {
         </div>
       )}
 
+      {/* Si hay pedidos eliminados */}
       {dataEliminados.getPedidosEliminados.length != 0 && (
         <div>
           <h1 className="flex justify-center text-2xl underline font-bold mb-5 mt-10">
             PEDIDOS ELIMINADOS
           </h1>
 
+          {/* Buscar en la tabla */}
           <div className="flex flex-row py-3 pl-2">
             <div className="relative max-w-xs">
               <input
@@ -1581,6 +1655,7 @@ function AllPedidos(props) {
             </div>
           </div>
 
+          {/* Tabla pedidos eliminados */}
           <div className="flex flex-col">
             <div className="overflow-x-auto">
               <div className="p-1.5 w-full inline-block align-middle">
@@ -1627,6 +1702,7 @@ function AllPedidos(props) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
+                      {/* Si no hay filtro para buscas */}
                       {!buscarPedidosEliminados &&
                         dataEliminados.getPedidosEliminados.map((pedidos) => (
                           <tr key={pedidos._id}>
@@ -1659,6 +1735,7 @@ function AllPedidos(props) {
                           </tr>
                         ))}
 
+                      {/* Si hay filtro para buscar */}
                       {buscarPedidosEliminados &&
                         dataFiltrados.getPedidosFiltrados.map((pedidos) => (
                           <tr key={pedidos._id}>

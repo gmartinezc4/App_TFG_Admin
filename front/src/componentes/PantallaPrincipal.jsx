@@ -8,9 +8,16 @@ import AllPedidos from "./AllPedidos";
 import ProductosWeb from "./ProductosWeb";
 import MaderasWeb from "./MaderasWeb";
 import CorreoConfirmacion from "./CorreoConfirmacion";
+import CorreoCancelacionProducto from './CorreoCancelacionProducto'
 import PerfilAdmin from "./PerfilAdmin";
 
+
+// 
+// * Componente PantallaPrincipal.
+// * Se encarga de mostrar el componente elegido en el menú lateral,
+//
 function PantallaPrincipal() {
+  // Variables del contexto usadas
   const {
     viewRegistro,
     viewUsuarios,
@@ -21,18 +28,26 @@ function PantallaPrincipal() {
     viewMaderasWeb,
     viewPerfilAdmin,
     enviarCorreoConfirmacion,
+    enviarCorreoCancelacion,
   } = useContext(Context);
-  
+
   const [idUser, setIdUser] = useState("");
   const [nombreUser, setNombreUser] = useState("");
   const [apellidoUser, setApellidoUser] = useState("");
   const [correoUser, setCorreoUser] = useState("");
 
   const [pedidoUser, setPedidoUser] = useState();
+  const [productoPedido, setProductoPedido] = useState()
 
-  
-
-  function setDatosUser(idUser, nombreUser, apellidoUser, correoUser){
+  //
+  // * Funcińo para darle valor las variables de estado desde otros componentes.
+  //
+  // * idUser: ID del usuario.
+  // * nombreUser: nombre del usuario.
+  // * apellidoUser: apellido del usuario.
+  // * correoUser: correo del usuario.
+  //
+  function setDatosUser(idUser, nombreUser, apellidoUser, correoUser) {
     setIdUser(idUser);
     setNombreUser(nombreUser);
     setApellidoUser(apellidoUser);
@@ -55,15 +70,13 @@ function PantallaPrincipal() {
               apellidoUser={apellidoUser}
               correoUser={correoUser}
               pedido={pedidoUser}
-             setPedidoUser={setPedidoUser}
+              setPedidoUser={setPedidoUser}
             />
           </div>
         )}
       </div>
       <div className="m-10">
-        {viewProductosUser && (
-          <ProductosUser pedidoUser={pedidoUser} />
-        )}
+        {viewProductosUser && <ProductosUser pedidoUser={pedidoUser} setProductoPedido={setProductoPedido} />}
       </div>
       <div className="m-10">
         {viewTodosPedidos && (
@@ -87,7 +100,10 @@ function PantallaPrincipal() {
         )}
       </div>
 
-      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser}/>}
+      {enviarCorreoConfirmacion && <CorreoConfirmacion pedido={pedidoUser} />}
+
+      {enviarCorreoCancelacion && <CorreoCancelacionProducto pedido={pedidoUser} producto={productoPedido}/>}
+
     </div>
   );
 }

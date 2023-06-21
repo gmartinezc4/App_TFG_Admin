@@ -1,6 +1,10 @@
 import { ApolloError } from "apollo-server";
 import { Db, ObjectId } from "mongodb";
 
+
+//
+// * Querys de la apliación
+//
 export const Query = {
 
     getAdmin: async (parent: any, args: any, context: { userAdmin: any }) => {
@@ -8,15 +12,15 @@ export const Query = {
 
         try {
             if (userAdmin) {
-                    return {
-                        _id: userAdmin._id.toString(),
-                        nombre: userAdmin.Nombre,
-                        apellido: userAdmin.Apellido,
-                        email: userAdmin.Email,
-                        password: userAdmin.Password,
-                        nivel_auth: userAdmin.Nivel_auth,
-                        token: userAdmin.token || "",
-                    }
+                return {
+                    _id: userAdmin._id.toString(),
+                    nombre: userAdmin.Nombre,
+                    apellido: userAdmin.Apellido,
+                    email: userAdmin.Email,
+                    password: userAdmin.Password,
+                    nivel_auth: userAdmin.Nivel_auth,
+                    token: userAdmin.token || "",
+                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -57,14 +61,14 @@ export const Query = {
         }
     },
 
-    getAdminsFiltrados: async (parent: any, args: { filtro: string}, context: { db_admin: Db, userAdmin: any }) => {
+    getAdminsFiltrados: async (parent: any, args: { filtro: string }, context: { db_admin: Db, userAdmin: any }) => {
         const { db_admin, userAdmin } = context;
         const filtro = args.filtro;
 
         try {
 
             if (userAdmin) {
-                const filtradosNombre = await db_admin.collection("Usuarios_admins").find({ Nombre: {$regex: filtro, $options: 'i'}}).toArray();
+                const filtradosNombre = await db_admin.collection("Usuarios_admins").find({ Nombre: { $regex: filtro, $options: 'i' } }).toArray();
 
                 if (filtradosNombre) {
                     return filtradosNombre.map((u) => ({
@@ -77,7 +81,8 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    return [];                }
+                    return [];
+                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -113,14 +118,14 @@ export const Query = {
         }
     },
 
-    getUsuariosFiltrados: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+    getUsuariosFiltrados: async (parent: any, args: { filtro: string }, context: { db: Db, userAdmin: any }) => {
         const { db, userAdmin } = context;
         const filtro = args.filtro;
 
         try {
 
             if (userAdmin) {
-                const filtradosNombre = await db.collection("Usuarios").find({ Nombre: {$regex: filtro, $options: 'i'}}).toArray();
+                const filtradosNombre = await db.collection("Usuarios").find({ Nombre: { $regex: filtro, $options: 'i' } }).toArray();
 
                 if (filtradosNombre) {
                     return filtradosNombre.map((u: any) => ({
@@ -132,7 +137,8 @@ export const Query = {
                         token: u.token || "",
                     }))
                 } else {
-                    return [];                }
+                    return [];
+                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -164,14 +170,14 @@ export const Query = {
         }
     },
 
-    getMaderasFiltradas: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+    getMaderasFiltradas: async (parent: any, args: { filtro: string }, context: { db: Db, userAdmin: any }) => {
         const { db, userAdmin } = context;
         const filtro = args.filtro;
 
         try {
 
             if (userAdmin) {
-                const filtradosNombre = await db.collection("Tipos_Madera").find({ name: {$regex: filtro, $options: 'i'}}).toArray();
+                const filtradosNombre = await db.collection("Tipos_Madera").find({ name: { $regex: filtro, $options: 'i' } }).toArray();
 
                 if (filtradosNombre) {
                     return filtradosNombre.map((u: any) => ({
@@ -264,23 +270,23 @@ export const Query = {
                     if (estado == "Eliminado") bbdd = "Pedidos_Eliminados"
 
                     const pedido = await db.collection(bbdd).findOne({ _id: new ObjectId(id_pedido) });
-                    
+
                     if (pedido) {
                         if (pedido.Productos.length != 0) {
-                             
-                            return pedido?.Productos.map((e: any) => ({
-                                    _id: e._id.toString(),
-                                    id_user: e.Id_user,
-                                    id_producto: e.Id_producto,
-                                    img: e.Img,
-                                    name: e.Name,
-                                    cantidad: e.Cantidad,
-                                    precioTotal: e.PrecioTotal,
-                                    precioTotal_freeIVA: e.PrecioTotal_freeIVA
-                                }))
 
-                            
-                        }else {
+                            return pedido?.Productos.map((e: any) => ({
+                                _id: e._id.toString(),
+                                id_user: e.Id_user,
+                                id_producto: e.Id_producto,
+                                img: e.Img,
+                                name: e.Name,
+                                cantidad: e.Cantidad,
+                                precioTotal: e.PrecioTotal,
+                                precioTotal_freeIVA: e.PrecioTotal_freeIVA
+                            }))
+
+
+                        } else {
                             throw new ApolloError("El pedido no tiene productos");
 
                         }
@@ -296,14 +302,14 @@ export const Query = {
         }
     },
 
-    getProductosFiltrados: async (parent: any, args: { filtro: string}, context: { db: Db, userAdmin: any }) => {
+    getProductosFiltrados: async (parent: any, args: { filtro: string }, context: { db: Db, userAdmin: any }) => {
         const { db, userAdmin } = context;
         const filtro = args.filtro;
 
         try {
 
             if (userAdmin) {
-                const filtradosNombre = await db.collection("Productos_Venta").find({ name: {$regex: filtro, $options: 'i'}}).toArray();
+                const filtradosNombre = await db.collection("Productos_Venta").find({ name: { $regex: filtro, $options: 'i' } }).toArray();
 
                 if (filtradosNombre) {
                     return filtradosNombre.map((u: any) => ({
@@ -314,7 +320,8 @@ export const Query = {
                         precio: u.precio,
                     }))
                 } else {
-                    return [];                }
+                    return [];
+                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -339,7 +346,6 @@ export const Query = {
                         const pedidos = await db.collection("Pedidos_Recogidos").find({ Id_user: userPedidos._id.toString() }).toArray();
 
                         if (pedidos) {
-                            console.log(pedidos)
                             return pedidos.map(p => ({
                                 _id: p._id,
                                 id_user: p.Id_user,
@@ -617,7 +623,8 @@ export const Query = {
                         }))
                     }))
                 } else {
-                    return [];                }
+                    return [];
+                }
             } else {
                 throw new ApolloError("Usuario no autorizado");
             }
@@ -851,12 +858,12 @@ export const Query = {
 
             if (userAdmin) {
                 let filtradosFecha: any;
-                
-                if(bbdd == "Pedidos_Activos") filtradosFecha = await db.collection("Pedidos_Activos").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
-                if(bbdd == "Pedidos_Pendientes") filtradosFecha = await db.collection("Pedidos_Pendientes").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
-                if(bbdd == "Pedidos_Cancelados") filtradosFecha = await db.collection("Pedidos_Cancelados").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
-                if(bbdd == "Pedidos_Recogidos") filtradosFecha = await db.collection("Pedidos_Recogidos").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
-                if(bbdd == "Pedidos_Eliminados") filtradosFecha = await db.collection("Pedidos_Eliminados").find({ FechaRecogida: {$eq: filtro.toString() }}).toArray();
+
+                if (bbdd == "Pedidos_Activos") filtradosFecha = await db.collection("Pedidos_Activos").find({ FechaRecogida: { $eq: filtro.toString() } }).toArray();
+                if (bbdd == "Pedidos_Pendientes") filtradosFecha = await db.collection("Pedidos_Pendientes").find({ FechaRecogida: { $eq: filtro.toString() } }).toArray();
+                if (bbdd == "Pedidos_Cancelados") filtradosFecha = await db.collection("Pedidos_Cancelados").find({ FechaRecogida: { $eq: filtro.toString() } }).toArray();
+                if (bbdd == "Pedidos_Recogidos") filtradosFecha = await db.collection("Pedidos_Recogidos").find({ FechaRecogida: { $eq: filtro.toString() } }).toArray();
+                if (bbdd == "Pedidos_Eliminados") filtradosFecha = await db.collection("Pedidos_Eliminados").find({ FechaRecogida: { $eq: filtro.toString() } }).toArray();
 
 
                 if (filtradosFecha) {

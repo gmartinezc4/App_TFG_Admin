@@ -68,12 +68,19 @@ const GET_MADERAS_FILTRADAS = gql`
   }
 `;
 
+//
+// * Componente MaderasWeb.
+// * Muestra las tablas de las maderas.
+//
 function MaderasWeb() {
-  const { changeReload } = useContext(Context);
+  // Variables usadas del contexto.
+  const { changeReload, changeErrorTrue, changeCodigoError, changeMensajeError } =
+    useContext(Context);
 
   const [buscarMadera, setBuscarMadera] = useState("");
   const [buscarMaderaAux, setBuscarMaderaAux] = useState("");
 
+  // Mutation para borrar una madera.
   const [borrarMadera] = useMutation(BORRAR_MADERA, {
     onCompleted: () => {
       console.log("Se ha eliminado la madera");
@@ -87,7 +94,7 @@ function MaderasWeb() {
       });
     },
     onError: (error) => {
-      //si hay un error, borrar el token
+      // Si hay un error, borrar el token.
       console.log(error);
       Swal.fire({
         position: "center",
@@ -100,6 +107,7 @@ function MaderasWeb() {
     },
   });
 
+  // Mutation para modificar una madera.
   const [modificarMadera] = useMutation(MODIFICAR_MADERA, {
     onCompleted: () => {
       console.log("Se ha modificado la madera");
@@ -113,7 +121,7 @@ function MaderasWeb() {
       });
     },
     onError: (error) => {
-      //si hay un error, borrar el token
+      // Si hay un error, borrar el token.
       console.log(error);
       Swal.fire({
         position: "center",
@@ -126,6 +134,7 @@ function MaderasWeb() {
     },
   });
 
+  // Mutation para añadir una madera.
   const [addMadera] = useMutation(ADD_MADERA, {
     onCompleted: () => {
       console.log("Se ha añadido la madera");
@@ -139,7 +148,7 @@ function MaderasWeb() {
       });
     },
     onError: (error) => {
-      //si hay un error, borrar el token
+      // Si hay un error, borrar el token.
       console.log(error);
       Swal.fire({
         position: "center",
@@ -152,6 +161,7 @@ function MaderasWeb() {
     },
   });
 
+  // Query para traera todas las maderas.
   const {
     data: dataGetAllMaderas,
     loading: loadingGetAllMaderas,
@@ -164,6 +174,7 @@ function MaderasWeb() {
     },
   });
 
+  // Query para traer todas las maderas con un filtro aplicado.
   const {
     data: dataGetMaderasFiltradas,
     loading: loadingGetMaderasFiltradas,
@@ -201,6 +212,12 @@ function MaderasWeb() {
       </div>
     );
 
+  //
+  // * Función que muestra la confirmación de la eliminación de la madera.
+  // * Realiza la mutation borrarMadera.
+  //
+  // * idMadera: ID de la madera eliminada.
+  //
   function modalBorrarMadera(idMadera) {
     Swal.fire({
       icon: "warning",
@@ -225,6 +242,15 @@ function MaderasWeb() {
     });
   }
 
+  //
+  // * Función para editar una madera.
+  // * Realiza la mutation modificarMadera.
+  //
+  // * idMadera: ID de la madera eliminada.
+  // * img: url actual.
+  // * name: nombre actual.
+  // * description: descripción actual.
+  //
   async function modalModificarMadera(idMadera, img, name, description) {
     console.log(description);
     const { value: formValues } = await Swal.fire({
@@ -269,6 +295,10 @@ function MaderasWeb() {
     }
   }
 
+  //
+  // * Función para añadir una madera.
+  // * Realiza la mutation addMadera.
+  //
   async function modalAddMadera() {
     const { value: formValues } = await Swal.fire({
       title: "Añadir Producto",
@@ -327,6 +357,8 @@ function MaderasWeb() {
         <h1 className="text-2xl font-mono text-orange-900 mb-10">
           Base de datos Tipos_Madera
         </h1>
+
+        {/* Boton para llama a la función modalAddMadera */}
         <button
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 border border-black hover:border-white rounded"
           onClick={() => {
@@ -340,6 +372,7 @@ function MaderasWeb() {
       <div>
         <h1 className="flex justify-center text-2xl underline font-bold mb-5">MADERAS</h1>
 
+        {/* Buscar en la tabla */}
         <div className="flex flex-row py-3 pl-2">
           <div className="relative max-w-xs">
             <input
@@ -373,6 +406,8 @@ function MaderasWeb() {
             </button>
           </div>
         </div>
+
+        {/* Tabla de las maderas */}
 
         <div className="flex flex-col">
           <div className="overflow-x-auto">
@@ -420,6 +455,7 @@ function MaderasWeb() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
+                    {/* Si no hay un filtro para buscar */}
                     {!buscarMadera &&
                       dataGetAllMaderas.getMaderas.map((madera) => (
                         <tr key={madera._id}>
@@ -463,6 +499,7 @@ function MaderasWeb() {
                         </tr>
                       ))}
 
+                    {/* Si hay un filtro para buscar */}
                     {buscarMadera &&
                       dataGetMaderasFiltradas.getMaderasFiltradas.map((madera) => (
                         <tr key={madera._id}>

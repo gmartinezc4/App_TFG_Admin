@@ -1,22 +1,37 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
-import { Context } from "../context/Context";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import Swal from "sweetalert2";
 
 const REGISTRAR_ADMIN = gql`
-  mutation RegistrarAdmin($nombre: String!, $apellido: String!, $correo: String!, $nivelAuth: String!, $password: String!) {
-  RegistrarAdmin(nombre: $nombre, apellido: $apellido, correo: $correo, nivel_auth: $nivelAuth, password: $password) {
-    apellido
-    email
-    nivel_auth
-    nombre
-    password
-    token
+  mutation RegistrarAdmin(
+    $nombre: String!
+    $apellido: String!
+    $correo: String!
+    $nivelAuth: String!
+    $password: String!
+  ) {
+    RegistrarAdmin(
+      nombre: $nombre
+      apellido: $apellido
+      correo: $correo
+      nivel_auth: $nivelAuth
+      password: $password
+    ) {
+      apellido
+      email
+      nivel_auth
+      nombre
+      password
+      token
+    }
   }
-}
 `;
 
+//
+// * Componente RegistrarAdmin.
+// * Desde aqui se dan de dalta nuevos usuarios administradores.
+//
 function RegistrarAdmin() {
   const [nombre, setNombre] = useState("");
   const [apellido, setApellido] = useState("");
@@ -36,8 +51,7 @@ function RegistrarAdmin() {
   const [passView, setPassView] = useState(false);
   const [repPassView, setRepPassView] = useState(false);
 
-  const { changeReload } = useContext(Context);
-
+  //Mutatuion para registrar un nuevo administrador
   const [register] = useMutation(REGISTRAR_ADMIN, {
     onCompleted: () => {
       console.log("usuario administrador registrado");
@@ -57,6 +71,10 @@ function RegistrarAdmin() {
     },
   });
 
+  //
+  // * Función para comprobar que los datos introducidos son correctos.
+  // * Realiza la mutatuion register.
+  //
   function comprobarUser() {
     if (nombre == "") {
       setNoHayNombre(true);
@@ -85,9 +103,9 @@ function RegistrarAdmin() {
       setErrorPasswordNoCoinciden(false);
       setErrorCorreoIncompleto(false);
       setNoHayNivelAuth(false);
-    } else if (nivel_auth == ""){
-        setNoHayNivelAuth(true);
-        setNoHayPassword(false);
+    } else if (nivel_auth == "") {
+      setNoHayNivelAuth(true);
+      setNoHayPassword(false);
       setNoHayNombre(false);
       setnoHayApellido(false);
       setNoHayCorreo(false);
@@ -130,21 +148,24 @@ function RegistrarAdmin() {
           password,
         },
         context: {
-            headers: {
-              authorization: localStorage.getItem("token"),
-            },
+          headers: {
+            authorization: localStorage.getItem("token"),
           },
+        },
       });
     }
   }
 
+  //
+  // * Función para mostrar la confirmación del registro.
+  //
   function mostrarConfirmación() {
     Swal.fire({
-      position: 'center',
-      icon: 'success',
-      title: 'Usuario registrado',
+      position: "center",
+      icon: "success",
+      title: "Usuario registrado",
       showConfirmButton: false,
-      timer: 1500
+      timer: 1500,
     });
   }
 
@@ -155,12 +176,15 @@ function RegistrarAdmin() {
           REGISTRAR ADMINISTRADOR
         </h1>
 
+        {/* Si el email ya está registrado */}
         {errorCorreo && (
           <p className="flex justify-center text-red-500 text-xs italic mt-5">
             El email ya esta registrado
           </p>
         )}
 
+        {/* Form que se usa para recoger los datos del nuevo usuario administrador */}
+        {/* Llama a la funicón comprobarUser tras el submit */}
         <form
           className="mt-6"
           onSubmit={(event) => {
@@ -239,7 +263,9 @@ function RegistrarAdmin() {
           </div>
 
           <div className="mb-2">
-            <label className="block text-sm font-semibold text-gray-800">Nivel de autorización</label>
+            <label className="block text-sm font-semibold text-gray-800">
+              Nivel de autorización
+            </label>
             <input
               type="number"
               value={nivel_auth}
@@ -341,6 +367,7 @@ function RegistrarAdmin() {
             )}
           </div>
 
+          {/* Boton submit, para realizar el registro */}
           <div className="mt-6">
             <button
               type="submit"

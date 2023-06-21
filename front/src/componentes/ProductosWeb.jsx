@@ -75,12 +75,19 @@ const GET_PRODCUTOS_FILTRADOS = gql`
   }
 `;
 
+//
+// * Componente ProductosWeb.
+// * Se encarga de mostrar la tabla con los productos disponibles.
+//
 function ProductosWeb() {
-  const { changeReload } = useContext(Context);
+  // Variables del contexto usadas.
+  const { changeReload, changeErrorTrue, changeCodigoError, changeMensajeError } =
+    useContext(Context);
 
   const [buscarProducto, setBuscarProducto] = useState("");
   const [buscarProductoAux, setBuscarProductoAux] = useState("");
 
+  // Mutation para borrar un producto.
   const [borrarProducto] = useMutation(BORRAR_PRODUCTO, {
     onCompleted: () => {
       console.log("Se ha eliminado el producto");
@@ -107,6 +114,7 @@ function ProductosWeb() {
     },
   });
 
+  // Mutation para editar un producto.
   const [modificarProducto] = useMutation(MODIFICAR_PRODUCTO, {
     onCompleted: () => {
       console.log("Se ha modificado el producto");
@@ -133,6 +141,7 @@ function ProductosWeb() {
     },
   });
 
+  // Mutation para añadir un producto.
   const [addProducto] = useMutation(ADD_PRODUCTO, {
     onCompleted: () => {
       console.log("Se ha añadido el producto");
@@ -159,6 +168,7 @@ function ProductosWeb() {
     },
   });
 
+  // Query para traer todos los productos.
   const {
     data: dataGetAllProductos,
     loading: loadingGetAllProductos,
@@ -171,6 +181,7 @@ function ProductosWeb() {
     },
   });
 
+  // Query para traer los productos con un filtro
   const {
     data: dataGetProductosFiltrados,
     loading: loadingGetProductosFiltrados,
@@ -192,7 +203,7 @@ function ProductosWeb() {
         <Cargando />
       </div>
     );
-    
+
   if (errorGetAllProductos)
     return (
       <div>
@@ -208,6 +219,13 @@ function ProductosWeb() {
         {changeMensajeError(errorGetProductosFiltrados.message)}
       </div>
     );
+
+  //
+  // * Función para borrar un producto.
+  // * Realiza la mutation borrarProducto.
+  //
+  // * idProd: ID del producto a borrar.
+  //
   function modalBorrarProducto(idProd) {
     Swal.fire({
       icon: "warning",
@@ -232,6 +250,16 @@ function ProductosWeb() {
     });
   }
 
+  //
+  // * Función para editar un producto.
+  // * Realiza la mutation modificarProducto.
+  //
+  // * idProd: ID del producto a borrar.
+  // * img: url actual.
+  // * name: nombre actual.
+  // * stock: stock actual.
+  // * precio: precio actual.
+  //
   async function modalModificarProducto(idProd, img, name, stock, precio) {
     const { value: formValues } = await Swal.fire({
       title: "Editar Producto",
@@ -279,6 +307,10 @@ function ProductosWeb() {
     }
   }
 
+  //
+  // * Función para añadir un nuevo producto.
+  // * Realiza la mutatuon addProducto.
+  //
   async function modalAddProducto() {
     const { value: formValues } = await Swal.fire({
       title: "Añadir Producto",
@@ -341,6 +373,8 @@ function ProductosWeb() {
         <h1 className="text-2xl font-mono text-orange-900 mb-10">
           Base de datos Productos_Venta
         </h1>
+
+        {/* Boton para añadir un nuevo producto */}
         <button
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold px-4 border border-black hover:border-white rounded"
           onClick={() => {
@@ -356,6 +390,7 @@ function ProductosWeb() {
           PRODUCTOS
         </h1>
 
+        {/* Buscar en la tabla */}
         <div className="flex flex-row py-3 pl-2">
           <div className="relative max-w-xs">
             <input
@@ -390,6 +425,7 @@ function ProductosWeb() {
           </div>
         </div>
 
+        {/* Tabla productos */}
         <div className="flex flex-col">
           <div className="overflow-x-auto">
             <div className="p-1.5 w-full inline-block align-middle">
@@ -442,6 +478,7 @@ function ProductosWeb() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
+                    {/* Si no hay filtro para buscar */}
                     {!buscarProducto &&
                       dataGetAllProductos.getProductos.map((producto) => (
                         <tr key={producto._id}>
@@ -489,6 +526,7 @@ function ProductosWeb() {
                         </tr>
                       ))}
 
+                    {/* Si hay filtro para buscar */}
                     {buscarProducto &&
                       dataGetProductosFiltrados.getProductosFiltrados.map((producto) => (
                         <tr key={producto._id}>

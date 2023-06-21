@@ -1,8 +1,14 @@
 import React, { useContext } from "react";
 import { Context } from "../context/Context";
-import styled from 'styled-components'
 
+
+//
+// * Compnente MenuLateral
+// * Se encarga de mostrar el menú lateral.
+//
 function MenuLateral() {
+
+  // Variables del contexto usadas.
   const {
     nivel_auth,
     changeViewRegistro,
@@ -22,6 +28,8 @@ function MenuLateral() {
       <div className="flex justify-center">
         <span className="flex flex-col mt-3 ml-5">
           <h1 className="flex justify-center mb-10 text-2xl font-bold underline">Menu</h1>
+          
+          {/* Boton para ver las tablas de los usuarios */}
           <button
             className={
               viewUsuarios
@@ -34,6 +42,8 @@ function MenuLateral() {
           >
             • Usuarios
           </button>
+
+          {/* Boton para ver las tablas de los pedidos */}
           <button
             className={
               viewTodosPedidos
@@ -46,6 +56,8 @@ function MenuLateral() {
           >
             • Pedidos
           </button>
+
+          {/* Boton para ver las tablas de los productos */}
           <button
             className={
               viewProductosWeb
@@ -58,6 +70,8 @@ function MenuLateral() {
           >
             • Productos
           </button>
+
+          {/* Boton para ver las tablas de los maderas */}
           <button
             className={
               viewMaderasWeb
@@ -70,6 +84,8 @@ function MenuLateral() {
           >
             • Maderas
           </button>
+
+          {/* Boton para registrar un nuevo administrador */}
           <div className="flex justify-start mb-5">
             {nivel_auth >= 2 && (
               <button

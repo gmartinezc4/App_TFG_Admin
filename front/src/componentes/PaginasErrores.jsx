@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 
 // 
-// * Componente para mostrar pñagina de errores.
+// * Componente para mostrar paginas de errores.
 // 
 function PaginasErrores(props) {
 
   useEffect(() => {
-    if(props.mensaje == "Ha ocurrido un error con el usuario"){
+    if(props.mensaje == "Usuario no autorizado"){
       localStorage.removeItem("token");
     }
   }, [])
