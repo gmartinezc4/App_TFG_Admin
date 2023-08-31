@@ -32,3 +32,16 @@ Esta aplicación está desarrollada para el trabajo de fin de curso del grado de
 7. En la terminal del front, aparecerá la ruta local en la cual se ha desplegado la interfaz de la aplicación para poder interactuar con la aplicación.
    
 9. Accedemos a dicha ruta mediante nuetro navegador web.
+
+
+### En caso de error
+
+En caso de tener un error persistente que no se arregle al recargar la página el usuario deberá: 
+
+1. Dirigirse al la clase "Contenedor", y pegar la siguiente línea de código:
+
+   ```
+    localStorage.removeItem("token");
+   ```
+   
+2. Una vez realizado esto, se deverán guardar los cambios y seguidamente volver a borrar dicha línea y volver a guardar los cambios.
